@@ -1,0 +1,20 @@
+{
+  "name": "public-info-research-public",
+  "interface": {
+    "displayName": "公开信息研究工具包"
+  },
+  "plugins": [
+    {
+      "name": "public-info-research-kit",
+      "source": {
+        "source": "local",
+        "path": "./plugins/public-info-research-kit"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

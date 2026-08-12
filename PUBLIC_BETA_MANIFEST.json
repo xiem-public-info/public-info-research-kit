@@ -1,0 +1,166 @@
+{
+  "schema": "public_info_personal_self_use_manifest.v1",
+  "version": "0.4.0",
+  "status": "personal_multi_device_self_use_beta",
+  "distribution_model": "public_repository_personal_multi_device_self_use",
+  "clean_history_required": true,
+  "release_published": false,
+  "repository": "xiem-public-info/public-info-research-kit",
+  "files": [
+    {
+      "path": ".agents/plugins/marketplace.json",
+      "sha256": "95d4685899ab5dbfbcd75133f67e7383426cb94d2cd3d8df063426a3af746e59",
+      "bytes": 432
+    },
+    {
+      "path": "PRIVACY.md",
+      "sha256": "c5cce00ec6777f46e5c881c758e124f7b142aa548c365e695eb42d6b949d44cb",
+      "bytes": 715
+    },
+    {
+      "path": "QUICKSTART.md",
+      "sha256": "1d275df7c3869cb4dad7459c230c2a0e75fd8d716b5179a32ec7faf2f1542056",
+      "bytes": 1937
+    },
+    {
+      "path": "README.md",
+      "sha256": "8fb359fef3a4bf6ef501232f4733f18b45f49e22ee2cc52733fc955ebf4edf30",
+      "bytes": 1878
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "669c9be94dd3caf7491f607650fa2693d0a84928e7fc29fa37fcec01655f1c00",
+      "bytes": 685
+    },
+    {
+      "path": "SUPPORT.md",
+      "sha256": "5a6f400111948241eb6a9a53c037faef3c3575a464ad9f739bef681d9e756325",
+      "bytes": 409
+    },
+    {
+      "path": "TROUBLESHOOTING.md",
+      "sha256": "b5339fe40ad268cd0ead1fd23999e8262a9e7c75c19b6e11f5261b5e57dce7cc",
+      "bytes": 1265
+    },
+    {
+      "path": "plugins/public-info-research-kit/.codex-plugin/plugin.json",
+      "sha256": "cc23390deac7f78456aada3b2b466c3cfb0feaaed6327de33843d8ce88153bec",
+      "bytes": 975
+    },
+    {
+      "path": "plugins/public-info-research-kit/requirements/python-docs.txt",
+      "sha256": "540531bba84a0e9dfa36b873f7a94a804a449444a700c961e1ca92610ec36d63",
+      "bytes": 13
+    },
+    {
+      "path": "plugins/public-info-research-kit/schemas/public_evidence_envelope.v1.json",
+      "sha256": "a2a3372faf565fdfd40e1929be0ec7ff7eb94c540a7061268585439149126a40",
+      "bytes": 989
+    },
+    {
+      "path": "plugins/public-info-research-kit/schemas/wechat_publisher_list_receipt.v1.json",
+      "sha256": "4a2adcc97169ac5ff939c86edf378f660c17f3b3031819d419362d1543540b09",
+      "bytes": 847
+    },
+    {
+      "path": "plugins/public-info-research-kit/schemas/wechat_publisher_list_request.v1.json",
+      "sha256": "43020683b5c453dc8ea82e03e584fa403aef12b9edec140fc4705e53249bff4d",
+      "bytes": 1887
+    },
+    {
+      "path": "plugins/public-info-research-kit/skills/map-spatial-evidence/SKILL.md",
+      "sha256": "84eb80c881343ac76d98c13958cb6d4af0570c4f463a9543d5bd1508eb25dc3e",
+      "bytes": 1844
+    },
+    {
+      "path": "plugins/public-info-research-kit/skills/public-evidence-delivery/SKILL.md",
+      "sha256": "dd72fc634febb7f11aa8fc9fae198c9bcc853f7ac56704cb2cb12e652f4fecbe",
+      "bytes": 1789
+    },
+    {
+      "path": "plugins/public-info-research-kit/skills/public-info-intake-router/SKILL.md",
+      "sha256": "7b4e50f0bbcd323c7bdf57b1cf92725a1bd467d8bab661a4cea8cf176aa9aa4b",
+      "bytes": 2157
+    },
+    {
+      "path": "plugins/public-info-research-kit/skills/public-web-official-resolver/SKILL.md",
+      "sha256": "412cb5cbcde0c9d0ce8cb86538c08d380a23a08145f1cbf0f8f1fcc831eb8236",
+      "bytes": 1724
+    },
+    {
+      "path": "plugins/public-info-research-kit/skills/wechat-known-url-reader/SKILL.md",
+      "sha256": "b88a5ec6bebadf43fd39030e110191454356ad285f303f584a3305285b7c42bf",
+      "bytes": 1689
+    },
+    {
+      "path": "plugins/public-info-research-kit/skills/wechat-public-research/SKILL.md",
+      "sha256": "e5ff393084b7ce982d61a5df577123314220e397a3cd944d4e40e6f443791ecc",
+      "bytes": 2494
+    },
+    {
+      "path": "plugins/public-info-research-kit/skills/xhs-visible-research/SKILL.md",
+      "sha256": "108154c98a21bcf62c3eb5fd61960a7aca2f97fba003e9e7ab068d57c73d0cca",
+      "bytes": 2058
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/assemble_osm_asset.py",
+      "sha256": "ac80012958549545e22eaa3b6d25e752a4c06af6b2718492fd8ec444b863eb9d",
+      "bytes": 4886
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/build_wechat_account_query_plan.py",
+      "sha256": "bd2460033b056fb64dc9523a9157fd622a5786e0ac36f68cf65aa1f936835271",
+      "bytes": 3131
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/build_wechat_query_pad.py",
+      "sha256": "0c1e4b610cbbca6c2136f995172f7ee44aa920f4214702ffff03bbe3c139d3f0",
+      "bytes": 6861
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/doctor.py",
+      "sha256": "df0a8da43e9551c5c27f94bf7039082c08af85e71c425c4e5468e695adc0cfca",
+      "bytes": 5053
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/package_evidence.py",
+      "sha256": "25ec9ffb8844ac22f401f0602aa256e2c7ed539f62c97c0e628c5e9557535a01",
+      "bytes": 2374
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/providers/macos_vision_ocr.swift",
+      "sha256": "91cba098140e7141989e993bc5516cd485dd9c343122f1a3fa9439215672524c",
+      "bytes": 4744
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/route_task.py",
+      "sha256": "2157325863e127d1750c70e5c2e61231bd8fa38ff2527859781607da97a356c6",
+      "bytes": 5417
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/triage_official_document.py",
+      "sha256": "3b73e1f728e308638bef3aad1279f2c932ed53dd39d8c2af8e3ea4fcbfa5f789",
+      "bytes": 10484
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/validate_osm_display_receipt.py",
+      "sha256": "7f49e2d051bf08e5bbb769bfad653207100aa2e52f149ceff0677e238d6a5da7",
+      "bytes": 3667
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/validate_public_evidence.py",
+      "sha256": "10defa23fe2dae2ede2786c53a5cfa2cab6a14a833e8242f325f70981e2dfde5",
+      "bytes": 7928
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/validate_wechat_account_list.py",
+      "sha256": "ccb1fd75bb343ebc2e10baff3a5d4ecaba5f61569338d906bff16f0ad2d2ff08",
+      "bytes": 10468
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/validate_xhs_evidence_security.py",
+      "sha256": "cac51844c58f693bf6d51946a526cd5f4b0c7cfd44212f6b3847aba7f8e3c9f8",
+      "bytes": 6003
+    }
+  ]
+}

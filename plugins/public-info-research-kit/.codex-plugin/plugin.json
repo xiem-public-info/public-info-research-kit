@@ -1,0 +1,28 @@
+{
+  "name": "public-info-research-kit",
+  "version": "0.4.0",
+  "description": "个人多设备自助使用的公开信息研究工具包，覆盖网页、微信、小红书、地图与证据交付。",
+  "keywords": [
+    "public-information",
+    "wechat",
+    "xiaohongshu",
+    "openstreetmap",
+    "research"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "公开信息研究工具包",
+    "shortDescription": "自助研究网页、微信、小红书、文档与地图证据",
+    "longDescription": "通过公开 GitHub 仓库在本人控制的多个 Codex 账号和电脑上自助安装；安装后直接使用，不需要逐任务运行附件。",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read"
+    ],
+    "defaultPrompt": [
+      "把这个业务问题拆成公开信息检索计划",
+      "阅读这个公开网页并整理证据与缺口",
+      "检查这份 OSM 地图的事实和署名"
+    ]
+  }
+}

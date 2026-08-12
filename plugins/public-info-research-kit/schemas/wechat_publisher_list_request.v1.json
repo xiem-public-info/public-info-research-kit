@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "wechat_publisher_list_request.v1",
+  "title": "WeChat publisher-list research request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "task_id",
+    "subject",
+    "business_question",
+    "requested_evidence",
+    "publisher_accounts",
+    "query_strategy",
+    "usage_boundary",
+    "stop_condition"
+  ],
+  "properties": {
+    "schema": {"const": "wechat_publisher_list_request.v1"},
+    "task_id": {"type": "string", "minLength": 1},
+    "subject": {"type": "string", "minLength": 1},
+    "business_question": {"type": "string", "minLength": 1},
+    "requested_evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "publisher_accounts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["publisher_id", "display_name"],
+        "properties": {
+          "publisher_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
+          "display_name": {"type": "string", "minLength": 1},
+          "aliases": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "query_strategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["keywords", "include_aliases", "max_articles_per_publisher"],
+      "properties": {
+        "keywords": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "include_aliases": {"type": "boolean"},
+        "max_articles_per_publisher": {"type": "integer", "minimum": 1, "maximum": 100},
+        "time_scope": {"type": "string", "minLength": 1}
+      }
+    },
+    "usage_boundary": {"type": "string", "minLength": 1},
+    "stop_condition": {"type": "string", "minLength": 1}
+  }
+}

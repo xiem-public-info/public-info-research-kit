@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "public_evidence_envelope.v1",
+  "title": "Public information evidence envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "package_id",
+    "task_id",
+    "subject",
+    "release_version",
+    "request",
+    "sources",
+    "items",
+    "package_boundary"
+  ],
+  "properties": {
+    "schema": {"const": "public_evidence_envelope.v1"},
+    "package_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "subject": {"type": "string", "minLength": 1},
+    "release_version": {"type": "string", "minLength": 1},
+    "request": {
+      "type": "object",
+      "required": ["business_question", "requested_evidence", "channel_scope", "time_scope", "geo_scope", "usage_boundary", "stop_condition"]
+    },
+    "sources": {"type": "array"},
+    "items": {"type": "array"},
+    "package_boundary": {"type": "string", "minLength": 1}
+  }
+}
