@@ -21,6 +21,7 @@ REQUIRED = (
     "stop_condition",
 )
 CHANNELS = {"wechat", "xhs", "public_web", "official_document", "map_gis"}
+SOCIAL_STRATEGY = "social_semantic_query_lexicon.v0.1"
 
 
 def _nonempty(value: Any) -> bool:
@@ -50,6 +51,9 @@ def _route_wechat(request: dict[str, Any], errors: list[str]) -> list[dict[str, 
                 "input_count": len(value),
                 "uses_declared_task_scope": True,
                 "requires_shared_gui_serialization": True,
+                "searcher_mode": request.get("searcher_mode") or "researcher",
+                "query_strategy": SOCIAL_STRATEGY,
+                "query_plan_schema": "social_query_plan.v1",
                 "default_executes_platform": False,
             }
         )
@@ -81,7 +85,7 @@ def build_plan(request: dict[str, Any]) -> dict[str, Any]:
             if not queries:
                 errors.append("xhs channel requires queries")
             else:
-                routes.append({"channel": "xhs", "mode": "visible_search", "skill": "skills/xhs-visible-research", "input_count": len(queries), "uses_declared_task_scope": True, "requires_shared_gui_serialization": True, "default_executes_platform": False})
+                routes.append({"channel": "xhs", "mode": "visible_search", "skill": "skills/xhs-visible-research", "input_count": len(queries), "uses_declared_task_scope": True, "requires_shared_gui_serialization": True, "searcher_mode": request.get("searcher_mode") or "researcher", "query_strategy": SOCIAL_STRATEGY, "query_plan_schema": "social_query_plan.v1", "default_executes_platform": False})
         elif channel in {"public_web", "official_document"}:
             cfg = request.get("public_web") or {}
             inputs = (cfg.get("known_urls") or []) + (cfg.get("queries") or [])

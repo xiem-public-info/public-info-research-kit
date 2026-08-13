@@ -1,0 +1,29 @@
+{
+  "schema": "social_query_plan.v1",
+  "task_id": "example-001",
+  "subject": "某城市某住宅项目",
+  "business_question": "目标客群为什么选择或放弃该项目",
+  "searcher_mode": "researcher",
+  "plan_version": "v1",
+  "queries": [
+    {
+      "query_id": "wechat-q01",
+      "platform": "wechat",
+      "surface": "微信全局文章结果",
+      "exact_query_text": "某城市 某住宅项目 为什么买",
+      "atom_signature": ["identity:城市", "identity:正式名", "business_intent:为什么买"],
+      "term_provenance": "business_judgment",
+      "reading_target": "达到本任务约定的高质量开文配额，或触发驻留门允许换词条件"
+    },
+    {
+      "query_id": "xhs-q01",
+      "platform": "xhs",
+      "surface": "小红书笔记列表",
+      "exact_query_text": "某城市 某住宅项目 入住体验",
+      "atom_signature": ["identity:城市", "identity:正式名", "content_form:入住体验"],
+      "term_provenance": "business_judgment",
+      "reading_target": "优先覆盖真实可见正文、字幕和评论中的使用体验"
+    }
+  ],
+  "stop_condition": "完成业务问题所需证据覆盖，或触发登录、安全、页面不可读停止线"
+}

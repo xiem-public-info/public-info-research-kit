@@ -1,0 +1,136 @@
+{
+  "schema": "social_semantic_query_lexicon.v0.1",
+  "release_version": "0.5.0",
+  "source_decision": "D-235",
+  "source_commit": "fd7339f932078159ad508681706ba8dbbe9f6385",
+  "principles": [
+    "本词库是语义原子与查询配方，不是可直接整包提交的平台关键词清单",
+    "业务研究默认 searcher_mode=researcher",
+    "每次真实执行前必须生成并冻结 query_id 与 exact_query_text",
+    "正式名、异体字、历史名和跨城同名优先拆成独立查询",
+    "聚合回答只生成扩词、反例和回源线索，真实原文承担证据",
+    "查询语义失败与输入、控制、渲染和安全停止分开记录",
+    "不得假定未经当前客户端验证的平台特殊语法、排序或筛选能力"
+  ],
+  "atom_families": {
+    "identity": {
+      "purpose": "消除同名、跨城、分期和主体漂移",
+      "atoms": ["城市", "区县", "板块", "正式名", "推广名", "历史名", "异体字", "开发主体", "地块名", "宗地号", "地址", "一期", "二期", "组团"]
+    },
+    "lifecycle": {
+      "purpose": "限定信息发生阶段",
+      "atoms": ["规划", "公示", "拿证", "取证", "开盘", "在售", "施工", "实景", "交付", "入住", "运营", "二手", "维保"]
+    },
+    "business_intent": {
+      "purpose": "把业务问题改写为可检索意图",
+      "atoms": ["是什么", "有哪些", "为什么买", "为什么不买", "值不值", "怎么选", "对比", "替代", "升级", "继续住", "使用体验", "兑现", "风险", "投诉", "反悔", "后悔"]
+    },
+    "source_role": {
+      "purpose": "控制样本角色而非只追求篇数",
+      "atoms": ["官方", "开发商", "设计方", "施工方", "媒体", "销售", "中介", "看房者", "购房者", "业主", "住户", "商家", "从业者", "评论"]
+    },
+    "decision_event": {
+      "purpose": "捕捉选择、放弃与权衡行为",
+      "atoms": ["看过", "去看", "比较", "最后选了", "放弃", "成交", "退房", "换房", "置换", "买完", "入住后", "交付后", "推荐", "劝退"]
+    },
+    "experience_mechanism": {
+      "purpose": "把抽象概念拆成可感知、可使用内容",
+      "atoms": ["城市界面", "立面", "门庭", "落客", "归家", "动线", "园林", "会所", "架空层", "商业", "材料", "工艺", "收口", "尺度", "采光", "视野", "私密", "梯户比", "停车", "物业", "维护", "交付"]
+    },
+    "customer_task": {
+      "purpose": "把产品搜索连接到真实生活任务",
+      "atoms": ["首套", "首改", "再改", "原地改善", "跨区置换", "通勤", "教育", "老人照护", "亲子", "社交", "安静", "身份表达", "情绪放松", "生活便利", "资产保值", "预算"]
+    },
+    "comparison_role": {
+      "purpose": "保持竞争对象与替代方案对称",
+      "atoms": ["直接竞品", "品牌品质竞品", "产品尺度竞品", "价格竞品", "成熟二手替代", "继续居住替代", "内部分期替代", "跨板块替代"]
+    },
+    "counterevidence": {
+      "purpose": "主动检索机制失效与表达落差",
+      "atoms": ["好看不实用", "闲置", "收费", "维护差", "缩水", "货不对板", "交付落差", "物业差", "噪音", "停车难", "不保值", "溢价高", "权益不清", "距离误导"]
+    },
+    "content_form": {
+      "purpose": "按证据用途选择内容形态",
+      "atoms": ["探盘", "实景", "测评", "户型解析", "施工记录", "交付记录", "入住体验", "对比长文", "视频文案", "评论问答"]
+    },
+    "time": {
+      "purpose": "限制高变化事实的时间语义",
+      "atoms": ["年份", "月份", "最新", "当前", "开盘前", "开盘后", "交付前", "交付后", "入住一年后"]
+    }
+  },
+  "query_recipes": [
+    {
+      "recipe_id": "identity_baseline",
+      "pattern": "[城市] [正式名或单一别名] [阶段]",
+      "use_when": "首次闭合对象身份或出现跨城同名"
+    },
+    {
+      "recipe_id": "fact_lifecycle",
+      "pattern": "[身份锚点] [生命周期] [事实字段]",
+      "use_when": "寻找规划、开盘、交付等阶段性原文"
+    },
+    {
+      "recipe_id": "experience_choice",
+      "pattern": "[身份锚点] [来源角色] [体验机制1至2个] [选择语言]",
+      "use_when": "寻找为什么买、为什么放弃和长期体验"
+    },
+    {
+      "recipe_id": "direct_comparison",
+      "pattern": "[对象A] [对象B] 对比 [核心机制或客户任务]",
+      "use_when": "已经确认直接比较对象"
+    },
+    {
+      "recipe_id": "task_substitute",
+      "pattern": "[区域或既有方案] [换房或继续住] [客户任务] [值不值或为什么]",
+      "use_when": "检验非新房替代方案"
+    },
+    {
+      "recipe_id": "mechanism_analogy",
+      "pattern": "[体验机制组合] [产品类型] [为什么买或使用体验]",
+      "use_when": "直接声音稀缺，需要同类机制线索"
+    },
+    {
+      "recipe_id": "symmetric_countercheck",
+      "pattern": "[身份或体验机制] [反例词] [交付后或入住后]",
+      "use_when": "检验支持性发现是否存在兑现反例"
+    }
+  ],
+  "compile_policy": {
+    "recommended_slots_per_query": "1组身份锚点 + 1个检索意图 + 1至3个机制或任务词；这是经验区间，不是平台语法限制",
+    "alias_policy": "正式名、异体字和历史名分别生成独立 query_id",
+    "freeze_before_execution": true,
+    "platform_boolean_syntax_assumed": false
+  },
+  "query_dwell_gate": {
+    "rule": "结果列表就绪后不得只看标题连续换词",
+    "allow_switch_when": [
+      "达到任务冻结的高质量开文或阅读配额",
+      "已浏览两个内容确有推进的不同结果批次且仍无高质量候选",
+      "出现明显跨城、同名、身份或主题漂移",
+      "触发登录、验证、风控、加载或页面不可读停止线"
+    ],
+    "universal_fixed_count": false
+  },
+  "failure_classes": {
+    "query_semantic_failure": "查询正确提交并充分查看后仍低相关或严重漂移",
+    "identity_collision": "同名、跨城、主体或阶段混淆",
+    "content_supply_gap": "查询合理但平台当前没有足够高质量内容",
+    "query_transport_failure": "计划词未正确进入平台或未提交",
+    "route_control_failure": "可见窗口、焦点或控制层不可用",
+    "source_render_failure": "文章或笔记正文未渲染或不可读",
+    "safety_stop": "登录、验证、风控、权限或异常提示触发停止",
+    "operator_transient_error_recovered": "一次误点或状态误判已恢复",
+    "evidence_conversion_failure": "聚合线索无法回到真实原文"
+  },
+  "source_roles": [
+    "official_fact_source",
+    "brand_claim",
+    "sales_expression",
+    "supply_side_mechanism",
+    "buyer_voice",
+    "owner_experience",
+    "media_narrative",
+    "professional_workflow",
+    "ai_aggregate_clue"
+  ]
+}
