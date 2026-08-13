@@ -14,7 +14,8 @@ doctor 会一次汇总全部关键缺口，不会逐项失败后要求反复重�
 - `tls_probe_failed`：检查系统时间、证书链或代理 TLS 配置，不要关闭证书校验。
 - `codex_cli_missing`：在 Codex 应用设置中确认命令行工具可用。
 - `marketplace_missing` / `plugin_missing`：先在 Plugin 页面重新安装；仍未刷新时新建任务；只有继续不可见时才重启 Codex 排错。
-- `skill_count_mismatch`：确认安装的是 0.4.0，且 Plugin 中包含七个 Skill。
+- `skill_count_mismatch`：确认安装的是 0.5.0，且 Plugin 中包含七个 Skill。
+- 微信已登录但无法进入检索：本人先手动打开“搜一搜”页面并保持在前台，再让 Codex 继续；快捷键打不开不代表安装失败。
 - 微信或小红书出现登录、安全、验证码、风控或页面不明：由本人在原应用中处理，完成后继续，不切换到绕过路线。
 
 可复现的安装、更新或 Plugin 故障可按 `SUPPORT.md` 提交；具体研究任务不提供一步一步辅导。

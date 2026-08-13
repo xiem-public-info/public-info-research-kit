@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Optional read-only self-diagnostic for the 0.4.0 personal self-use beta."""
+"""Optional read-only self-diagnostic for the 0.5.0 personal self-use beta."""
 
 from __future__ import annotations
 
@@ -91,7 +91,7 @@ def main() -> int:
             sensitive.append(str(path.relative_to(REPO)))
     rows.append(finding("sensitive_files", "pass" if not sensitive else "gap", "删除凭证或账号态文件并轮换相关凭证", sensitive))
     gaps = [row for row in rows if row["status"] == "gap"]
-    report = {"schema": "public_info_personal_self_use_doctor.v1", "version": "0.4.0", "status": "pass" if not gaps else "gaps_detected", "checks": rows, "gap_count": len(gaps), "network_probe": "tls_only", "credentials_read": False, "writes_performed": False}
+    report = {"schema": "public_info_personal_self_use_doctor.v1", "version": "0.5.0", "status": "pass" if not gaps else "gaps_detected", "checks": rows, "gap_count": len(gaps), "network_probe": "tls_only", "credentials_read": False, "writes_performed": False}
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0 if not gaps else 2
 

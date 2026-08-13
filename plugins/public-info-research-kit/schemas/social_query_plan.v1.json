@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "social_query_plan.v1",
+  "title": "Social semantic query plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "task_id", "subject", "business_question", "searcher_mode", "plan_version", "queries", "stop_condition"],
+  "properties": {
+    "schema": {"const": "social_query_plan.v1"},
+    "task_id": {"type": "string", "minLength": 1},
+    "subject": {"type": "string", "minLength": 1},
+    "business_question": {"type": "string", "minLength": 1},
+    "searcher_mode": {"enum": ["researcher", "creator_supply_side", "tool_or_automation"]},
+    "plan_version": {"type": "string", "minLength": 1},
+    "queries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["query_id", "platform", "surface", "exact_query_text", "atom_signature", "term_provenance", "reading_target"],
+        "properties": {
+          "query_id": {"type": "string", "minLength": 1},
+          "platform": {"enum": ["wechat", "xhs"]},
+          "surface": {"type": "string", "minLength": 1},
+          "exact_query_text": {"type": "string", "minLength": 1},
+          "atom_signature": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z_]+:.+$"}},
+          "term_provenance": {"enum": ["official_name", "business_judgment", "platform_suggestion", "aggregate_clue", "title", "body", "comment"]},
+          "reading_target": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "stop_condition": {"type": "string", "minLength": 1}
+  }
+}

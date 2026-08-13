@@ -43,6 +43,10 @@ python3 plugins/public-info-research-kit/tools/doctor.py
 codex plugin marketplace upgrade public-info-research-public && codex plugin add public-info-research-kit@public-info-research-public
 ```
 
+从 0.4.0 更新到 0.5.0 不需要先卸载。更新完成后新建一个任务即可使用新规则；无需重启 Codex，也不要把 doctor 当作更新前置。微信任务开始前，本人需登录微信并手动打开“搜一搜”页面、保持在前台。
+
+0.5.0 的更新验收见 `UPDATE_0.5.0.md`。
+
 ## 卸载
 
 优先在 Codex 的 Plugin 页面点击卸载。备用命令：
