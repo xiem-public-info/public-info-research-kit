@@ -1,7 +1,7 @@
 {
   "name": "public-info-research-kit",
-  "version": "0.5.0",
-  "description": "个人多设备自助使用的公开信息研究工具包，覆盖网页、微信、小红书、地图与证据交付。",
+  "version": "0.6.0",
+  "description": "可公开下载并自助使用的公开信息研究工具包，覆盖网页、微信、小红书、地图与证据交付。",
   "keywords": [
     "public-information",
     "wechat",
@@ -13,7 +13,7 @@
   "interface": {
     "displayName": "公开信息研究工具包",
     "shortDescription": "自助研究网页、微信、小红书、文档与地图证据",
-    "longDescription": "通过公开 GitHub 仓库在本人控制的多个 Codex 账号和电脑上自助安装；安装后直接使用，并内置 D-235 研究型社媒检索策略。",
+    "longDescription": "通过公开 GitHub 仓库直接下载和自助安装；安装后可使用微信 Lite、小红书可见研究、公开网页、官方文档、OSM 空间证据与 D-235 研究型检索策略。",
     "category": "Productivity",
     "capabilities": [
       "Interactive",
