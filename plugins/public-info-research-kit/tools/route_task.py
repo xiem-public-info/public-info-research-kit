@@ -20,7 +20,15 @@ REQUIRED = (
     "usage_boundary",
     "stop_condition",
 )
-CHANNELS = {"wechat", "xhs", "public_web", "official_document", "map_gis"}
+CHANNELS = {
+    "wechat",
+    "xhs",
+    "public_web",
+    "public_dynamic_page",
+    "official_document",
+    "rss_feed",
+    "map_gis",
+}
 SOCIAL_STRATEGY = "social_semantic_query_lexicon.v0.1"
 
 
@@ -87,12 +95,26 @@ def build_plan(request: dict[str, Any]) -> dict[str, Any]:
             else:
                 routes.append({"channel": "xhs", "mode": "visible_search", "skill": "skills/xhs-visible-research", "input_count": len(queries), "uses_declared_task_scope": True, "requires_shared_gui_serialization": True, "searcher_mode": request.get("searcher_mode") or "researcher", "query_strategy": SOCIAL_STRATEGY, "query_plan_schema": "social_query_plan.v1", "default_executes_platform": False})
         elif channel in {"public_web", "official_document"}:
-            cfg = request.get("public_web") or {}
+            cfg = request.get(channel) or request.get("public_web") or {}
             inputs = (cfg.get("known_urls") or []) + (cfg.get("queries") or [])
             if not inputs:
                 errors.append(f"{channel} requires known_urls or queries")
             else:
                 routes.append({"channel": channel, "mode": "official_source_resolution", "skill": "skills/public-web-official-resolver", "input_count": len(inputs), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False})
+        elif channel == "public_dynamic_page":
+            cfg = request.get("public_dynamic_page") or {}
+            inputs = (cfg.get("known_urls") or []) + (cfg.get("queries") or [])
+            if not inputs:
+                errors.append("public_dynamic_page requires known_urls or queries")
+            else:
+                routes.append({"channel": channel, "mode": "public_dynamic_runtime_capture", "skill": "skills/public-web-official-resolver", "input_count": len(inputs), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False, "static_probe_first": True, "browser_runtime_only_if_needed": True})
+        elif channel == "rss_feed":
+            cfg = request.get("rss_feed") or {}
+            feeds = cfg.get("feed_urls") or []
+            if not feeds:
+                errors.append("rss_feed requires feed_urls")
+            else:
+                routes.append({"channel": channel, "mode": "public_feed_discovery", "skill": "skills/public-web-official-resolver", "input_count": len(feeds), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False, "discovery_only": True, "original_source_resolution_required": True})
         elif channel == "map_gis":
             cfg = request.get("map_gis") or {}
             if not cfg.get("project_anchor"):
