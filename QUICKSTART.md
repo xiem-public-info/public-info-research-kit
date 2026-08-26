@@ -4,7 +4,7 @@
 
 在 Codex 中打开本仓库并安装 Plugin。若没有出现安装卡片，直接让 Codex“安装这个 GitHub 仓库里的 `public-info-research-kit` Plugin”，无需手动执行底层命令。
 
-安装成功后即可开始任务。当前任务没有刷新出新 Skill 时，新建任务；不要把重启或 doctor 当作正常安装步骤。
+安装成功后即可开始任务，无需联系维护者或取得逐任务授权。当前任务没有刷新出新 Skill 时，新建任务；不要把重启或 doctor 当作正常安装步骤。
 
 ## 备用 CLI
 
@@ -43,9 +43,9 @@ python3 plugins/public-info-research-kit/tools/doctor.py
 codex plugin marketplace upgrade public-info-research-public && codex plugin add public-info-research-kit@public-info-research-public
 ```
 
-从 0.4.0 或 0.5.0 更新到 0.6.0 不需要先卸载。更新完成后新建一个任务即可使用新规则；无需重启 Codex，也不要把 doctor 当作更新前置。微信任务开始前，本人需登录微信并手动打开公开“搜一搜”页面。
+从 0.4.0、0.5.0 或 0.6.0 更新到 0.7.0 不需要先卸载。更新完成后新建一个任务即可使用新规则；无需重启 Codex，也不要把 doctor 当作更新前置。微信任务开始前，使用者需登录微信、手动打开公开“搜一搜”，并让该页面保持在 Computer Use 当前可操作的主屏执行面。
 
-0.6.0 的更新验收见 `UPDATE_0.6.0.md`。
+0.7.0 的更新验收见 `UPDATE_0.7.0.md`。
 
 ## 卸载
 

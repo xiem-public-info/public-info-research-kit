@@ -1,20 +1,32 @@
 {
   "name": "public-info-research-kit",
-  "version": "0.6.0",
-  "description": "可公开下载并自助使用的公开信息研究工具包，覆盖网页、微信、小红书、地图与证据交付。",
+  "version": "0.7.0",
+  "description": "面向公众自助使用的公开信息研究工具包，覆盖网页、微信、小红书、文档、Feed、地图与证据交付。",
+  "author": {
+    "name": "xiem-public-info",
+    "url": "https://github.com/xiem-public-info"
+  },
+  "homepage": "https://github.com/xiem-public-info/public-info-research-kit",
+  "repository": "https://github.com/xiem-public-info/public-info-research-kit",
+  "license": "MIT",
   "keywords": [
     "public-information",
     "wechat",
     "xiaohongshu",
+    "rss",
+    "pdf",
     "openstreetmap",
     "research"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "公开信息研究工具包",
-    "shortDescription": "自助研究网页、微信、小红书、文档与地图证据",
-    "longDescription": "通过公开 GitHub 仓库直接下载和自助安装；安装后可使用微信 Lite、小红书可见研究、公开网页、官方文档、OSM 空间证据与 D-235 研究型检索策略。",
+    "shortDescription": "自助研究网页、微信、小红书、文档、Feed 与地图证据",
+    "longDescription": "任何符合环境条件的使用者均可从公开 GitHub 仓库直接安装；覆盖微信 Lite、小红书可见研究、静态与动态公开网页、官方文档、RSS/Feed 发现、OSM 空间证据与研究型检索策略。",
+    "developerName": "xiem-public-info",
     "category": "Productivity",
+    "websiteURL": "https://github.com/xiem-public-info/public-info-research-kit",
+    "privacyPolicyURL": "https://github.com/xiem-public-info/public-info-research-kit/blob/main/PRIVACY.md",
     "capabilities": [
       "Interactive",
       "Read"
@@ -23,6 +35,7 @@
       "把这个业务问题拆成公开信息检索计划",
       "把这个微信或小红书研究任务编译为冻结的精确检索词",
       "阅读这个公开网页并整理证据与缺口",
+      "从这些公开 RSS 或 Feed 发现新内容并回到原站核验",
       "检查这份 OSM 地图的事实和署名"
     ]
   }

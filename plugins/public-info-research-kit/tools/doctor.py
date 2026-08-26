@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Optional read-only self-diagnostic for the 0.6.0 public self-service release."""
+"""Optional read-only self-diagnostic for the 0.7.0 public self-service release."""
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -16,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parents[1]
 PLUGIN_ID = "public-info-research-kit@public-info-research-public"
 SUPPORTED = {(3, 12), (3, 13), (3, 14)}
+RELEASE_VERSION = "0.7.0"
 
 
 def command(args: list[str]) -> tuple[int, str]:
@@ -46,6 +48,40 @@ def discover_supported_pythons() -> list[dict]:
         if len(parts) >= 2 and tuple(map(int, parts[:2])) in SUPPORTED:
             rows.append({"command": name, "version": version})
     return rows
+
+
+def release_manifest_integrity() -> tuple[bool, dict]:
+    manifest_path = REPO / "PUBLIC_BETA_MANIFEST.json"
+    if not manifest_path.is_file():
+        return False, {"reason": "manifest_missing"}
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return False, {"reason": type(exc).__name__}
+    failures = []
+    for entry in manifest.get("files") or []:
+        relative = entry.get("path")
+        if not isinstance(relative, str) or not relative:
+            failures.append({"path": relative, "reason": "invalid_path"})
+            continue
+        path = REPO / relative
+        if not path.is_file():
+            failures.append({"path": relative, "reason": "missing"})
+            continue
+        payload = path.read_bytes()
+        digest = hashlib.sha256(payload).hexdigest()
+        if digest != entry.get("sha256") or len(payload) != entry.get("bytes"):
+            failures.append({"path": relative, "reason": "hash_or_size_mismatch"})
+    valid = (
+        manifest.get("version") == RELEASE_VERSION
+        and manifest.get("skill_count") == 7
+        and not failures
+    )
+    return valid, {
+        "version": manifest.get("version"),
+        "file_count": len(manifest.get("files") or []),
+        "failures": failures,
+    }
 
 
 def main() -> int:
@@ -85,13 +121,15 @@ def main() -> int:
     rows.append(finding("plugin_visibility", "pass" if plugin_visible else "gap", "在 Plugin 页面重新安装；当前任务未刷新时新建任务；仍不可见时再重启 Codex 排错", plugin_visible))
     skills = sorted(path.parent.name for path in (ROOT / "skills").glob("*/SKILL.md"))
     rows.append(finding("skill_count", "pass" if len(skills) == 7 else "gap", "安装包必须恰好包含七个 Skill", skills))
+    manifest_ok, manifest_observed = release_manifest_integrity()
+    rows.append(finding("release_manifest_integrity", "pass" if manifest_ok else "gap", "重新从公开仓安装或更新；不要继续使用文件缺失或哈希不一致的副本", manifest_observed))
     sensitive = []
     for path in REPO.rglob("*"):
         if path.is_file() and path.name.lower() in {".env", "cookies.sqlite", "storage_state.json", "credentials.json"}:
             sensitive.append(str(path.relative_to(REPO)))
     rows.append(finding("sensitive_files", "pass" if not sensitive else "gap", "删除凭证或账号态文件并轮换相关凭证", sensitive))
     gaps = [row for row in rows if row["status"] == "gap"]
-    report = {"schema": "public_info_self_service_doctor.v1", "version": "0.6.0", "status": "pass" if not gaps else "gaps_detected", "checks": rows, "gap_count": len(gaps), "network_probe": "tls_only", "credentials_read": False, "writes_performed": False}
+    report = {"schema": "public_info_self_service_doctor.v1", "version": RELEASE_VERSION, "status": "pass" if not gaps else "gaps_detected", "checks": rows, "gap_count": len(gaps), "network_probe": "tls_only", "credentials_read": False, "writes_performed": False}
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0 if not gaps else 2
 
