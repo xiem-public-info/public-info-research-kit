@@ -1,6 +1,6 @@
 {
   "schema": "social_semantic_query_lexicon.v0.1",
-  "release_version": "0.5.0",
+  "release_version": "0.6.0",
   "source_decision": "D-235",
   "source_commit": "fd7339f932078159ad508681706ba8dbbe9f6385",
   "principles": [
