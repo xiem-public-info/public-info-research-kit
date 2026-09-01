@@ -1,0 +1,74 @@
+{
+  "schema": "channel_capability_profile.v1",
+  "profile_id": "xhs.v1",
+  "channel": "xhs",
+  "route": "XHS-SEARCH-V1",
+  "status": "visible_low_frequency_route",
+  "execution_owner": "installed_public_info_research_kit",
+  "business_owner": "requesting_user_or_downstream_project",
+  "good_at": [
+    "公开笔记中实际可见的体验、选择语言、使用场景与弱信号",
+    "标题、正文、轮播图文字、视频可见文案或字幕和实际可见评论的联合观察",
+    "围绕同一业务问题寻找支持、反例、冲突和客户语言",
+    "通过点点等聚合表面做解歧、扩词与真实笔记回源导航"
+  ],
+  "not_good_at": [
+    "统计比例、市场普遍性、项目硬事实或不可见音频内容的推断",
+    "需要绕过登录、验证码、权限墙或风控的内容",
+    "高频、无人值守、DOM、CDP、Playwright 或隔离浏览器资料目录采集",
+    "把聚合答案、营销软文或单一投诉升级为确定性结论"
+  ],
+  "human_prerequisites": [
+    "终端用户自行安装并授权 Computer Use",
+    "终端用户在自己的正常 Chrome 中登录小红书",
+    "终端用户保持该既有 Chrome 会话正常、可见且未被其他桌面任务占用"
+  ],
+  "package_policy": {
+    "install_or_enable_computer_use": false,
+    "grant_system_permissions": false,
+    "operate_login": false,
+    "remind_and_detect_only": true
+  },
+  "golden_method": [
+    "先闭合对象身份并将正式名、别名、分期和反例拆为独立查询",
+    "通过语义词库形成少量查询，冻结 query_id 与 exact_query_text",
+    "执行便携式渠道预检，确认执行 Owner、正常可见 Chrome、共享桌面串行与停止线",
+    "只在现有正常 Chrome 的真实可写控件中输入，平台内逐字可见一致后提交",
+    "按任务配额推进结果批次并实际开读，不用首屏标题代表内容覆盖",
+    "只记录实际可见正文、字幕、画面文字和评论，并区分来源角色",
+    "落盘前清除瞬态链接参数、账号态字段、请求头、本地存储和浏览器资料路径"
+  ],
+  "dwell_switch_conditions": [
+    "达到任务冻结的高质量开读目标",
+    "两个内容确有推进的不同结果批次仍无高质量候选",
+    "出现明显身份或主题漂移",
+    "触发登录、验证码、自动化提示、风控或页面不可读停止线"
+  ],
+  "failure_classes": [
+    "query_semantic_failure",
+    "identity_collision",
+    "content_supply_gap",
+    "query_transport_failure",
+    "route_control_failure",
+    "source_render_failure",
+    "safety_stop",
+    "operator_transient_error_recovered",
+    "evidence_conversion_failure"
+  ],
+  "forbidden_routes": [
+    "chrome_connector_or_extension_takeover",
+    "agent_browser",
+    "Playwright_or_CDP",
+    "DOM_snapshot_or_evaluate",
+    "direct_goto",
+    "isolated_or_copied_profile",
+    "MediaCrawler_or_XHS_Searcher",
+    "automatic_query_pad_fallback"
+  ],
+  "required_validators": [
+    "tools/validate_social_query_plan.py",
+    "tools/check_portable_channel_preflight.py",
+    "tools/validate_xhs_evidence_security.py",
+    "tools/validate_public_evidence.py"
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "schema": "adaptive_query_sufficiency_package.v1",
+  "task_id": "NEG-PROMOTION-01",
+  "business_question_ref": "BQ-NEG-PROMOTION",
+  "business_question_family": "住宅项目交付后体验",
+  "consumer_contract": {
+    "acceptance_mode": "quality_sufficiency",
+    "qualified_match_classes": ["direct"],
+    "non_counted_match_classes": ["excluded"],
+    "quality_criteria": ["可回源"],
+    "count_threshold": null,
+    "diversity_requirements": {
+      "minimum_source_role_count": 1,
+      "minimum_project_or_brand_count": 1,
+      "maximum_qualified_items_per_project_or_brand": 2
+    },
+    "evidence_usage_permission": "内部方法候选",
+    "adaptive_extension": {
+      "authorized": false,
+      "authorization_ref": null,
+      "maximum_incremental_batches": 0,
+      "time_limit_minutes": 0,
+      "cost_limit": null
+    }
+  },
+  "batch": {
+    "batch_id": "NEG-PROMOTION-01-B1",
+    "batch_state": "initial_frozen_batch",
+    "parent_batch_id": null,
+    "queries": [
+      {
+        "query_id": "q-one-task",
+        "exact_query_text": "某项目 入住后 物业兑现",
+        "atom_signature": ["identity:正式名", "decision_event:入住后"],
+        "term_provenance": ["single_task"],
+        "minimum_result_batches": 1,
+        "minimum_actual_opens": 1
+      }
+    ]
+  },
+  "receipt": {
+    "evidence_sufficiency_status": "sufficient",
+    "marginal_information_gain": {
+      "assessment": "high",
+      "new_qualified_count": 1,
+      "new_distinct_source_role_count": 1,
+      "new_qualified_project_or_brand_count": 1,
+      "new_expression_pattern_count": 1,
+      "duplicate_rate": 0.0,
+      "assessment_basis": "单任务命中"
+    },
+    "failure_class": null,
+    "needs_downstream_authorization": false,
+    "remaining_gap": "无",
+    "stop_reason": "完成本任务",
+    "executed_result_batch_count": 1,
+    "actual_open_count": 1
+  },
+  "query_learning_records": [
+    {
+      "query_id": "q-one-task",
+      "exact_query_text": "某项目 入住后 物业兑现",
+      "attribution_status": "recorded",
+      "discovery_evidence_item_ids": ["EV-NEG-1"],
+      "revisit_evidence_item_ids": [],
+      "qualification_counts": {"direct": 1, "excluded": 0},
+      "qualified_count": 1,
+      "qualified_rate": 1.0,
+      "qualified_project_or_brand_count": 1,
+      "result_batch_count": 1,
+      "actual_open_count": 1,
+      "marginal_information_gain": "high",
+      "effective_terms": ["物业兑现"],
+      "low_efficiency_terms": [],
+      "identity_or_object_drift": [],
+      "failure_class": null,
+      "stop_reason": "完成本任务",
+      "validated_task_count": 1,
+      "recommended_query_status": "recommended",
+      "human_review": {"status": "accepted", "reviewer": "human_owner", "reviewed_at": "2026-09-01", "review_batch_id": "NEG-REVIEW-01"}
+    }
+  ],
+  "promotion_review_batches": [
+    {
+      "schema": "query_promotion_review_batch.v1",
+      "review_batch_id": "NEG-REVIEW-01",
+      "business_question_family": "住宅项目交付后体验",
+      "covered_query_ids": ["q-one-task"],
+      "status": "accepted",
+      "reviewer": "human_owner",
+      "reviewed_at": "2026-09-01"
+    }
+  ]
+}

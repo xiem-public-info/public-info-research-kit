@@ -1,0 +1,50 @@
+{
+  "schema": "public.residential_bridge_lock.v0.2",
+  "status": "compatible_candidate_frozen",
+  "producer": {
+    "release_candidate": "0.8.0-rc.1",
+    "schema_path": "schemas/public_evidence_envelope.v1.json",
+    "$id": "public_evidence_envelope.v1",
+    "sha256": "ee303d2ea8eef1bcc2b6e6f7a8b020486aa80c3c3ca3189cb99fedd5b8fc2148"
+  },
+  "consumer": {
+    "repository": "https://github.com/xiem-bit/residential-project-interpretation-service-public",
+    "release_candidate": "v0.2.0-rc.1",
+    "candidate_commit": "0a0c08eefc5ba4d5d36e9b5658ea648c44628585",
+    "contracts": [
+      {
+        "path": "external-capabilities/upstream-task.schema.json",
+        "$id": "residential.upstream_task.v0.2",
+        "sha256": "12f7ed916755bc37a870a6eb893210cc7e0fbc35ecea443f8e8d10bbe102b271"
+      },
+      {
+        "path": "external-capabilities/upstream-response.schema.json",
+        "$id": "residential.upstream_response.v0.2",
+        "sha256": "baec010a6a21b44a0f80a9639680fc2dcda2b6bce685d28d8cd29df9dc7ed2e1"
+      },
+      {
+        "path": "external-capabilities/upstream-adoption-receipt.schema.json",
+        "$id": "residential.upstream_adoption_receipt.v0.2",
+        "sha256": "64183f6485ac5fc8c076f7969c3d5bfd07209632a9c9ddd532c6eef7ad2e1414"
+      }
+    ]
+  },
+  "conformance": {
+    "status": "pass_unpublished_candidates",
+    "producer_minimum_fixture_cases": 11,
+    "producer_core_conformance_fixture_cases": 94,
+    "current_producer_release_harness_cases": 101,
+    "consumer_regression_cases": 102,
+    "producer_validated_consumer_fixture": true,
+    "consumer_validated_producer_fixture": true
+  },
+  "boundaries": {
+    "shared_cwd_required": false,
+    "absolute_path_dependency_allowed": false,
+    "upstream_fulfilled_equals_downstream_accepted": false,
+    "soft_evidence_may_be_promoted_without_independent_support": false,
+    "real_gui_validated": false,
+    "business_acceptance_validated": false,
+    "both_candidates_published": false
+  }
+}

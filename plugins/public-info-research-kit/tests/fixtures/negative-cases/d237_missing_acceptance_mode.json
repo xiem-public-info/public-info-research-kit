@@ -1,0 +1,9 @@
+{
+  "schema": "query_sufficiency_applicability.v1",
+  "task_id": "NEG-D237-01",
+  "route_receipt": {
+    "primary_route_id": "ROUTE-XHS",
+    "required_gate_ids": ["GATE-D237-RESEARCH-SUFFICIENCY-DEFAULT"]
+  },
+  "research_characteristics": ["multiple_independent_queries"]
+}

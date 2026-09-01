@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "per_machine_smoke_receipt.v1",
+  "title": "Per-machine public information channel smoke receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "receipt_id",
+    "package_version",
+    "channel",
+    "operator_scope",
+    "installation",
+    "doctor",
+    "prerequisites",
+    "observations",
+    "result",
+    "boundary"
+  ],
+  "properties": {
+    "schema": {"const": "per_machine_smoke_receipt.v1"},
+    "receipt_id": {"type": "string", "minLength": 1},
+    "package_version": {"type": "string", "minLength": 1},
+    "channel": {"enum": ["non_gui_public_web", "wechat", "xhs"]},
+    "operator_scope": {"const": "end_user_on_own_machine"},
+    "installation": {"type": "object"},
+    "doctor": {"type": "object"},
+    "prerequisites": {"type": "object"},
+    "observations": {"type": "object"},
+    "result": {"type": "object"},
+    "boundary": {"type": "string", "minLength": 1}
+  }
+}

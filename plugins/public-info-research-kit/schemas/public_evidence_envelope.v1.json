@@ -8,25 +8,102 @@
     "schema",
     "package_id",
     "task_id",
+    "request_id",
+    "project_id",
     "subject",
     "release_version",
+    "upstream_status",
+    "downstream_acceptance",
     "request",
+    "query_execution",
     "sources",
     "items",
+    "negative_hits",
+    "conflicts",
+    "gaps",
+    "stop_reason",
     "package_boundary"
   ],
   "properties": {
     "schema": {"const": "public_evidence_envelope.v1"},
     "package_id": {"type": "string", "minLength": 1},
     "task_id": {"type": "string", "minLength": 1},
+    "request_id": {"type": "string", "minLength": 1},
+    "project_id": {"type": ["string", "null"]},
     "subject": {"type": "string", "minLength": 1},
     "release_version": {"type": "string", "minLength": 1},
+    "upstream_status": {
+      "description": "Upstream production state only. stopped is valid when a declared safety, access, scope or human stop prevents normal completion; it never implies downstream rejection.",
+      "enum": ["fulfilled", "partial", "gap", "stopped"]
+    },
+    "downstream_acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "decided_by", "reason"],
+      "properties": {
+        "status": {"enum": ["not_assessed", "accepted", "accepted_with_conditions", "rejected"]},
+        "decided_by": {"type": ["string", "null"]},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
     "request": {
       "type": "object",
-      "required": ["business_question", "requested_evidence", "channel_scope", "time_scope", "geo_scope", "usage_boundary", "stop_condition"]
+      "additionalProperties": false,
+      "required": ["business_question", "requested_evidence", "channel_scope", "time_scope", "geo_scope", "usage_boundary", "stop_condition"],
+      "properties": {
+        "business_question": {"type": "string", "minLength": 1},
+        "requested_evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "channel_scope": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "time_scope": {"type": "string", "minLength": 1},
+        "geo_scope": {"type": "string", "minLength": 1},
+        "usage_boundary": {"type": "string", "minLength": 1},
+        "stop_condition": {"type": "string", "minLength": 1}
+      }
+    },
+    "query_execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "plan_schema",
+        "plan_version",
+        "acceptance_mode",
+        "evidence_sufficiency_status",
+        "executed_query_ids",
+        "proposed_incremental_query_ids",
+        "adaptive_extension_authorized",
+        "result_batch_count",
+        "actual_open_count",
+        "failure_attribution_complete"
+      ],
+      "properties": {
+        "mode": {"enum": ["research_retrieval", "simple_direct_retrieval"]},
+        "plan_schema": {"type": ["string", "null"]},
+        "plan_version": {"type": ["string", "null"]},
+        "acceptance_mode": {"type": "string", "minLength": 1},
+        "evidence_sufficiency_status": {"enum": ["sufficient", "partially_sufficient", "expression_supply_gap", "not_assessed"]},
+        "executed_query_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "proposed_incremental_query_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "adaptive_extension_authorized": {"type": "boolean"},
+        "result_batch_count": {"type": "integer", "minimum": 0},
+        "actual_open_count": {"type": "integer", "minimum": 0},
+        "failure_attribution_complete": {"type": "boolean"}
+      }
     },
     "sources": {"type": "array"},
     "items": {"type": "array"},
+    "negative_hits": {"type": "array"},
+    "conflicts": {
+      "description": "Exact conflict item ids. Use [] when there are no conflict items; null or omission is invalid.",
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "gaps": {
+      "description": "Exact gap item ids. Use [] when there are no gap items; null or omission is invalid.",
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "stop_reason": {"type": "string", "minLength": 1},
     "package_boundary": {"type": "string", "minLength": 1}
   }
 }

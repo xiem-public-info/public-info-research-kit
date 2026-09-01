@@ -1,0 +1,115 @@
+{
+  "schema": "adaptive_query_sufficiency_contract.v1",
+  "status": "active_public_default_for_research_retrieval",
+  "source_decisions": ["D-237", "D-240", "D-241"],
+  "purpose": "把固定查询覆盖与业务证据充分性分开；允许上游评估缺口并提出增量查询，同时由请求方或下游业务 Owner 保留验收、增量授权和最终解释权。",
+  "applicability": {
+    "schema": "query_sufficiency_applicability.v1",
+    "d237_required_gate_id": "GATE-D237-RESEARCH-SUFFICIENCY-DEFAULT",
+    "default_policy_for_real_retrieval": "d237_required",
+    "allowed_policies": ["d237_required", "exempt_simple_direct_retrieval"],
+    "simple_direct_retrieval_types": ["known_url_read", "specified_document_fetch", "single_fact_verification", "exact_record_retrieval"],
+    "required_exemption_fields": ["exemption_type", "evidence_target", "stop_condition", "human_authorization_ref"],
+    "research_characteristics_forbid_exemption": [
+      "multiple_independent_queries",
+      "support_and_counterevidence_required",
+      "source_or_project_diversity_required",
+      "comparative_or_pattern_judgment",
+      "adaptive_extension_possible",
+      "market_or_industry_generalization"
+    ]
+  },
+  "ownership": {
+    "business_owner": [
+      "business_question",
+      "acceptance_mode",
+      "qualified_match_classes",
+      "quality_criteria",
+      "count_threshold_when_applicable",
+      "diversity_requirements",
+      "evidence_usage_permission",
+      "adaptive_extension_authorization_and_limits",
+      "final_business_interpretation"
+    ],
+    "public_information_owner": [
+      "frozen_query_execution",
+      "evidence_packaging",
+      "observed_sufficiency_assessment",
+      "failure_classification",
+      "marginal_information_gain_assessment",
+      "incremental_batch_proposal",
+      "query_learning_record"
+    ]
+  },
+  "acceptance_modes": ["count_based", "quality_sufficiency", "hybrid"],
+  "batch_states": ["initial_frozen_batch", "proposed_incremental_batch", "approved_incremental_batch"],
+  "evidence_sufficiency_statuses": ["sufficient", "partially_sufficient", "expression_supply_gap", "not_assessed"],
+  "marginal_information_gain_assessments": ["high", "medium", "low", "none", "unknown"],
+  "failure_classes": [
+    "query_semantic_failure",
+    "identity_collision",
+    "content_supply_gap",
+    "query_transport_failure",
+    "route_control_failure",
+    "source_render_failure",
+    "safety_stop",
+    "operator_transient_error_recovered",
+    "evidence_conversion_failure"
+  ],
+  "query_recommendation": {
+    "statuses": ["candidate", "recommended", "rejected"],
+    "human_review_statuses": ["pending", "accepted", "rejected"],
+    "minimum_validated_task_count_for_recommended": 2,
+    "human_acceptance_required_for_recommended": true,
+    "human_review_trigger": "promotion_threshold_reached_only",
+    "human_review_unit": "business_question_family_batch",
+    "candidate_stage_human_review_required": false,
+    "review_batch_schema": "query_promotion_review_batch.v1"
+  },
+  "query_attribution_statuses": ["recorded", "not_recorded_legacy_receipt"],
+  "package_schema": "adaptive_query_sufficiency_package.v1",
+  "required_package_sections": ["task_id", "business_question_ref", "business_question_family", "consumer_contract", "batch", "receipt", "query_learning_records"],
+  "required_query_fields": [
+    "query_id",
+    "exact_query_text",
+    "atom_signature",
+    "term_provenance",
+    "minimum_result_batches",
+    "minimum_actual_opens"
+  ],
+  "query_learning_required_fields": [
+    "query_id",
+    "exact_query_text",
+    "attribution_status",
+    "discovery_evidence_item_ids",
+    "revisit_evidence_item_ids",
+    "qualification_counts",
+    "qualified_count",
+    "qualified_rate",
+    "qualified_project_or_brand_count",
+    "result_batch_count",
+    "actual_open_count",
+    "marginal_information_gain",
+    "effective_terms",
+    "low_efficiency_terms",
+    "identity_or_object_drift",
+    "failure_class",
+    "stop_reason",
+    "validated_task_count",
+    "recommended_query_status",
+    "human_review"
+  ],
+  "behavior_boundaries": [
+    "真实研究检索未声明策略时默认启用 D-237；缺少 acceptance_mode 时返回 d237_consumer_contract_required",
+    "简单定向获取只有显式人工豁免且不存在研究特征时才可豁免",
+    "完成固定查询数或固定样本数不自动证明业务充分",
+    "proposed_incremental_batch 必须 needs_downstream_authorization=true 且 live_channel_authorized=false",
+    "approved_incremental_batch 必须有 adaptive_extension 授权和数量、时间、成本边界",
+    "增量授权不替代微信或小红书 Owner 预检、共享 GUI lease 或 live Gate",
+    "单次命中只能成为 candidate；跨至少两个真实任务有效且经真人批量接受后才能 recommended",
+    "candidate 阶段不要求逐条人工审批",
+    "真实学习记录与业务样本不得进入公开发行 fixture",
+    "content_supply_gap 只描述当前平台、当前查询批次和当前语义，不能外推为全网没有"
+  ],
+  "validator": "tools/validate_adaptive_query_sufficiency.py"
+}

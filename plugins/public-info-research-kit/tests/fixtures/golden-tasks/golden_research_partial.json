@@ -1,0 +1,84 @@
+{
+  "schema": "adaptive_query_sufficiency_package.v1",
+  "task_id": "GOLDEN-RESEARCH-01",
+  "business_question_ref": "BQ-GOLDEN-01",
+  "business_question_family": "住宅项目选择与放弃机制",
+  "consumer_contract": {
+    "acceptance_mode": "hybrid",
+    "qualified_match_classes": ["direct", "supporting"],
+    "non_counted_match_classes": ["excluded"],
+    "quality_criteria": ["对象身份闭合", "真实公开内容可回源", "内容能回答业务问题"],
+    "count_threshold": 3,
+    "diversity_requirements": {
+      "minimum_source_role_count": 2,
+      "minimum_project_or_brand_count": 2,
+      "maximum_qualified_items_per_project_or_brand": 2
+    },
+    "evidence_usage_permission": "内部研究候选，不直接升级为项目硬事实",
+    "adaptive_extension": {
+      "authorized": false,
+      "authorization_ref": null,
+      "maximum_incremental_batches": 0,
+      "time_limit_minutes": 0,
+      "cost_limit": null
+    }
+  },
+  "batch": {
+    "batch_id": "GOLDEN-RESEARCH-01-B1",
+    "batch_state": "initial_frozen_batch",
+    "parent_batch_id": null,
+    "queries": [
+      {
+        "query_id": "wechat-q01",
+        "exact_query_text": "某城市 某项目 交付后 使用体验",
+        "atom_signature": ["identity:城市", "identity:正式名", "lifecycle:交付", "business_intent:使用体验"],
+        "term_provenance": ["official_name", "business_judgment"],
+        "minimum_result_batches": 2,
+        "minimum_actual_opens": 2
+      }
+    ]
+  },
+  "receipt": {
+    "evidence_sufficiency_status": "partially_sufficient",
+    "marginal_information_gain": {
+      "assessment": "medium",
+      "new_qualified_count": 2,
+      "new_distinct_source_role_count": 2,
+      "new_qualified_project_or_brand_count": 1,
+      "new_expression_pattern_count": 2,
+      "duplicate_rate": 0.2,
+      "assessment_basis": "初始批次补足两个有效选择机制，但项目多样性仍不足"
+    },
+    "failure_class": "content_supply_gap",
+    "needs_downstream_authorization": false,
+    "remaining_gap": "当前微信查询批次仍缺一个独立项目或品牌的可回源反例",
+    "stop_reason": "初始冻结批次已完成，等待业务 Owner 决定是否授权增量",
+    "executed_result_batch_count": 2,
+    "actual_open_count": 2
+  },
+  "query_learning_records": [
+    {
+      "query_id": "wechat-q01",
+      "exact_query_text": "某城市 某项目 交付后 使用体验",
+      "attribution_status": "recorded",
+      "discovery_evidence_item_ids": ["EV-001", "EV-002"],
+      "revisit_evidence_item_ids": [],
+      "qualification_counts": {"direct": 1, "supporting": 1, "excluded": 1},
+      "qualified_count": 2,
+      "qualified_rate": 0.6667,
+      "qualified_project_or_brand_count": 1,
+      "result_batch_count": 2,
+      "actual_open_count": 2,
+      "marginal_information_gain": "medium",
+      "effective_terms": ["交付后", "使用体验"],
+      "low_efficiency_terms": [],
+      "identity_or_object_drift": [],
+      "failure_class": "content_supply_gap",
+      "stop_reason": "完成两批结果和两篇实际开读后，多样性仍不足",
+      "validated_task_count": 1,
+      "recommended_query_status": "candidate",
+      "human_review": {"status": "pending", "reviewer": null, "reviewed_at": null, "review_batch_id": null}
+    }
+  ],
+  "promotion_review_batches": []
+}

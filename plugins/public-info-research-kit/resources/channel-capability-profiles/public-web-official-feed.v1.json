@@ -1,0 +1,49 @@
+{
+  "schema": "channel_capability_profile.v1",
+  "profile_id": "public-web-official-feed.v1",
+  "channel": "public_web_official_dynamic_feed",
+  "status": "public_read_route",
+  "execution_owner": "installed_public_info_research_kit",
+  "business_owner": "requesting_user_or_downstream_project",
+  "good_at": [
+    "静态公开网页正文、表格、附件和稳定链接读取",
+    "官方来源身份、发布主体、日期、文种和原始声明核验",
+    "原生、扫描或混合 PDF 判型与必要页 OCR",
+    "无需账号的公开动态页在静态读取不足时受控渲染",
+    "RSS 或公开 Feed 的低频发现、去重和原站回源"
+  ],
+  "not_good_at": [
+    "登录后、授权后、付费或内部平台内容的公共读取授权",
+    "把搜索摘要、转载、Feed 摘要或 AI 摘要当作原始证据",
+    "用 OCR 推断替代原页视觉复核或人工确认",
+    "对每个站点假定相同动态渲染、选择器或 Feed 适配规则"
+  ],
+  "golden_method": [
+    "先确认业务问题、事实字段、时间范围和来源强度要求",
+    "优先解析官方或原始来源身份并保留最终稳定 URL",
+    "静态正文优先，公开动态页仅在静态不足时受控渲染",
+    "PDF 先判定原生、扫描或混合类型，再只 OCR 必要页面",
+    "Feed 和聚合结果只做发现，关键主张回到原站正文",
+    "保留抓取时间、来源角色、文种、冲突、缺口和使用边界"
+  ],
+  "failure_classes": [
+    "official_identity_unresolved",
+    "document_type_unresolved",
+    "source_render_failure",
+    "authorized_source_boundary",
+    "original_source_not_resolved",
+    "content_supply_gap",
+    "safety_stop"
+  ],
+  "stop_on": [
+    "login_or_authorization_required",
+    "paywall_or_access_control",
+    "source_identity_cannot_be_resolved",
+    "critical_content_is_unreadable",
+    "requested_network_access_is_out_of_scope"
+  ],
+  "required_validators": [
+    "tools/triage_official_document.py",
+    "tools/validate_public_evidence.py"
+  ]
+}

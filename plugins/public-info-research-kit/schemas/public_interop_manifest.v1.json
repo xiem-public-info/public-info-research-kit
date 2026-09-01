@@ -1,0 +1,69 @@
+{
+  "schema": "public_interop_manifest.v1",
+  "release_candidate": "0.8.0-rc.1",
+  "hash_algorithm": "sha256_raw_file_bytes",
+  "producer": "installed_public_info_research_kit",
+  "producer_interface": {
+    "path": "schemas/public_evidence_envelope.v1.json",
+    "$id": "public_evidence_envelope.v1",
+    "sha256": "ee303d2ea8eef1bcc2b6e6f7a8b020486aa80c3c3ca3189cb99fedd5b8fc2148",
+    "upstream_statuses": ["fulfilled", "partial", "gap", "stopped"],
+    "empty_conflicts_and_gaps_representation": "empty_array",
+    "downstream_acceptance_in_upstream_envelope": "not_assessed_only"
+  },
+  "consumer_owned_interfaces": [
+    "residential.upstream_task.v0.2",
+    "residential.upstream_response.v0.2",
+    "residential.upstream_adoption_receipt.v0.2"
+  ],
+  "consumer_candidate": {
+    "repository": "https://github.com/xiem-bit/residential-project-interpretation-service-public",
+    "release_candidate": "v0.2.0-rc.1",
+    "candidate_commit": "0a0c08eefc5ba4d5d36e9b5658ea648c44628585",
+    "contracts": [
+      {
+        "path": "external-capabilities/upstream-task.schema.json",
+        "$id": "residential.upstream_task.v0.2",
+        "sha256": "12f7ed916755bc37a870a6eb893210cc7e0fbc35ecea443f8e8d10bbe102b271"
+      },
+      {
+        "path": "external-capabilities/upstream-response.schema.json",
+        "$id": "residential.upstream_response.v0.2",
+        "sha256": "baec010a6a21b44a0f80a9639680fc2dcda2b6bce685d28d8cd29df9dc7ed2e1"
+      },
+      {
+        "path": "external-capabilities/upstream-adoption-receipt.schema.json",
+        "$id": "residential.upstream_adoption_receipt.v0.2",
+        "sha256": "64183f6485ac5fc8c076f7969c3d5bfd07209632a9c9ddd532c6eef7ad2e1414"
+      }
+    ],
+    "cross_package_conformance": {
+      "status": "pass_unpublished_candidates",
+      "command_from_consumer_root": "python3 scripts/verify_cross_package_conformance.py --upstream-plugin-root UPSTREAM_PLUGIN_ROOT --full",
+      "producer_core_conformance_fixture_case_count": 94,
+      "current_producer_release_harness_case_count": 101,
+      "consumer_regression_case_count": 102,
+      "network_accessed": false,
+      "platform_opened": false,
+      "business_acceptance_validated": false
+    }
+  },
+  "fields_preserved_end_to_end": [
+    "request_id",
+    "project_id",
+    "negative_hits",
+    "conflicts",
+    "gaps",
+    "stop_reason"
+  ],
+  "conformance_commands_from_plugin_root": [
+    "python3 tests/run_public_evidence_contract.py",
+    "python3 tests/run_release_harness.py"
+  ],
+  "boundaries": [
+    "upstream_status_does_not_equal_downstream_acceptance",
+    "soft_evidence_does_not_enter_project_hard_fact_without_independent_support",
+    "consumer_records_acceptance_or_rejection_in_its_own_receipt",
+    "offline_conformance_does_not_prove_real_gui_or_business_acceptance"
+  ]
+}

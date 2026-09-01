@@ -1,7 +1,7 @@
 {
   "name": "public-info-research-kit",
-  "version": "0.7.0",
-  "description": "面向公众自助使用的公开信息研究工具包，覆盖网页、微信、小红书、文档、Feed、地图与证据交付。",
+  "version": "0.8.0-rc.1",
+  "description": "面向公众自助使用的公开信息研究工具包，覆盖渠道画像、充分性、网页、微信、小红书、文档、Feed、地图与证据交付。",
   "author": {
     "name": "xiem-public-info",
     "url": "https://github.com/xiem-public-info"
@@ -22,7 +22,7 @@
   "interface": {
     "displayName": "公开信息研究工具包",
     "shortDescription": "自助研究网页、微信、小红书、文档、Feed 与地图证据",
-    "longDescription": "任何符合环境条件的使用者均可从公开 GitHub 仓库直接安装；覆盖微信 Lite、小红书可见研究、静态与动态公开网页、官方文档、RSS/Feed 发现、OSM 空间证据与研究型检索策略。",
+    "longDescription": "任何符合环境条件的使用者均可从公开 GitHub 仓库直接安装；覆盖渠道能力画像、D-235 查询设计、D-237 充分性与增量、微信 Lite、小红书可见研究、静态与动态公开网页、官方文档、RSS/Feed、OSM 空间证据和下游拒收。",
     "developerName": "xiem-public-info",
     "category": "Productivity",
     "websiteURL": "https://github.com/xiem-public-info/public-info-research-kit",

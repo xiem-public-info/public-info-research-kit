@@ -1,0 +1,16 @@
+{
+  "schema": "query_sufficiency_applicability.v1",
+  "task_id": "GOLDEN-DIRECT-01",
+  "route_receipt": {
+    "primary_route_id": "ROUTE-WECHAT-KNOWN-URL",
+    "required_gate_ids": ["GATE-D237-RESEARCH-SUFFICIENCY-DEFAULT"]
+  },
+  "sufficiency_policy": "exempt_simple_direct_retrieval",
+  "research_characteristics": [],
+  "simple_direct_retrieval_exemption": {
+    "exemption_type": "known_url_read",
+    "evidence_target": "使用者指定的一篇公开文章",
+    "stop_condition": "完整读取该文章并返回实际可见内容与缺口",
+    "human_authorization_ref": "USER-REQUEST-GOLDEN-01"
+  }
+}

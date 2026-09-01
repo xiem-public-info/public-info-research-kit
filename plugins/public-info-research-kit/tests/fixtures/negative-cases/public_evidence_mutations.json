@@ -1,0 +1,56 @@
+{
+  "schema": "public_evidence_negative_mutations.v1",
+  "base_fixture": "../golden-tasks/golden_public_evidence_envelope.json",
+  "cases": [
+    {
+      "case_id": "soft_source_as_fact_candidate",
+      "operation": "replace",
+      "path": ["items", 0, "source_refs"],
+      "value": ["SRC-XHS-01"],
+      "expected_error_contains": "soft evidence cannot enter fact_candidate"
+    },
+    {
+      "case_id": "upstream_claims_downstream_acceptance",
+      "operation": "replace",
+      "path": ["downstream_acceptance", "status"],
+      "value": "accepted",
+      "expected_error_contains": "cannot claim downstream acceptance"
+    },
+    {
+      "case_id": "sensitive_cookie_field",
+      "operation": "add",
+      "path": ["runtime", "cookie"],
+      "value": "negative-fixture-only",
+      "expected_error_contains": "forbidden sensitive field"
+    },
+    {
+      "case_id": "fulfilled_hides_blocking_gap",
+      "operation": "multi_replace",
+      "changes": [
+        {"path": ["upstream_status"], "value": "fulfilled"},
+        {"path": ["items", 3, "blocking_level"], "value": "blocking"}
+      ],
+      "expected_error_contains": "cannot hide a blocking gap"
+    },
+    {
+      "case_id": "proposed_query_claimed_executed",
+      "operation": "replace",
+      "path": ["query_execution", "executed_query_ids"],
+      "value": ["xhs-q01", "wechat-q02-proposal"],
+      "expected_error_contains": "cannot be listed as executed"
+    },
+    {
+      "case_id": "social_query_missing_actual_open_trace",
+      "operation": "remove",
+      "path": ["sources", 1, "query_ref", "actual_open_count"],
+      "expected_error_contains": "actual_open_count"
+    },
+    {
+      "case_id": "gap_not_enumerated",
+      "operation": "replace",
+      "path": ["gaps"],
+      "value": [],
+      "expected_error_contains": "enumerate every gap item"
+    }
+  ]
+}

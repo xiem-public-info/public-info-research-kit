@@ -4,29 +4,112 @@
   "title": "Social semantic query plan",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema", "task_id", "subject", "business_question", "searcher_mode", "plan_version", "queries", "stop_condition"],
+  "required": [
+    "schema",
+    "task_id",
+    "subject",
+    "identity_closure",
+    "business_question",
+    "business_question_family",
+    "judgment_gap",
+    "searcher_mode",
+    "plan_version",
+    "acceptance_mode",
+    "acceptance",
+    "adaptive_extension",
+    "queries",
+    "stop_condition"
+  ],
   "properties": {
     "schema": {"const": "social_query_plan.v1"},
     "task_id": {"type": "string", "minLength": 1},
     "subject": {"type": "string", "minLength": 1},
+    "identity_closure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "city", "official_name", "phase_scope", "aliases_tested", "conflict_notes"],
+      "properties": {
+        "status": {"enum": ["closed", "ambiguous"]},
+        "city": {"type": "string", "minLength": 1},
+        "official_name": {"type": "string", "minLength": 1},
+        "phase_scope": {"type": "string", "minLength": 1},
+        "aliases_tested": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "conflict_notes": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
     "business_question": {"type": "string", "minLength": 1},
+    "business_question_family": {"type": "string", "minLength": 1},
+    "judgment_gap": {"type": "string", "minLength": 1},
     "searcher_mode": {"enum": ["researcher", "creator_supply_side", "tool_or_automation"]},
     "plan_version": {"type": "string", "minLength": 1},
+    "acceptance_mode": {"enum": ["d237_required", "exempt_simple_direct_retrieval"]},
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["quality_criteria", "minimum_qualified_items", "diversity_targets", "global_stop_condition"],
+      "properties": {
+        "quality_criteria": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "minimum_qualified_items": {"type": "integer", "minimum": 1},
+        "diversity_targets": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "global_stop_condition": {"type": "string", "minLength": 1},
+        "exemption_reason": {"type": "string", "minLength": 1},
+        "direct_retrieval_target": {"type": "string", "minLength": 1}
+      }
+    },
+    "adaptive_extension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authorized", "authorized_by", "maximum_additional_queries"],
+      "properties": {
+        "authorized": {"type": "boolean"},
+        "authorized_by": {
+          "oneOf": [
+            {"enum": ["end_user", "downstream_business_owner"]},
+            {"type": "null"}
+          ]
+        },
+        "maximum_additional_queries": {"type": "integer", "minimum": 0}
+      }
+    },
     "queries": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["query_id", "platform", "surface", "exact_query_text", "atom_signature", "term_provenance", "reading_target"],
+        "required": [
+          "query_id",
+          "platform",
+          "surface",
+          "exact_query_text",
+          "execution_state",
+          "phase",
+          "query_hypothesis",
+          "atom_signature",
+          "term_provenance",
+          "source_role_targets",
+          "reading_target",
+          "minimum_result_batches",
+          "minimum_actual_opens",
+          "expected_information_gain",
+          "failure_attribution_required"
+        ],
         "properties": {
           "query_id": {"type": "string", "minLength": 1},
           "platform": {"enum": ["wechat", "xhs"]},
           "surface": {"type": "string", "minLength": 1},
           "exact_query_text": {"type": "string", "minLength": 1},
+          "execution_state": {"enum": ["frozen", "proposed_incremental"]},
+          "phase": {"type": "string", "minLength": 1},
+          "query_hypothesis": {"type": "string", "minLength": 1},
           "atom_signature": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z_]+:.+$"}},
           "term_provenance": {"enum": ["official_name", "business_judgment", "platform_suggestion", "aggregate_clue", "title", "body", "comment"]},
-          "reading_target": {"type": "string", "minLength": 1}
+          "source_role_targets": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "reading_target": {"type": "string", "minLength": 1},
+          "minimum_result_batches": {"type": "integer", "minimum": 1},
+          "minimum_actual_opens": {"type": "integer", "minimum": 1},
+          "expected_information_gain": {"type": "string", "minLength": 1},
+          "failure_attribution_required": {"const": true}
         }
       }
     },

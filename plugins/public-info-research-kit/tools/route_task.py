@@ -30,6 +30,15 @@ CHANNELS = {
     "map_gis",
 }
 SOCIAL_STRATEGY = "social_semantic_query_lexicon.v0.1"
+CAPABILITY_PROFILES = {
+    "wechat": "resources/channel-capability-profiles/wechat.v1.json",
+    "xhs": "resources/channel-capability-profiles/xhs.v1.json",
+    "public_web": "resources/channel-capability-profiles/public-web-official-feed.v1.json",
+    "public_dynamic_page": "resources/channel-capability-profiles/public-web-official-feed.v1.json",
+    "official_document": "resources/channel-capability-profiles/public-web-official-feed.v1.json",
+    "rss_feed": "resources/channel-capability-profiles/public-web-official-feed.v1.json",
+    "map_gis": "resources/channel-capability-profiles/osm-spatial.v1.json",
+}
 
 
 def _nonempty(value: Any) -> bool:
@@ -41,30 +50,38 @@ def _nonempty(value: Any) -> bool:
 def _route_wechat(request: dict[str, Any], errors: list[str]) -> list[dict[str, Any]]:
     cfg = request.get("wechat") or {}
     modes = [
-        ("keyword_discovery", cfg.get("queries"), "skills/wechat-public-research"),
-        ("account_list_discovery", cfg.get("publisher_accounts"), "skills/wechat-public-research"),
-        ("known_url_browser_open", cfg.get("known_urls"), "skills/wechat-known-url-reader"),
+        ("keyword_discovery", cfg.get("queries"), "skills/wechat-public-research", True),
+        ("account_list_discovery", cfg.get("publisher_accounts"), "skills/wechat-public-research", True),
+        ("known_url_browser_open", cfg.get("known_urls"), "skills/wechat-known-url-reader", False),
     ]
-    selected = [(mode, value, skill) for mode, value, skill in modes if value]
+    selected = [(mode, value, skill, requires_gui) for mode, value, skill, requires_gui in modes if value]
     if not selected:
         errors.append("wechat channel requires queries, publisher_accounts, or known_urls")
         return []
     routes = []
-    for mode, value, skill in selected:
-        routes.append(
-            {
-                "channel": "wechat",
-                "mode": mode,
-                "skill": skill,
-                "input_count": len(value),
-                "uses_declared_task_scope": True,
-                "requires_shared_gui_serialization": True,
-                "searcher_mode": request.get("searcher_mode") or "researcher",
-                "query_strategy": SOCIAL_STRATEGY,
-                "query_plan_schema": "social_query_plan.v1",
-                "default_executes_platform": False,
-            }
-        )
+    for mode, value, skill, requires_gui in selected:
+        route = {
+            "channel": "wechat",
+            "mode": mode,
+            "skill": skill,
+            "capability_profile": CAPABILITY_PROFILES["wechat"],
+            "input_count": len(value),
+            "uses_declared_task_scope": True,
+            "requires_shared_gui_serialization": requires_gui,
+            "searcher_mode": request.get("searcher_mode") or "researcher",
+            "query_strategy": SOCIAL_STRATEGY,
+            "query_plan_schema": "social_query_plan.v1",
+            "default_executes_platform": False,
+        }
+        if requires_gui:
+            route.update(
+                {
+                    "portable_preflight_schema": "portable_channel_request.v1",
+                    "portable_preflight_tool": "tools/check_portable_channel_preflight.py",
+                    "computer_use_installation_policy": "end_user_installs_and_authorizes_package_reminds_and_detects_only",
+                }
+            )
+        routes.append(route)
     return routes
 
 
@@ -93,34 +110,34 @@ def build_plan(request: dict[str, Any]) -> dict[str, Any]:
             if not queries:
                 errors.append("xhs channel requires queries")
             else:
-                routes.append({"channel": "xhs", "mode": "visible_search", "skill": "skills/xhs-visible-research", "input_count": len(queries), "uses_declared_task_scope": True, "requires_shared_gui_serialization": True, "searcher_mode": request.get("searcher_mode") or "researcher", "query_strategy": SOCIAL_STRATEGY, "query_plan_schema": "social_query_plan.v1", "default_executes_platform": False})
+                routes.append({"channel": "xhs", "mode": "visible_search", "skill": "skills/xhs-visible-research", "capability_profile": CAPABILITY_PROFILES["xhs"], "input_count": len(queries), "uses_declared_task_scope": True, "requires_shared_gui_serialization": True, "searcher_mode": request.get("searcher_mode") or "researcher", "query_strategy": SOCIAL_STRATEGY, "query_plan_schema": "social_query_plan.v1", "portable_preflight_schema": "portable_channel_request.v1", "portable_preflight_tool": "tools/check_portable_channel_preflight.py", "computer_use_installation_policy": "end_user_installs_and_authorizes_package_reminds_and_detects_only", "default_executes_platform": False})
         elif channel in {"public_web", "official_document"}:
             cfg = request.get(channel) or request.get("public_web") or {}
             inputs = (cfg.get("known_urls") or []) + (cfg.get("queries") or [])
             if not inputs:
                 errors.append(f"{channel} requires known_urls or queries")
             else:
-                routes.append({"channel": channel, "mode": "official_source_resolution", "skill": "skills/public-web-official-resolver", "input_count": len(inputs), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False})
+                routes.append({"channel": channel, "mode": "official_source_resolution", "skill": "skills/public-web-official-resolver", "capability_profile": CAPABILITY_PROFILES[channel], "input_count": len(inputs), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False})
         elif channel == "public_dynamic_page":
             cfg = request.get("public_dynamic_page") or {}
             inputs = (cfg.get("known_urls") or []) + (cfg.get("queries") or [])
             if not inputs:
                 errors.append("public_dynamic_page requires known_urls or queries")
             else:
-                routes.append({"channel": channel, "mode": "public_dynamic_runtime_capture", "skill": "skills/public-web-official-resolver", "input_count": len(inputs), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False, "static_probe_first": True, "browser_runtime_only_if_needed": True})
+                routes.append({"channel": channel, "mode": "public_dynamic_runtime_capture", "skill": "skills/public-web-official-resolver", "capability_profile": CAPABILITY_PROFILES[channel], "input_count": len(inputs), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False, "static_probe_first": True, "browser_runtime_only_if_needed": True})
         elif channel == "rss_feed":
             cfg = request.get("rss_feed") or {}
             feeds = cfg.get("feed_urls") or []
             if not feeds:
                 errors.append("rss_feed requires feed_urls")
             else:
-                routes.append({"channel": channel, "mode": "public_feed_discovery", "skill": "skills/public-web-official-resolver", "input_count": len(feeds), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False, "discovery_only": True, "original_source_resolution_required": True})
+                routes.append({"channel": channel, "mode": "public_feed_discovery", "skill": "skills/public-web-official-resolver", "capability_profile": CAPABILITY_PROFILES[channel], "input_count": len(feeds), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False, "discovery_only": True, "original_source_resolution_required": True})
         elif channel == "map_gis":
             cfg = request.get("map_gis") or {}
             if not cfg.get("project_anchor"):
                 errors.append("map_gis requires project_anchor")
             else:
-                routes.append({"channel": "map_gis", "mode": "spatial_evidence", "skill": "skills/map-spatial-evidence", "input_count": 1 + len(cfg.get("pois") or []), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False})
+                routes.append({"channel": "map_gis", "mode": "spatial_evidence", "skill": "skills/map-spatial-evidence", "capability_profile": CAPABILITY_PROFILES["map_gis"], "input_count": 1 + len(cfg.get("pois") or []), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False})
 
     canonical = json.dumps(request, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return {

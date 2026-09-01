@@ -1,0 +1,61 @@
+{
+  "schema": "adaptive_query_sufficiency_package.v1",
+  "task_id": "GOLDEN-RESEARCH-01",
+  "business_question_ref": "BQ-GOLDEN-01",
+  "business_question_family": "住宅项目选择与放弃机制",
+  "consumer_contract": {
+    "acceptance_mode": "hybrid",
+    "qualified_match_classes": ["direct", "supporting"],
+    "non_counted_match_classes": ["excluded"],
+    "quality_criteria": ["对象身份闭合", "真实公开内容可回源", "内容能回答业务问题"],
+    "count_threshold": 3,
+    "diversity_requirements": {
+      "minimum_source_role_count": 2,
+      "minimum_project_or_brand_count": 2,
+      "maximum_qualified_items_per_project_or_brand": 2
+    },
+    "evidence_usage_permission": "内部研究候选，不直接升级为项目硬事实",
+    "adaptive_extension": {
+      "authorized": false,
+      "authorization_ref": null,
+      "maximum_incremental_batches": 0,
+      "time_limit_minutes": 0,
+      "cost_limit": null
+    }
+  },
+  "batch": {
+    "batch_id": "GOLDEN-RESEARCH-01-B2-PROPOSAL",
+    "batch_state": "proposed_incremental_batch",
+    "parent_batch_id": "GOLDEN-RESEARCH-01-B1",
+    "queries": [
+      {
+        "query_id": "xhs-q02",
+        "exact_query_text": "某城市 同类项目 入住后 好看不实用",
+        "atom_signature": ["identity:城市", "decision_event:入住后", "counterevidence:好看不实用"],
+        "term_provenance": ["prior_batch_gap", "business_judgment"],
+        "minimum_result_batches": 2,
+        "minimum_actual_opens": 2
+      }
+    ]
+  },
+  "receipt": {
+    "evidence_sufficiency_status": "not_assessed",
+    "marginal_information_gain": {
+      "assessment": "unknown",
+      "new_qualified_count": 0,
+      "new_distinct_source_role_count": 0,
+      "new_qualified_project_or_brand_count": 0,
+      "new_expression_pattern_count": 0,
+      "duplicate_rate": null,
+      "assessment_basis": "仅提出增量批次，尚未获得执行授权"
+    },
+    "failure_class": null,
+    "needs_downstream_authorization": true,
+    "remaining_gap": "需要补足独立项目的兑现反例和真实使用者语言",
+    "stop_reason": "增量查询只形成提案，等待业务 Owner 明确授权",
+    "executed_result_batch_count": 0,
+    "actual_open_count": 0
+  },
+  "query_learning_records": [],
+  "promotion_review_batches": []
+}

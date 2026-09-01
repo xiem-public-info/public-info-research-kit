@@ -2,28 +2,66 @@
   "schema": "social_query_plan.v1",
   "task_id": "example-001",
   "subject": "某城市某住宅项目",
+  "identity_closure": {
+    "status": "closed",
+    "city": "某城市",
+    "official_name": "某住宅项目",
+    "phase_scope": "当前在售分期",
+    "aliases_tested": ["某项目推广名"],
+    "conflict_notes": []
+  },
   "business_question": "目标客群为什么选择或放弃该项目",
+  "business_question_family": "住宅项目选择与放弃机制",
+  "judgment_gap": "缺少真实使用者对交付后体验和替代选择的公开表达",
   "searcher_mode": "researcher",
   "plan_version": "v1",
+  "acceptance_mode": "d237_required",
+  "acceptance": {
+    "quality_criteria": ["内容与对象身份一致", "正文或实际可见内容能回答业务问题"],
+    "minimum_qualified_items": 3,
+    "diversity_targets": ["至少两个来源角色", "同时覆盖支持与反例或明确记录反例缺口"],
+    "global_stop_condition": "满足质量、数量和多样性，或连续增量无信息增益，或触发安全停止线"
+  },
+  "adaptive_extension": {
+    "authorized": false,
+    "authorized_by": null,
+    "maximum_additional_queries": 0
+  },
   "queries": [
     {
       "query_id": "wechat-q01",
       "platform": "wechat",
       "surface": "微信全局文章结果",
       "exact_query_text": "某城市 某住宅项目 为什么买",
+      "execution_state": "frozen",
+      "phase": "体验与选择",
+      "query_hypothesis": "公开长文可能解释项目选择机制与品牌表达",
       "atom_signature": ["identity:城市", "identity:正式名", "business_intent:为什么买"],
       "term_provenance": "business_judgment",
-      "reading_target": "达到本任务约定的高质量开文配额，或触发驻留门允许换词条件"
+      "source_role_targets": ["购房者", "媒体", "销售"],
+      "reading_target": "推进至少两个有效结果批次并实际开读两篇，或触发驻留门允许换词条件",
+      "minimum_result_batches": 2,
+      "minimum_actual_opens": 2,
+      "expected_information_gain": "补足选择理由、产品机制和可能冲突",
+      "failure_attribution_required": true
     },
     {
       "query_id": "xhs-q01",
       "platform": "xhs",
       "surface": "小红书笔记列表",
       "exact_query_text": "某城市 某住宅项目 入住体验",
+      "execution_state": "frozen",
+      "phase": "体验与反例",
+      "query_hypothesis": "真实可见笔记或评论可能暴露交付后体验与兑现落差",
       "atom_signature": ["identity:城市", "identity:正式名", "content_form:入住体验"],
       "term_provenance": "business_judgment",
-      "reading_target": "优先覆盖真实可见正文、字幕和评论中的使用体验"
+      "source_role_targets": ["业主", "住户", "评论"],
+      "reading_target": "推进至少两个有效结果批次并实际开读两篇，优先覆盖可见正文、字幕和评论",
+      "minimum_result_batches": 2,
+      "minimum_actual_opens": 2,
+      "expected_information_gain": "补足交付后体验、负面机制和客户语言",
+      "failure_attribution_required": true
     }
   ],
-  "stop_condition": "完成业务问题所需证据覆盖，或触发登录、安全、页面不可读停止线"
+  "stop_condition": "满足约定充分性，或增量信息增益耗尽，或触发登录、安全、风控、页面不可读停止线"
 }

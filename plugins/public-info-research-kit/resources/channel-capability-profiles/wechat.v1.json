@@ -1,0 +1,74 @@
+{
+  "schema": "channel_capability_profile.v1",
+  "profile_id": "wechat.v1",
+  "channel": "wechat",
+  "route": "WECHAT-LITE-DIRECT-CU-V1",
+  "status": "stable_public_route",
+  "execution_owner": "installed_public_info_research_kit",
+  "business_owner": "requesting_user_or_downstream_project",
+  "good_at": [
+    "公开公众号文章的关键词发现与正文阅读",
+    "已知公众号账号的公开文章清单核验",
+    "已知公开文章链接的定向读取",
+    "官方、品牌、媒体与专业机构长文的来源分层",
+    "围绕业务问题寻找机制、选择语言、反例与冲突"
+  ],
+  "not_good_at": [
+    "私聊、通讯录、小程序私域和非公开内容",
+    "需要绕过登录、验证码、权限墙、付费墙或风控的内容",
+    "用标题列表代替正文证据",
+    "把问一问或 AI 聚合答案直接当作事实或用户声音",
+    "高频、无人值守或固定坐标式批量采集"
+  ],
+  "human_prerequisites": [
+    "终端用户自行安装并授权 Computer Use",
+    "终端用户登录自己的微信账号",
+    "首次由终端用户手动打开公开搜一搜并保持在可操作主屏"
+  ],
+  "package_policy": {
+    "install_or_enable_computer_use": false,
+    "grant_system_permissions": false,
+    "operate_login": false,
+    "remind_and_detect_only": true
+  },
+  "golden_method": [
+    "先闭合城市、正式名、单一别名、分期、主体和时间阶段",
+    "按语义原子编译少量独立查询并冻结 query_id 与 exact_query_text",
+    "执行便携式渠道预检，确认执行 Owner、共享桌面串行、登录态与停止线",
+    "从最新完整画面新鲜定位搜索框，选中一次、直接粘贴一次、逐字确认、提交一次",
+    "结果列表就绪后按任务配额开读正文，不只看标题连续换词",
+    "逐次推进正文并在每次动作后读取最新完整画面，读毕安全关页",
+    "按来源角色、证据层级、冲突和缺口交付，并记录结果批次、实际开文数与失败归因"
+  ],
+  "dwell_switch_conditions": [
+    "达到任务冻结的高质量开文或阅读目标",
+    "两个内容确有推进的不同结果批次仍无高质量候选",
+    "出现明显身份或主题漂移",
+    "触发登录、安全、风控、加载或页面不可读停止线"
+  ],
+  "failure_classes": [
+    "query_semantic_failure",
+    "identity_collision",
+    "content_supply_gap",
+    "query_transport_failure",
+    "route_control_failure",
+    "source_render_failure",
+    "safety_stop",
+    "operator_transient_error_recovered",
+    "evidence_conversion_failure"
+  ],
+  "forbidden_routes": [
+    "WeChat_V2",
+    "query_pad",
+    "native_AX",
+    "DOM_or_Playwright",
+    "fixed_coordinates_or_cached_elements",
+    "automatic_same_query_fallback",
+    "desktop_main_shell_recovery"
+  ],
+  "required_validators": [
+    "tools/validate_social_query_plan.py",
+    "tools/check_portable_channel_preflight.py",
+    "tools/validate_public_evidence.py"
+  ]
+}

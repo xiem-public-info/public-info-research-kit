@@ -1,15 +1,52 @@
 {
   "schema": "social_semantic_query_lexicon.v0.1",
-  "release_version": "0.7.0",
+  "release_version": "0.8.0-rc.1",
+  "status": "active_public_rule_asset_with_controlled_pilots",
   "source_decision": "D-235",
-  "source_commit": "fd7339f932078159ad508681706ba8dbbe9f6385",
+  "source_commit": "103244c77688f0f563d2e412392f76e47a8cee6d",
+  "formalized_capabilities": [
+    "searcher_mode_role_disambiguation",
+    "semantic_atoms_and_query_recipes",
+    "aggregate_navigation_to_original_source",
+    "query_dwell_gate",
+    "failure_layering",
+    "wechat_surface_classification",
+    "supply_side_mechanism_label",
+    "term_provenance_and_backsource_status",
+    "incremental_query_proposal_without_silent_execution",
+    "cross_task_query_promotion_with_human_acceptance"
+  ],
+  "controlled_pilots": [
+    "platform_ai_clue_surfaces",
+    "platform_special_syntax",
+    "cross_task_reuse_observation",
+    "lightweight_manual_query_compiler"
+  ],
+  "rejected": [
+    "unverified_ranking_formulas_or_weights",
+    "cookie_cdp_crawler_or_isolated_profile_routes",
+    "aggregate_answer_as_fact_or_user_voice",
+    "universal_fixed_sample_count",
+    "silent_incremental_execution",
+    "promotion_from_one_task_or_unaccepted_output"
+  ],
+  "scope": [
+    "wechat_query_results_discovery",
+    "wechat_ai_search_clue",
+    "xhs_note_search",
+    "xhs_diandian_clue"
+  ],
   "principles": [
     "本词库是语义原子与查询配方，不是可直接整包提交的平台关键词清单",
     "业务研究默认 searcher_mode=researcher",
+    "先闭合对象身份，再编译业务语义内核和查询计划",
     "每次真实执行前必须生成并冻结 query_id 与 exact_query_text",
     "正式名、异体字、历史名和跨城同名优先拆成独立查询",
-    "聚合回答只生成扩词、反例和回源线索，真实原文承担证据",
+    "聚合 AI 只生成候选方向、同义词、冲突和回源线索，不承担消费证据",
+    "列表就绪后不得只看标题连续换词，须满足驻留门才可切换查询",
     "查询语义失败与输入、控制、渲染和安全停止分开记录",
+    "只有正确提交并充分查看后的查询效果可以进入查询学习",
+    "业务语义内核可以提出增量查询，但未获 adaptive_extension 授权不得执行",
     "不得假定未经当前客户端验证的平台特殊语法、排序或筛选能力"
   ],
   "atom_families": {
@@ -22,12 +59,24 @@
       "atoms": ["规划", "公示", "拿证", "取证", "开盘", "在售", "施工", "实景", "交付", "入住", "运营", "二手", "维保"]
     },
     "business_intent": {
-      "purpose": "把业务问题改写为可检索意图",
+      "purpose": "把下游问题改写为可检索意图",
       "atoms": ["是什么", "有哪些", "为什么买", "为什么不买", "值不值", "怎么选", "对比", "替代", "升级", "继续住", "使用体验", "兑现", "风险", "投诉", "反悔", "后悔"]
+    },
+    "searcher_mode": {
+      "purpose": "消除普通用户找资料、创作者 SEO、营销投放和自动化抓取之间的意图漂移",
+      "atoms": ["普通用户找资料", "研究检索", "信息溯源", "创作者SEO", "搜索排名", "营销投放", "自动化抓取"]
+    },
+    "channel_surface": {
+      "purpose": "防止不同搜索或聚合表面的结果、失败与证据强度混记",
+      "atoms": ["微信全局文章结果", "公众号文章列表", "公众号号内搜索", "问一问", "微信AI搜索", "聊天记录搜索", "小程序或服务搜索", "已知链接浏览器直读", "小红书笔记列表", "小红书点点聚合"]
     },
     "source_role": {
       "purpose": "控制样本角色而非只追求篇数",
       "atoms": ["官方", "开发商", "设计方", "施工方", "媒体", "销售", "中介", "看房者", "购房者", "业主", "住户", "商家", "从业者", "评论"]
+    },
+    "source_interpretation": {
+      "purpose": "区分事实源、品牌表达、供给侧方法、个人声音与聚合线索",
+      "atoms": ["official_fact_source", "brand_claim", "sales_expression", "supply_side_mechanism", "buyer_voice", "owner_experience", "media_narrative", "professional_workflow", "ai_aggregate_clue"]
     },
     "decision_event": {
       "purpose": "捕捉选择、放弃与权衡行为",
@@ -62,75 +111,135 @@
     {
       "recipe_id": "identity_baseline",
       "pattern": "[城市] [正式名或单一别名] [阶段]",
-      "use_when": "首次闭合对象身份或出现跨城同名"
+      "use_when": "首次闭合对象身份或出现跨城同名",
+      "avoid": "一个查询同时塞入多个别名、多个阶段和多个竞品"
     },
     {
       "recipe_id": "fact_lifecycle",
       "pattern": "[身份锚点] [生命周期] [事实字段]",
-      "use_when": "寻找规划、开盘、交付等阶段性原文"
+      "use_when": "寻找规划、开盘、交付等阶段性原文",
+      "avoid": "把社媒结果升级为法定事实"
     },
     {
       "recipe_id": "experience_choice",
       "pattern": "[身份锚点] [来源角色] [体验机制1至2个] [选择语言]",
-      "use_when": "寻找为什么买、为什么放弃和长期体验"
+      "use_when": "寻找为什么买、为什么放弃和长期体验",
+      "avoid": "只搜抽象设计标签"
     },
     {
       "recipe_id": "direct_comparison",
       "pattern": "[对象A] [对象B] 对比 [核心机制或客户任务]",
-      "use_when": "已经确认直接比较对象"
+      "use_when": "已经确认直接比较对象",
+      "avoid": "一次堆入三个以上对象"
     },
     {
       "recipe_id": "task_substitute",
       "pattern": "[区域或既有方案] [换房或继续住] [客户任务] [值不值或为什么]",
-      "use_when": "检验非新房替代方案"
+      "use_when": "检验非新房替代方案",
+      "avoid": "业务问题是设计价值时过早转向二手替代"
     },
     {
       "recipe_id": "mechanism_analogy",
       "pattern": "[体验机制组合] [产品类型] [为什么买或使用体验]",
-      "use_when": "直接声音稀缺，需要同类机制线索"
+      "use_when": "直接声音稀缺，需要同类机制推演",
+      "avoid": "用同类案例反向证明本案已经兑现"
     },
     {
       "recipe_id": "symmetric_countercheck",
       "pattern": "[身份或体验机制] [反例词] [交付后或入住后]",
-      "use_when": "检验支持性发现是否存在兑现反例"
+      "use_when": "检验支持性发现是否存在兑现反例",
+      "avoid": "将单一投诉外推为普遍结论"
     }
   ],
   "compile_policy": {
     "recommended_slots_per_query": "1组身份锚点 + 1个检索意图 + 1至3个机制或任务词；这是经验区间，不是平台语法限制",
     "alias_policy": "正式名、异体字和历史名分别生成独立 query_id",
-    "freeze_before_execution": true,
+    "searcher_mode_policy": "当主题含检索、搜索、效率、优化或排名等易混词时，聚合提问必须明确普通用户找资料或创作者 SEO；回到真实列表的 exact_query_text 也应带可见意图词",
+    "platform_syntax_policy": "点点或微信 AI 提出的双引号、减号、快捷指令、排序或筛选能力一律先记平台候选，不得在当前可见客户端未核验时升级为查询合同",
+    "wechat_surface_policy": "候选设计必须区分微信全局文章、公众号文章列表、号内搜索、问一问、AI 搜索、聊天记录、小程序和已知链接；不同表面的结果与失败不得无差别合并",
+    "phase_order": ["身份与对象", "聚合解歧与词扩展", "原文列表回源", "体验与选择", "竞品或替代", "反例与冲突", "收敛"],
+    "freeze_before_live": true,
     "platform_boolean_syntax_assumed": false
   },
   "query_dwell_gate": {
-    "rule": "结果列表就绪后不得只看标题连续换词",
+    "rule": "结果列表就绪后不得只看标题连续换词；进入下一查询前至少满足一个允许条件",
     "allow_switch_when": [
       "达到任务冻结的高质量开文或阅读配额",
       "已浏览两个内容确有推进的不同结果批次且仍无高质量候选",
       "出现明显跨城、同名、身份或主题漂移",
-      "触发登录、验证、风控、加载或页面不可读停止线"
+      "触发登录、权限、风控、加载或页面不可读停止线"
     ],
-    "universal_fixed_count": false
+    "universal_fixed_count": false,
+    "note": "具体任务可以冻结每条查询的结果批次与实际开读下限，但不得升级为全局固定篇数"
+  },
+  "incremental_query_policy": {
+    "semantic_kernel_inputs": ["business_question", "judgment_gap", "negative_hits", "conflicts", "gaps", "marginal_information_gain"],
+    "proposal_allowed": true,
+    "execution_requires_adaptive_extension": true,
+    "silent_execution_forbidden": true,
+    "proposal_state": "proposed_incremental",
+    "executable_state_after_authorization": "frozen"
+  },
+  "learning_record_fields": [
+    "business_question_ref",
+    "business_question_family",
+    "platform",
+    "query_id",
+    "exact_query_text",
+    "atom_signature",
+    "valid_submit",
+    "result_batch_count",
+    "high_quality_open_count",
+    "source_role_coverage",
+    "searcher_mode",
+    "wechat_surface",
+    "term_provenance",
+    "identity_drift",
+    "duplicate_or_marketing_drift",
+    "choice_event_yield",
+    "experience_mechanism_yield",
+    "conflict_yield",
+    "marginal_information_gain",
+    "new_terms",
+    "aggregate_clue_count",
+    "backed_clue_count",
+    "orphan_clue_count",
+    "conflict_count",
+    "failure_class",
+    "stop_reason"
+  ],
+  "query_learning_policy": {
+    "raw_learning_records_separate_from_evidence": true,
+    "only_valid_submit_can_train_semantics": true,
+    "historical_nulls_are_not_backfilled_by_inference": true,
+    "candidate_does_not_require_per_item_approval": true,
+    "promotion_review_requires": {
+      "minimum_distinct_real_tasks": 2,
+      "human_acceptance": true,
+      "group_by": "business_question_family",
+      "batch_review": true
+    }
   },
   "failure_classes": {
-    "query_semantic_failure": "查询正确提交并充分查看后仍低相关或严重漂移",
+    "query_semantic_failure": "查询已正确提交并充分查看结果，但低相关、无有效供给或严重漂移",
     "identity_collision": "同名、跨城、主体或阶段混淆",
     "content_supply_gap": "查询合理但平台当前没有足够高质量内容",
     "query_transport_failure": "计划词未正确进入平台或未提交",
     "route_control_failure": "可见窗口、焦点或控制层不可用",
     "source_render_failure": "文章或笔记正文未渲染或不可读",
     "safety_stop": "登录、验证、风控、权限或异常提示触发停止",
-    "operator_transient_error_recovered": "一次误点或状态误判已恢复",
-    "evidence_conversion_failure": "聚合线索无法回到真实原文"
+    "operator_transient_error_recovered": "一次错选、误点或状态误判已在合同恢复预算内纠正",
+    "evidence_conversion_failure": "聚合 AI 给出候选主张，但无法回到真实文章、笔记或评论支持"
   },
-  "source_roles": [
-    "official_fact_source",
-    "brand_claim",
-    "sales_expression",
-    "supply_side_mechanism",
-    "buyer_voice",
-    "owner_experience",
-    "media_narrative",
-    "professional_workflow",
-    "ai_aggregate_clue"
-  ]
+  "aggregate_prompt_templates": {
+    "researcher_search": "我是普通用户做资料研究，不是创作者做 SEO、搜索排名或投流。围绕【对象／问题】只做检索导航：列出对象词、问题词、场景词、比较词、来源角色词和反例词；为每项给出可回到真实内容核验的标题、账号或内容线索；把未验证的平台语法或功能单列，不要替我下结论。",
+    "creator_search": "我是创作者研究用户搜索意图与内容供给。请区分品类词、问题词、场景词、对比词、本地词、品牌词和长尾词，并列出真实内容回源线索；不要把搜索排名经验冒充普通用户检索方法。"
+  },
+  "domain_extension_template": {
+    "identity_aliases": ["项目正式名", "单一异体字", "历史名", "一期", "二期"],
+    "experience_terms": ["立面", "门庭", "归家", "园林", "会所", "材料", "工艺", "物业", "交付"],
+    "decision_terms": ["为什么买", "值不值", "最后选了", "看房", "业主", "入住后"],
+    "counter_terms": ["好看不实用", "停车难", "会所闲置", "物业兑现", "交付落差", "溢价高"],
+    "boundary": "模板只示范语义槽位，不包含真实任务学习记录或具体业务样本"
+  }
 }

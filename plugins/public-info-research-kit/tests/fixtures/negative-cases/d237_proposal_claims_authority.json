@@ -1,0 +1,61 @@
+{
+  "schema": "adaptive_query_sufficiency_package.v1",
+  "task_id": "NEG-D237-02",
+  "business_question_ref": "BQ-NEG-02",
+  "business_question_family": "住宅项目选择与放弃机制",
+  "consumer_contract": {
+    "acceptance_mode": "quality_sufficiency",
+    "qualified_match_classes": ["direct"],
+    "non_counted_match_classes": ["excluded"],
+    "quality_criteria": ["真实公开内容可回源"],
+    "count_threshold": null,
+    "diversity_requirements": {
+      "minimum_source_role_count": 1,
+      "minimum_project_or_brand_count": 1,
+      "maximum_qualified_items_per_project_or_brand": 2
+    },
+    "evidence_usage_permission": "内部研究候选",
+    "adaptive_extension": {
+      "authorized": false,
+      "authorization_ref": null,
+      "maximum_incremental_batches": 0,
+      "time_limit_minutes": 0,
+      "cost_limit": null
+    }
+  },
+  "batch": {
+    "batch_id": "NEG-D237-02-B2",
+    "batch_state": "proposed_incremental_batch",
+    "parent_batch_id": "NEG-D237-02-B1",
+    "queries": [
+      {
+        "query_id": "q02",
+        "exact_query_text": "某项目 交付落差",
+        "atom_signature": ["identity:正式名", "counterevidence:交付落差"],
+        "term_provenance": ["prior_batch_gap"],
+        "minimum_result_batches": 1,
+        "minimum_actual_opens": 1
+      }
+    ]
+  },
+  "receipt": {
+    "evidence_sufficiency_status": "not_assessed",
+    "marginal_information_gain": {
+      "assessment": "unknown",
+      "new_qualified_count": 0,
+      "new_distinct_source_role_count": 0,
+      "new_qualified_project_or_brand_count": 0,
+      "new_expression_pattern_count": 0,
+      "duplicate_rate": null,
+      "assessment_basis": "尚未执行"
+    },
+    "failure_class": null,
+    "needs_downstream_authorization": false,
+    "remaining_gap": "仍缺反例",
+    "stop_reason": "错误负例：提案越权声称无需授权",
+    "executed_result_batch_count": 0,
+    "actual_open_count": 0
+  },
+  "query_learning_records": [],
+  "promotion_review_batches": []
+}
