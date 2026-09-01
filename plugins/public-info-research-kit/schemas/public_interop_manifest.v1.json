@@ -19,7 +19,7 @@
   "consumer_candidate": {
     "repository": "https://github.com/xiem-bit/residential-project-interpretation-service-public",
     "release_candidate": "v0.2.0-rc.1",
-    "candidate_commit": "0a0c08eefc5ba4d5d36e9b5658ea648c44628585",
+    "candidate_commit": "1b60c50430f84728745f1d45ff81ed4e3d0ad560",
     "contracts": [
       {
         "path": "external-capabilities/upstream-task.schema.json",
@@ -42,7 +42,7 @@
       "command_from_consumer_root": "python3 scripts/verify_cross_package_conformance.py --upstream-plugin-root UPSTREAM_PLUGIN_ROOT --full",
       "producer_core_conformance_fixture_case_count": 94,
       "current_producer_release_harness_case_count": 101,
-      "consumer_regression_case_count": 102,
+      "consumer_regression_case_count": 106,
       "network_accessed": false,
       "platform_opened": false,
       "business_acceptance_validated": false

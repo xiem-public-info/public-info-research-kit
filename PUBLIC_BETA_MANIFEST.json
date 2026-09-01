@@ -175,7 +175,7 @@
     },
     {
       "path": "plugins/public-info-research-kit/bridges/residential-v0.2/consumer-contract-lock.v0.2.json",
-      "sha256": "88af39162fc5b9dd6ffd21a11d06411ca686a9dc3ee882d70a414fc8ad981d48",
+      "sha256": "45e3a88bbd7047f26063676bdf6f5467b3357d732b36047fa8319b2a4e186c61",
       "bytes": 1981
     },
     {
@@ -250,7 +250,7 @@
     },
     {
       "path": "plugins/public-info-research-kit/schemas/public_interop_manifest.v1.json",
-      "sha256": "541c233a1d35c69a09dfe5fc24a763bf22fb0b1464a98cd6e618fb4415581a8c",
+      "sha256": "5596b94a8e3395c1f30dafd3e24b43f55a327477f4aebc3ca66a5743b0286212",
       "bytes": 2803
     },
     {
