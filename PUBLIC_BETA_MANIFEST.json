@@ -85,8 +85,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "05993432f382a13506de0b70840329a937edd5984052903209d965e95beee63a",
-      "bytes": 3295
+      "sha256": "825aadbd4e116d20ba31c0549cb56dfb1ab319f72f9b1daca09c964b358b73ed",
+      "bytes": 3316
     },
     {
       "path": "DECISION_PLAYBOOK.md",
@@ -115,13 +115,18 @@
     },
     {
       "path": "QUICKSTART.md",
-      "sha256": "1184cd9d8a1b0aa7cc81ba63f22ad8ce8974770836fd6d4b8c40fae0bb35ec8d",
-      "bytes": 3131
+      "sha256": "5046d815587477537ff7e13959481af8d64803e40b9d3b143badc56f5c222d0c",
+      "bytes": 3421
+    },
+    {
+      "path": "RC_INSTALL_0.8.0.md",
+      "sha256": "b2371ceeb5067d7f2bfec1d6db85c38f992d1cea24dcc258794be19d47655f90",
+      "bytes": 3304
     },
     {
       "path": "README.md",
-      "sha256": "04de3ea01cebe777ea9d28e834618fe446ca002b1e3cefd65c0b1e2a217d0c1d",
-      "bytes": 4354
+      "sha256": "e5691f4356ab840d81c585d04d0d3f5b8b32c6435b27ca9adfa9ba80c5c69729",
+      "bytes": 4474
     },
     {
       "path": "SECURITY.md",

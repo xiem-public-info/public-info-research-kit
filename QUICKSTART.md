@@ -1,5 +1,9 @@
 # Quickstart
 
+## 0.8.0-rc.1 候选版
+
+需要参加候选版试装的同事，请使用分支 `codex/public-v0.8-quality-parity`，不要从 `main` 安装。中文地址、命令和逐机验收说明见 [`RC_INSTALL_0.8.0.md`](RC_INSTALL_0.8.0.md)。普通稳定版用户继续使用 `main / v0.7.0`。
+
 ## 一步安装
 
 在 Codex 中打开本仓库并安装 Plugin。若没有出现安装卡片，直接让 Codex“安装这个 GitHub 仓库里的 `public-info-research-kit` Plugin”，无需手动执行底层命令。
