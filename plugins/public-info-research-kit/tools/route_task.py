@@ -32,6 +32,7 @@ CHANNELS = {
 SOCIAL_STRATEGY = "social_semantic_query_lexicon.v0.1"
 CAPABILITY_PROFILES = {
     "wechat": "resources/channel-capability-profiles/wechat.v1.json",
+    "wechat_ai_search": "resources/channel-capability-profiles/wechat-ai-search.v1.json",
     "xhs": "resources/channel-capability-profiles/xhs.v1.json",
     "public_web": "resources/channel-capability-profiles/public-web-official-feed.v1.json",
     "public_dynamic_page": "resources/channel-capability-profiles/public-web-official-feed.v1.json",
@@ -49,16 +50,41 @@ def _nonempty(value: Any) -> bool:
 
 def _route_wechat(request: dict[str, Any], errors: list[str]) -> list[dict[str, Any]]:
     cfg = request.get("wechat") or {}
+    ai_queries = cfg.get("ai_queries") or []
     modes = [
         ("keyword_discovery", cfg.get("queries"), "skills/wechat-public-research", True),
         ("account_list_discovery", cfg.get("publisher_accounts"), "skills/wechat-public-research", True),
         ("known_url_browser_open", cfg.get("known_urls"), "skills/wechat-known-url-reader", False),
     ]
     selected = [(mode, value, skill, requires_gui) for mode, value, skill, requires_gui in modes if value]
-    if not selected:
-        errors.append("wechat channel requires queries, publisher_accounts, or known_urls")
+    if not selected and not ai_queries:
+        errors.append("wechat channel requires ai_queries, queries, publisher_accounts, or known_urls")
         return []
     routes = []
+    if ai_queries:
+        routes.append(
+            {
+                "channel": "wechat",
+                "surface_id": "wechat_ai_search",
+                "mode": "aggregate_ai_gate_preparation",
+                "skill": "skills/wechat-public-research",
+                "capability_profile": CAPABILITY_PROFILES["wechat_ai_search"],
+                "input_count": len(ai_queries),
+                "uses_declared_task_scope": True,
+                "requires_shared_gui_serialization": False,
+                "searcher_mode": request.get("searcher_mode") or "researcher",
+                "query_strategy": SOCIAL_STRATEGY,
+                "gate_request_schema": "wechat_ai_search_gate_request.v1",
+                "gate_tool": "tools/check_wechat_ai_search_gate_preflight.py",
+                "research_orchestration_schema": "d292_research_orchestration.v1",
+                "research_orchestration_tool": "tools/validate_d292_research_orchestration.py",
+                "status": "gate_ready_not_live_validated",
+                "execution_authorized": False,
+                "real_gui_validated": False,
+                "original_source_backread_required": True,
+                "default_executes_platform": False,
+            }
+        )
     for mode, value, skill, requires_gui in selected:
         route = {
             "channel": "wechat",

@@ -1,0 +1,59 @@
+{
+  "schema": "wechat_ai_search_gate_fixture_set.v1",
+  "valid_request": {
+    "schema": "wechat_ai_search_gate_request.v1",
+    "task_id": "fixture-wechat-ai-001",
+    "channel": "wechat",
+    "platform": "wechat",
+    "aggregate_surface_id": "wechat_ai_search",
+    "aggregate_surface_contract_version": "WECHAT-AI-SEARCH-SURFACE-V1",
+    "execution_owner": "installed_public_info_research_kit",
+    "downstream_business_owner": "fixture_consumer",
+    "business_question": "哪些原始公开文章可支持或反驳当前业务判断",
+    "aggregate_purpose": "object_disambiguation",
+    "ordinary_original_source_surfaces": [
+      "wechat_global_article_results",
+      "public_account_article_list"
+    ],
+    "aggregate_answer_evidence_allowed": false,
+    "live_execution_requested": false,
+    "real_gui_validated": false
+  },
+  "negative_cases": [
+    {
+      "case_id": "xhs_surface_cannot_substitute",
+      "set": {"aggregate_surface_id": "xhs_ask_diandian"},
+      "expected_status": "cross_platform_aggregate_surface_forbidden"
+    },
+    {
+      "case_id": "ordinary_search_cannot_masquerade",
+      "set": {"aggregate_surface_id": "wechat_global_article_results"},
+      "expected_status": "ordinary_search_masquerade_forbidden"
+    },
+    {
+      "case_id": "aggregate_answer_is_not_evidence",
+      "set": {"aggregate_answer_evidence_allowed": true},
+      "expected_status": "aggregate_answer_evidence_forbidden"
+    },
+    {
+      "case_id": "original_source_surface_required",
+      "set": {"ordinary_original_source_surfaces": []},
+      "expected_status": "original_source_surface_required"
+    },
+    {
+      "case_id": "live_request_is_not_authorized",
+      "set": {"live_execution_requested": true},
+      "expected_status": "wechat_ai_search_live_not_validated"
+    },
+    {
+      "case_id": "wrong_owner_is_rejected",
+      "set": {"execution_owner": "downstream_project"},
+      "expected_status": "owner_preflight_not_ready"
+    },
+    {
+      "case_id": "sensitive_field_is_rejected",
+      "set": {"token": "fixture-must-never-pass"},
+      "expected_status": "forbidden_control_or_sensitive_field"
+    }
+  ]
+}

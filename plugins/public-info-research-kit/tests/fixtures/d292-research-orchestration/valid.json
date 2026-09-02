@@ -1,0 +1,71 @@
+{
+  "schema": "d292_research_orchestration.v1",
+  "task_id": "fixture-d292-001",
+  "aggregate_surfaces": [
+    {
+      "platform": "wechat",
+      "aggregate_surface_id": "wechat_ai_search",
+      "authorization_status": "not_authorized",
+      "aggregate_output_role": "ai_aggregate_clue",
+      "aggregate_answer_evidence_allowed": false,
+      "ordinary_original_source_surfaces": ["wechat_global_article_results", "public_account_article_list"]
+    },
+    {
+      "platform": "xhs",
+      "aggregate_surface_id": "xhs_ask_diandian",
+      "authorization_status": "unresolved",
+      "aggregate_output_role": "ai_aggregate_clue",
+      "aggregate_answer_evidence_allowed": false,
+      "ordinary_original_source_surfaces": ["xhs_note_list", "xhs_visible_note_body"]
+    }
+  ],
+  "competitor_lifecycle_precheck": {
+    "applies": true,
+    "complete_before_deep_retrieval": true,
+    "downstream_decides_final_competitor_role": true,
+    "objects": [
+      {
+        "object_id": "project-a",
+        "identity_closed": true,
+        "current_new_home_supply_checked": true,
+        "recent_six_month_content_checked": true,
+        "launch_and_actual_product_checked": true,
+        "delivery_date_checked": true,
+        "months_to_delivery": 8,
+        "applicable_product_scope": "partial_tier",
+        "recommended_role": "tail_end_reference"
+      }
+    ]
+  },
+  "complete_event_count_policy": {
+    "minimum_per_project": 3,
+    "target_per_project": 5,
+    "target_is_maximum": false,
+    "preserve_qualified_excess": true,
+    "project_event_affiliation_count": 6,
+    "unique_household_journey_count": 4,
+    "global_dedup_unit": "independent_person_or_household_journey"
+  },
+  "first_return": {
+    "project_fact_support_assessed": true,
+    "competitor_relation_support_assessed": true,
+    "customer_choice_support_assessed": true,
+    "counterexample_support_assessed": true,
+    "semantic_core_support_status": "partial",
+    "merged_increment_proposal": {
+      "proposed": true,
+      "downstream_authorization_required": true,
+      "execution_authorized": false
+    }
+  },
+  "official_expression_policy": {
+    "core_view_required": true,
+    "necessary_original_wording_required": true,
+    "source_locator_required": true
+  },
+  "thread_policy": {
+    "current_retrieval_task_naturally_closed": false,
+    "rotate_thread_after_close": false,
+    "urge_or_interleave_next_batch": false
+  }
+}

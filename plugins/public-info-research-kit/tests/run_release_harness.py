@@ -16,7 +16,9 @@ REPO_ROOT = ROOT.parents[1]
 TESTS = (
     "run_route_capability_profiles.py",
     "run_portable_channel_preflight.py",
+    "run_wechat_ai_search_gate_preflight.py",
     "run_social_query_plan.py",
+    "run_d292_research_orchestration.py",
     "run_adaptive_query_sufficiency.py",
     "run_public_evidence_contract.py",
     "run_official_source_fixture.py",
@@ -62,6 +64,8 @@ INTERFACE_FILES = (
     "schemas/public_evidence_envelope.v1.json",
     "schemas/adaptive_query_sufficiency_contract.v1.json",
     "schemas/portable_channel_request.v1.json",
+    "schemas/wechat_ai_search_gate_request.v1.json",
+    "schemas/d292_research_orchestration.v1.json",
 )
 
 

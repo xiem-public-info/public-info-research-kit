@@ -66,13 +66,15 @@ def main() -> int:
         "license": "MIT",
         "repository": "xiem-public-info/public-info-research-kit",
         "previous_stable_version": "0.7.0",
-        "private_source_commit": "103244c77688f0f563d2e412392f76e47a8cee6d",
+        "private_source_commit": "ff09f9ee0263fe3c6548d24cfc97cc9003c81c9f",
         "public_package_source": "curated_snapshot_without_private_repository_history_or_runtime_state",
         "skill_count": len(skills),
         "skills": skills,
         "quality_contracts": [
             "channel_capability_profiles",
             "D235_semantic_query_strategy",
+            "D292_research_orchestration",
+            "wechat_ai_search_offline_gate",
             "D237_D240_D241_adaptive_sufficiency",
             "evidence_consumer_rejection",
             "per_machine_smoke_separation",
@@ -88,6 +90,7 @@ def main() -> int:
         },
         "channel_routes": {
             "wechat": "WECHAT-LITE-DIRECT-CU-V1 / stable route / per-machine smoke required",
+            "wechat_ai_search": "WECHAT-AI-SEARCH-SURFACE-V1 / gate_ready_not_live_validated / offline gate only",
             "xhs": "XHS-SEARCH-V1 / visible normal Chrome / per-machine smoke required",
             "public_web": "static public web and official source resolver",
             "public_dynamic_page": "controlled runtime capture / source-specific verification",
@@ -102,6 +105,8 @@ def main() -> int:
             "MediaCrawler_or_CDP_or_XHS_Searcher",
             "WeChat_V2_or_Pad_or_AX",
             "W33_runtime_state_or_real_query_learning_records",
+            "week33_internal_wakeup_and_experiment_state",
+            "real_query_learning_records_and_business_samples",
             "credentials_cookies_tokens_profiles_or_runtime_state",
         ],
         "validation": {

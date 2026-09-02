@@ -1,0 +1,69 @@
+{
+  "schema": "channel_capability_profile.v1",
+  "profile_id": "wechat-ai-search.v1",
+  "channel": "wechat",
+  "surface_id": "wechat_ai_search",
+  "route": "WECHAT-AI-SEARCH-SURFACE-V1",
+  "status": "gate_ready_not_live_validated",
+  "execution_owner": "installed_public_info_research_kit",
+  "business_owner": "requesting_user_or_downstream_project",
+  "good_at": [
+    "离线检查微信 AI 搜索表面的身份与用途声明",
+    "约束聚合线索只用于对象解歧、信息密度、原始来源导航、反例和生命周期线索",
+    "要求所有可消费主张回到微信普通文章结果、公众号文章列表或已知公开文章原文"
+  ],
+  "not_good_at": [
+    "当前不具备任何微信 AI 真实表面执行授权",
+    "不打开微信、不输入真实查询、不操作登录或账号",
+    "不把聚合回答当作事实、官方表达或用户声音",
+    "不允许普通微信搜索或小红书问点点冒充微信 AI 搜索"
+  ],
+  "human_prerequisites": [
+    "本候选只需离线审核，无须打开微信或准备登录态",
+    "未来 live 能力必须由具名真实任务另行冻结查询、频率、配额、停止线和验收口径，并取得用户明确授权"
+  ],
+  "package_policy": {
+    "install_or_enable_computer_use": false,
+    "grant_system_permissions": false,
+    "operate_login": false,
+    "remind_and_detect_only": true
+  },
+  "golden_method": [
+    "先固定 platform=wechat 与 aggregate_surface_id=wechat_ai_search",
+    "声明聚合用途、普通原文回源面和 aggregate_answer_evidence_allowed=false",
+    "执行离线门槛并保留失败状态与零外部动作回执",
+    "若未来获独立 live Gate，聚合轮仍只交付标题、账号、日期、生命周期、冲突、反例和回源线索",
+    "使用新的独立 query_id 与 exact_query_text 回到普通微信原文表面核验"
+  ],
+  "failure_classes": [
+    "owner_preflight_not_ready",
+    "aggregate_surface_identity_mismatch",
+    "cross_platform_aggregate_surface_forbidden",
+    "ordinary_search_masquerade_forbidden",
+    "aggregate_answer_evidence_forbidden",
+    "original_source_surface_required",
+    "wechat_ai_search_live_not_validated",
+    "forbidden_control_or_sensitive_field"
+  ],
+  "forbidden_routes": [
+    "WeChat_V2",
+    "query_pad",
+    "native_AX",
+    "DOM_or_Playwright",
+    "fixed_coordinates_or_cached_elements",
+    "automatic_same_query_fallback",
+    "xhs_ask_diandian_substitution",
+    "ordinary_wechat_search_masquerade"
+  ],
+  "required_validators": [
+    "tools/check_wechat_ai_search_gate_preflight.py",
+    "tools/validate_d292_research_orchestration.py",
+    "tools/validate_public_evidence.py"
+  ],
+  "gate_policy": {
+    "offline_gate_preparation_allowed": true,
+    "live_execution_authorized": false,
+    "real_gui_validated": false,
+    "status_ceiling": "gate_ready_not_live_validated"
+  }
+}

@@ -5,7 +5,7 @@ description: 在真人首次预开的微信公开搜一搜中，以 Direct Compu
 
 # 微信 Lite 公开文章研究
 
-仅在任务已明确要求微信关键词检索或公众号账号清单研究时使用。
+仅在任务已明确要求微信关键词检索或公众号账号清单研究时使用。`wechat_ai_search` 当前只提供离线 Gate，不进入本 Skill 的真实执行热路径。
 
 ## 前置条件
 
@@ -17,6 +17,13 @@ description: 在真人首次预开的微信公开搜一搜中，以 Direct Compu
 - 微信登录态由使用者本人维护；不得导出、复制或写入发行包。
 - 终端用户自行安装并授权 Computer Use。公开包只提醒和检测，不安装、不启用、不授予系统权限，也不代替用户登录。
 - 当前可靠启动方式是使用者先登录微信并手动打开公开“搜一搜”，并让该页面保持在 Computer Use 当前可操作的主屏执行面。Plugin 从可见搜一搜页面开始；中途除微信真实退出登录外，不要求使用者重新打开。
+
+## 微信 AI 搜索表面边界
+
+- 若路由结果为 `aggregate_ai_gate_preparation`，读取 `resources/channel-capability-profiles/wechat-ai-search.v1.json`，并运行 `tools/check_wechat_ai_search_gate_preflight.py`。
+- 当前状态上限是 `gate_ready_not_live_validated`：`execution_authorized=false`、`real_gui_validated=false`。不得打开微信 AI、输入真实查询、操作登录或借普通搜索冒充聚合表面。
+- 聚合输出只能交付对象解歧、信息密度、标题、账号、日期、生命周期、冲突、反例和原始来源导航线索；正式消费前必须用新的独立查询回到普通微信文章表面和原文。
+- 未来 live 能力需由具名真实任务另行冻结查询、频率、配额、停止线和验收口径，并取得用户明确授权；本候选不预授予。
 
 ## 关键词模式：`WECHAT-LITE-DIRECT-CU-V1`
 

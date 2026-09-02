@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": "xiem-public-info/public-info-research-kit",
   "previous_stable_version": "0.7.0",
-  "private_source_commit": "103244c77688f0f563d2e412392f76e47a8cee6d",
+  "private_source_commit": "ff09f9ee0263fe3c6548d24cfc97cc9003c81c9f",
   "public_package_source": "curated_snapshot_without_private_repository_history_or_runtime_state",
   "skill_count": 7,
   "skills": [
@@ -21,6 +21,8 @@
   "quality_contracts": [
     "channel_capability_profiles",
     "D235_semantic_query_strategy",
+    "D292_research_orchestration",
+    "wechat_ai_search_offline_gate",
     "D237_D240_D241_adaptive_sufficiency",
     "evidence_consumer_rejection",
     "per_machine_smoke_separation",
@@ -36,6 +38,7 @@
   },
   "channel_routes": {
     "wechat": "WECHAT-LITE-DIRECT-CU-V1 / stable route / per-machine smoke required",
+    "wechat_ai_search": "WECHAT-AI-SEARCH-SURFACE-V1 / gate_ready_not_live_validated / offline gate only",
     "xhs": "XHS-SEARCH-V1 / visible normal Chrome / per-machine smoke required",
     "public_web": "static public web and official source resolver",
     "public_dynamic_page": "controlled runtime capture / source-specific verification",
@@ -50,12 +53,14 @@
     "MediaCrawler_or_CDP_or_XHS_Searcher",
     "WeChat_V2_or_Pad_or_AX",
     "W33_runtime_state_or_real_query_learning_records",
+    "week33_internal_wakeup_and_experiment_state",
+    "real_query_learning_records_and_business_samples",
     "credentials_cookies_tokens_profiles_or_runtime_state"
   ],
   "validation": {
     "harness_schema": "public_release_harness_report.v1",
-    "test_runner_count": 11,
-    "fixture_case_count": 101,
+    "test_runner_count": 13,
+    "fixture_case_count": 122,
     "fixture_failure_count": 0,
     "golden_task_fixture_count": 5,
     "negative_fixture_file_count": 4,
@@ -80,8 +85,8 @@
     },
     {
       "path": "CAPABILITY_MATRIX.md",
-      "sha256": "9d730a23538b8b346dfe74f9fd9b5efc3037bf5ca21a67788fdd25a3c28110d7",
-      "bytes": 2535
+      "sha256": "cab0c354fbb4cf1776b5795e032b6988d43a8fdafb250787f037b2314cc69c02",
+      "bytes": 3218
     },
     {
       "path": "CHANGELOG.md",
@@ -90,8 +95,8 @@
     },
     {
       "path": "DECISION_PLAYBOOK.md",
-      "sha256": "859334638acbdfc1a3480c212c1b4e79445ebb408879fc5c981cc568639b065e",
-      "bytes": 3790
+      "sha256": "59085b5cd3a3b8676856c7715acf34174ca257ff14e96cd885d4c7e551d00a07",
+      "bytes": 5256
     },
     {
       "path": "INSTALL_CHECKLIST.md",
@@ -165,8 +170,8 @@
     },
     {
       "path": "UPDATE_0.8.0.md",
-      "sha256": "ef782d04032e23e9008d04039046ad5105055dad2f102d462734c53176511ec9",
-      "bytes": 1624
+      "sha256": "fef6dbbdaf9da8049d4d0e38fb9e6e5c45768716fe92bdb536ce18c7e4ef16ec",
+      "bytes": 2099
     },
     {
       "path": "plugins/public-info-research-kit/.codex-plugin/plugin.json",
@@ -204,6 +209,11 @@
       "bytes": 2045
     },
     {
+      "path": "plugins/public-info-research-kit/resources/channel-capability-profiles/wechat-ai-search.v1.json",
+      "sha256": "60d1a84d954a8cb0b7b8ad79ce469c938bf753f285a0e8af75e1dd49e2d9d692",
+      "bytes": 2893
+    },
+    {
       "path": "plugins/public-info-research-kit/resources/channel-capability-profiles/wechat.v1.json",
       "sha256": "9106e7d32e0af5bacd8c773632d90680b5e88a45c05771750066a9fe96cd3fa1",
       "bytes": 3012
@@ -215,8 +225,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/resources/decision-playbook.v1.md",
-      "sha256": "ba3c09b65ab34b615bc39858ec6ef5cbb2c1198827993be497a024208457c5fc",
-      "bytes": 3563
+      "sha256": "8bf806221cf5ab793d0f5b0d163d79900d7dc070a67423a14c9a637e175a3cb5",
+      "bytes": 5029
     },
     {
       "path": "plugins/public-info-research-kit/resources/install-checklist.v1.md",
@@ -230,13 +240,18 @@
     },
     {
       "path": "plugins/public-info-research-kit/resources/social_semantic_query_lexicon.v0.1.json",
-      "sha256": "290ea5772a5d769a94dd954a6d12ca48f63616999844623eec65b69bf2b539b3",
-      "bytes": 13513
+      "sha256": "12bf767f96df638854d43f80c4d3ea994a68e5d66668acc8379e4e129376a6ae",
+      "bytes": 19086
     },
     {
       "path": "plugins/public-info-research-kit/schemas/adaptive_query_sufficiency_contract.v1.json",
       "sha256": "f945cb415c17d2e182bcc9f98443fa04273b5ddadaf1e23a40d26c9b8bc0bcd1",
       "bytes": 5156
+    },
+    {
+      "path": "plugins/public-info-research-kit/schemas/d292_research_orchestration.v1.json",
+      "sha256": "7a420de6174ae591a1ed84054e811e300a3ceeaf831a87800fab4861372a1879",
+      "bytes": 6117
     },
     {
       "path": "plugins/public-info-research-kit/schemas/per_machine_smoke_receipt.v1.json",
@@ -264,6 +279,11 @@
       "bytes": 4800
     },
     {
+      "path": "plugins/public-info-research-kit/schemas/wechat_ai_search_gate_request.v1.json",
+      "sha256": "94b9188e37bf461c4de34c467c55f922c3f1919e9ff9c3570aa0f6f87ab9865d",
+      "bytes": 1890
+    },
+    {
       "path": "plugins/public-info-research-kit/schemas/wechat_publisher_list_receipt.v1.json",
       "sha256": "4a2adcc97169ac5ff939c86edf378f660c17f3b3031819d419362d1543540b09",
       "bytes": 847
@@ -285,8 +305,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-info-intake-router/SKILL.md",
-      "sha256": "eb85697dce0c3a78a0930a4949b58c9f647868d42a62d36281f59de7aee37539",
-      "bytes": 5282
+      "sha256": "87c6a8d659c3ec72037d8cbc5a64dda7e7600972c21731f8dfbb22ef4738545a",
+      "bytes": 6237
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-web-official-resolver/SKILL.md",
@@ -300,13 +320,18 @@
     },
     {
       "path": "plugins/public-info-research-kit/skills/wechat-public-research/SKILL.md",
-      "sha256": "a1b3c1d3b42ddfe008b6d37fbae6ef251a8c63f0dabc1f8440508db3e29b7de9",
-      "bytes": 5794
+      "sha256": "9ee395ddcae20cf927aff39005807a0ed2c54ee7cc76d9991850985cef09722e",
+      "bytes": 6721
     },
     {
       "path": "plugins/public-info-research-kit/skills/xhs-visible-research/SKILL.md",
       "sha256": "f85a1a3eafe1beeec6025554a42d3139f4aeedaf57bac92680e0dabdc597bc79",
       "bytes": 3968
+    },
+    {
+      "path": "plugins/public-info-research-kit/tests/fixtures/d292-research-orchestration/valid.json",
+      "sha256": "cc9995c3196fe1a0f2d677d3d9c3671573df6cac4ea18c71afe27c9583d47a34",
+      "bytes": 2416
     },
     {
       "path": "plugins/public-info-research-kit/tests/fixtures/golden-tasks/golden_direct_retrieval_exemption.json",
@@ -354,9 +379,19 @@
       "bytes": 1849
     },
     {
+      "path": "plugins/public-info-research-kit/tests/fixtures/wechat-ai-search-gate/cases.json",
+      "sha256": "191089aea7962d2a54dedb1960b4fa4cbc2879580c238f2c45393c365857cdb8",
+      "bytes": 2148
+    },
+    {
       "path": "plugins/public-info-research-kit/tests/run_adaptive_query_sufficiency.py",
       "sha256": "46f649aefdd24d1f807168713f29a1d0fbfb4180ceba82bbb3ef2dc5c7490f29",
       "bytes": 11053
+    },
+    {
+      "path": "plugins/public-info-research-kit/tests/run_d292_research_orchestration.py",
+      "sha256": "2255275384bfff976c64b42a9e1a39c887500d95a63eddc16598c8324cdc6287",
+      "bytes": 4356
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_doctor_policy.py",
@@ -390,8 +425,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_release_harness.py",
-      "sha256": "56cc0bc1a35ec7b0903ef30d0a6c23d0d855fc8fce80cac9e9af31e27a6efe8c",
-      "bytes": 8775
+      "sha256": "51381f2a97c23c779c949d86b665d8b1dd36fca80dbb559013deb0fdf0e31121",
+      "bytes": 8967
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_residential_bridge_lock.py",
@@ -400,13 +435,18 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_route_capability_profiles.py",
-      "sha256": "e39df8283af83c29f5752838f2df20c29fa4cc18c5ba13760193bdc6c2de50f4",
-      "bytes": 5254
+      "sha256": "68db6a317f0d0a2c211d31688f46a5e1f9f32c1602786a4e8541086f97f33f77",
+      "bytes": 6280
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_social_query_plan.py",
       "sha256": "caddc2271b82689b2a7bacd2b834be7840d71e449e0133fd7fcf92e648b4b97d",
       "bytes": 3019
+    },
+    {
+      "path": "plugins/public-info-research-kit/tests/run_wechat_ai_search_gate_preflight.py",
+      "sha256": "5085768862ff0509d75f0c342ff3fde51824b1be172c6d536386a9efa2602327",
+      "bytes": 2580
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_xhs_evidence_security.py",
@@ -429,6 +469,11 @@
       "bytes": 11472
     },
     {
+      "path": "plugins/public-info-research-kit/tools/check_wechat_ai_search_gate_preflight.py",
+      "sha256": "61efaed757dfd55598b3c885338c6af2d787b0a569cec447e3d3cb2f5440b530",
+      "bytes": 6880
+    },
+    {
       "path": "plugins/public-info-research-kit/tools/doctor.py",
       "sha256": "4c138411a9a8cb1bc6d307d03ba7d57cb55ad221839e02a7e0bf4324983af313",
       "bytes": 13204
@@ -445,8 +490,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/route_task.py",
-      "sha256": "4689c5e430722974821554d18f943806a22a5494d56389c621c6a4903ac2a61b",
-      "bytes": 8745
+      "sha256": "88e9f2101e0e1d27e79c9c350ff8bc348a245e1ceecb0ca2b1cf408a53b2e63f",
+      "bytes": 10155
     },
     {
       "path": "plugins/public-info-research-kit/tools/triage_official_document.py",
@@ -457,6 +502,11 @@
       "path": "plugins/public-info-research-kit/tools/validate_adaptive_query_sufficiency.py",
       "sha256": "9dfaaed497defe4436633f6388d8cb57ca260280913c5423a6713051d73cbefa",
       "bytes": 25931
+    },
+    {
+      "path": "plugins/public-info-research-kit/tools/validate_d292_research_orchestration.py",
+      "sha256": "21349eaf3600a08c2842c8daabebcfbb53c626ddd573ec40bab194076f3608e3",
+      "bytes": 9203
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_osm_display_receipt.py",
@@ -495,8 +545,8 @@
     },
     {
       "path": "scripts/build_release_manifest.py",
-      "sha256": "b0c6d85b44c4313f6586fe06a61be43c7b459e6ddcb9e08939362b0eb9b88f21",
-      "bytes": 6356
+      "sha256": "2edc8a4cf2b7268499207fbf7e68c066da9feddc63a2f63ea218fcf53851b381",
+      "bytes": 6682
     }
   ]
 }

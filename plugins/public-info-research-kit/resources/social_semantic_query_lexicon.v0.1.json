@@ -2,8 +2,22 @@
   "schema": "social_semantic_query_lexicon.v0.1",
   "release_version": "0.8.0-rc.1",
   "status": "active_public_rule_asset_with_controlled_pilots",
-  "source_decision": "D-235",
-  "source_commit": "103244c77688f0f563d2e412392f76e47a8cee6d",
+  "source_decision": "D-235+D-292",
+  "source_commit": "ff09f9ee0263fe3c6548d24cfc97cc9003c81c9f",
+  "amendments": {
+    "decision_id": "D-292",
+    "decided_at": "2026-09-02",
+    "scope": [
+      "aggregate_surface_identity",
+      "residential_lifecycle_precheck",
+      "event_count_and_dedup",
+      "first_return_feedback",
+      "official_expression_fidelity",
+      "thread_health"
+    ],
+    "does_not_expand_live_authority": true,
+    "task_specific_minimum_and_target_are_not_universal": true
+  },
   "formalized_capabilities": [
     "searcher_mode_role_disambiguation",
     "semantic_atoms_and_query_recipes",
@@ -11,13 +25,19 @@
     "query_dwell_gate",
     "failure_layering",
     "wechat_surface_classification",
+    "platform_aggregate_surface_identity",
+    "first_return_support_matrix_and_merged_increment",
+    "residential_competitor_lifecycle_precheck",
+    "project_affiliation_and_global_journey_dedup",
+    "official_expression_core_view_and_necessary_wording",
     "supply_side_mechanism_label",
     "term_provenance_and_backsource_status",
     "incremental_query_proposal_without_silent_execution",
     "cross_task_query_promotion_with_human_acceptance"
   ],
   "controlled_pilots": [
-    "platform_ai_clue_surfaces",
+    "wechat_ai_search_offline_gate",
+    "xhs_ask_diandian_independent_surface",
     "platform_special_syntax",
     "cross_task_reuse_observation",
     "lightweight_manual_query_compiler"
@@ -43,6 +63,11 @@
     "每次真实执行前必须生成并冻结 query_id 与 exact_query_text",
     "正式名、异体字、历史名和跨城同名优先拆成独立查询",
     "聚合 AI 只生成候选方向、同义词、冲突和回源线索，不承担消费证据",
+    "微信 AI 搜索与小红书问点点必须按平台和表面分别登记；普通搜索不得冒充聚合 AI",
+    "研究检索首次回传必须用项目事实、竞品关系、客户选择和反例检查统一语义核；不足时只返回一份合并增量提案",
+    "住宅竞品深搜前先做身份、当前新房供给、近六个月内容、开盘或加推、实际可选产品、交付期和适用产品层的轻量生命周期核验",
+    "完整事件分别统计项目事件归属和全局独立家庭旅程；任务目标不是上限，已经取得的合格超额样本继续保留",
+    "官方优秀表达同时保留核心观点、必要短原话和原文定位；只有摘要不算表达资产完成",
     "列表就绪后不得只看标题连续换词，须满足驻留门才可切换查询",
     "查询语义失败与输入、控制、渲染和安全停止分开记录",
     "只有正确提交并充分查看后的查询效果可以进入查询学习",
@@ -70,6 +95,10 @@
       "purpose": "防止不同搜索或聚合表面的结果、失败与证据强度混记",
       "atoms": ["微信全局文章结果", "公众号文章列表", "公众号号内搜索", "问一问", "微信AI搜索", "聊天记录搜索", "小程序或服务搜索", "已知链接浏览器直读", "小红书笔记列表", "小红书点点聚合"]
     },
+    "aggregate_surface_identity": {
+      "purpose": "在进入聚合导航前固定平台、真实表面、当前授权和普通原文回源面",
+      "atoms": ["wechat:wechat_ai_search", "xhs:xhs_ask_diandian", "authorized", "not_authorized", "unresolved", "ordinary_original_source_surface"]
+    },
     "source_role": {
       "purpose": "控制样本角色而非只追求篇数",
       "atoms": ["官方", "开发商", "设计方", "施工方", "媒体", "销售", "中介", "看房者", "购房者", "业主", "住户", "商家", "从业者", "评论"]
@@ -80,7 +109,7 @@
     },
     "decision_event": {
       "purpose": "捕捉选择、放弃与权衡行为",
-      "atoms": ["看过", "去看", "比较", "最后选了", "放弃", "成交", "退房", "换房", "置换", "买完", "入住后", "交付后", "推荐", "劝退"]
+      "atoms": ["看过", "去看", "看房日记", "买房日记", "比较", "最后选了", "放弃", "成交", "退房", "换房", "置换", "买完", "入住后", "交付后", "推荐", "劝退"]
     },
     "experience_mechanism": {
       "purpose": "把抽象概念拆成可感知、可使用内容",
@@ -88,7 +117,7 @@
     },
     "customer_task": {
       "purpose": "把产品搜索连接到真实生活任务",
-      "atoms": ["首套", "首改", "再改", "原地改善", "跨区置换", "通勤", "教育", "老人照护", "亲子", "社交", "安静", "身份表达", "情绪放松", "生活便利", "资产保值", "预算"]
+      "atoms": ["首套", "首改", "再改", "原地改善", "跨区置换", "通勤", "教育", "老人照护", "亲子", "社交", "安静", "身份表达", "情绪放松", "日常生活", "生活便利", "新规产品适配", "资产保值", "预算"]
     },
     "comparison_role": {
       "purpose": "保持竞争对象与替代方案对称",
@@ -100,7 +129,7 @@
     },
     "content_form": {
       "purpose": "按证据用途选择内容形态",
-      "atoms": ["探盘", "实景", "测评", "户型解析", "施工记录", "交付记录", "入住体验", "对比长文", "视频文案", "评论问答"]
+      "atoms": ["探盘", "实景", "测评", "户型解析", "买房日记", "看房日记", "日常生活记录", "新规产品解析", "施工记录", "交付记录", "入住体验", "对比长文", "视频文案", "评论问答"]
     },
     "time": {
       "purpose": "限制高变化事实的时间语义",
@@ -125,6 +154,24 @@
       "pattern": "[身份锚点] [来源角色] [体验机制1至2个] [选择语言]",
       "use_when": "寻找为什么买、为什么放弃和长期体验",
       "avoid": "只搜抽象设计标签"
+    },
+    {
+      "recipe_id": "district_intent_choice_journey",
+      "pattern": "[板块或通勤锚点] [购买意图或家庭任务] [买房日记或看房日记] [行动结果或价值冲突]",
+      "use_when": "完整购房事件召回的第一轮，尤其项目名加单一意图供给稀疏时",
+      "avoid": "把板块宽词直接外推为目标项目事件；项目归属仍须正文核验"
+    },
+    {
+      "recipe_id": "daily_life_new_rule_product",
+      "pattern": "[板块或通勤锚点] [日常生活任务] [新规产品机制] [选择或代价]",
+      "use_when": "寻找产品变化如何进入通勤、亲子、照护、预算或长期使用选择",
+      "avoid": "把新规产品营销说明当作家庭真实选择"
+    },
+    {
+      "recipe_id": "aggregate_source_hint_recovery",
+      "pattern": "[聚合线索中的标题或账号] [对象身份] [原文内容形态]",
+      "use_when": "聚合 AI 给出高信息密度标题、作者、账号、日期或来源类别后回到原文",
+      "avoid": "依赖聚合对话上下文或把聚合摘要直接作为证据"
     },
     {
       "recipe_id": "direct_comparison",
@@ -157,7 +204,12 @@
     "searcher_mode_policy": "当主题含检索、搜索、效率、优化或排名等易混词时，聚合提问必须明确普通用户找资料或创作者 SEO；回到真实列表的 exact_query_text 也应带可见意图词",
     "platform_syntax_policy": "点点或微信 AI 提出的双引号、减号、快捷指令、排序或筛选能力一律先记平台候选，不得在当前可见客户端未核验时升级为查询合同",
     "wechat_surface_policy": "候选设计必须区分微信全局文章、公众号文章列表、号内搜索、问一问、AI 搜索、聊天记录、小程序和已知链接；不同表面的结果与失败不得无差别合并",
-    "phase_order": ["身份与对象", "聚合解歧与词扩展", "原文列表回源", "体验与选择", "竞品或替代", "反例与冲突", "收敛"],
+    "aggregate_surface_identity_policy": "聚合任务必须记录 platform、aggregate_surface_id、current_authorization_status 与 ordinary_original_source_surface；微信 AI 搜索和小红书问点点是两个独立表面，普通搜索不得事后标记为聚合 AI",
+    "residential_choice_recall_policy": "完整购房事件优先使用板块或通勤锚、购买意图或家庭任务、买房或看房日记、日常生活、新规产品、行动结果和价值冲突的组合；项目名加单一意图只作其中一种窄查询，不扩成固定矩阵",
+    "residential_competitor_lifecycle_precheck_policy": "深度事件和官方表达检索前先核身份、当前新房供给、近六个月销售或产品内容、开盘加推预售、实际可选产品、交付期和适用产品层；家书或交付信号触发交付日期核验，不足十二个月到交付时只建议下游降为尾盘参照",
+    "first_return_feedback_policy": "首次回传必须把真实标题、账号、日期、生命周期、行动词、身份冲突和低效词喂给下一轮独立查询，并检查项目事实、竞品关系、客户选择与反例是否共同支持统一语义核；不足时返回一个合并 proposed_incremental_batch，未经授权不得执行",
+    "official_expression_fidelity_policy": "官方表达资产必须同时保留核心观点、必要短原话、标题、账号或主体、日期、生命周期和原文定位；只有摘要不得标记完成",
+    "phase_order": ["身份与对象", "竞品生命周期轻量核验", "分平台聚合解歧与信息密度", "原文列表回源", "体验与选择", "竞品或替代", "反例与冲突", "统一语义核支持判断", "收敛"],
     "freeze_before_live": true,
     "platform_boolean_syntax_assumed": false
   },
@@ -202,9 +254,17 @@
     "marginal_information_gain",
     "new_terms",
     "aggregate_clue_count",
+    "aggregate_surface_id",
+    "aggregate_source_hint_count",
     "backed_clue_count",
     "orphan_clue_count",
     "conflict_count",
+    "project_event_affiliation_count",
+    "unique_household_journey_count",
+    "official_core_view_count",
+    "necessary_original_wording_count",
+    "semantic_core_support_status",
+    "merged_increment_proposal_status",
     "failure_class",
     "stop_reason"
   ],
@@ -233,12 +293,14 @@
   },
   "aggregate_prompt_templates": {
     "researcher_search": "我是普通用户做资料研究，不是创作者做 SEO、搜索排名或投流。围绕【对象／问题】只做检索导航：列出对象词、问题词、场景词、比较词、来源角色词和反例词；为每项给出可回到真实内容核验的标题、账号或内容线索；把未验证的平台语法或功能单列，不要替我下结论。",
-    "creator_search": "我是创作者研究用户搜索意图与内容供给。请区分品类词、问题词、场景词、对比词、本地词、品牌词和长尾词，并列出真实内容回源线索；不要把搜索排名经验冒充普通用户检索方法。"
+    "creator_search": "我是创作者研究用户搜索意图与内容供给。请区分品类词、问题词、场景词、对比词、本地词、品牌词和长尾词，并列出真实内容回源线索；不要把搜索排名经验冒充普通用户检索方法。",
+    "xhs_ask_diandian_research": "我是普通用户做购房资料研究。请先说明你理解的对象、信息供给密度、可能的同名或阶段冲突，再给出可回到小红书真实笔记核验的标题、作者、行动结果、家庭任务和反例线索；不要把聚合回答当事实或用户原声。",
+    "wechat_ai_search_research": "我是普通用户做项目资料研究。请先说明你理解的对象、信息供给密度、可能的同名或生命周期冲突，再给出可回到微信普通文章结果或公众号文章列表核验的标题、账号、日期、阶段和原始来源线索；不要替我下业务结论。"
   },
   "domain_extension_template": {
     "identity_aliases": ["项目正式名", "单一异体字", "历史名", "一期", "二期"],
     "experience_terms": ["立面", "门庭", "归家", "园林", "会所", "材料", "工艺", "物业", "交付"],
-    "decision_terms": ["为什么买", "值不值", "最后选了", "看房", "业主", "入住后"],
+    "decision_terms": ["为什么买", "值不值", "最后选了", "看房", "买房日记", "看房日记", "日常生活", "新规产品", "业主", "入住后"],
     "counter_terms": ["好看不实用", "停车难", "会所闲置", "物业兑现", "交付落差", "溢价高"],
     "boundary": "模板只示范语义槽位，不包含真实任务学习记录或具体业务样本"
   }

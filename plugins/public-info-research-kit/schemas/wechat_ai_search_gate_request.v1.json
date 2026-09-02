@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "wechat_ai_search_gate_request.v1",
+  "title": "Offline WeChat AI search surface gate request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "task_id",
+    "channel",
+    "platform",
+    "aggregate_surface_id",
+    "aggregate_surface_contract_version",
+    "execution_owner",
+    "downstream_business_owner",
+    "business_question",
+    "aggregate_purpose",
+    "ordinary_original_source_surfaces",
+    "aggregate_answer_evidence_allowed",
+    "live_execution_requested",
+    "real_gui_validated"
+  ],
+  "properties": {
+    "schema": {"const": "wechat_ai_search_gate_request.v1"},
+    "task_id": {"type": "string", "minLength": 1},
+    "channel": {"const": "wechat"},
+    "platform": {"const": "wechat"},
+    "aggregate_surface_id": {"const": "wechat_ai_search"},
+    "aggregate_surface_contract_version": {"const": "WECHAT-AI-SEARCH-SURFACE-V1"},
+    "execution_owner": {"const": "installed_public_info_research_kit"},
+    "downstream_business_owner": {"type": "string", "minLength": 1},
+    "business_question": {"type": "string", "minLength": 1},
+    "aggregate_purpose": {
+      "enum": [
+        "object_disambiguation",
+        "content_supply_density_estimation",
+        "original_source_navigation",
+        "counterexample_and_lifecycle_clue_discovery"
+      ]
+    },
+    "ordinary_original_source_surfaces": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "wechat_global_article_results",
+          "public_account_article_list",
+          "public_account_internal_search",
+          "known_public_article_url"
+        ]
+      }
+    },
+    "aggregate_answer_evidence_allowed": {"const": false},
+    "live_execution_requested": {"const": false},
+    "real_gui_validated": {"const": false}
+  }
+}

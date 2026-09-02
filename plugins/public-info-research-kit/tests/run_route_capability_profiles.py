@@ -27,7 +27,10 @@ def main() -> int:
         "usage_boundary": "内部研究候选",
         "stop_condition": "完成约定覆盖或触发停止线",
         "searcher_mode": "researcher",
-        "wechat": {"queries": ["某对象 交付后"]},
+        "wechat": {
+            "ai_queries": ["某对象 身份与信息供给"],
+            "queries": ["某对象 交付后"],
+        },
         "xhs": {"queries": ["某对象 入住体验"]},
         "public_web": {"known_urls": ["https://example.com/source"]},
         "public_dynamic_page": {"known_urls": ["https://example.com/dynamic"]},
@@ -74,6 +77,20 @@ def main() -> int:
                 token in forbidden
                 for token in ("wechat_v2", "query_pad", "native_ax", "dom_or_playwright", "fixed_coordinates", "automatic_same_query_fallback")
             )
+            if route.get("surface_id") == "wechat_ai_search":
+                channel_invariants_ok = channel_invariants_ok and all(
+                    (
+                        route.get("mode") == "aggregate_ai_gate_preparation",
+                        route.get("gate_request_schema") == "wechat_ai_search_gate_request.v1",
+                        route.get("gate_tool") == "tools/check_wechat_ai_search_gate_preflight.py",
+                        route.get("research_orchestration_schema") == "d292_research_orchestration.v1",
+                        route.get("status") == "gate_ready_not_live_validated",
+                        route.get("execution_authorized") is False,
+                        route.get("real_gui_validated") is False,
+                        route.get("original_source_backread_required") is True,
+                        route.get("default_executes_platform") is False,
+                    )
+                )
         elif route["channel"] == "xhs":
             channel_invariants_ok = all(
                 token in forbidden
