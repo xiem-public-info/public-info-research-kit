@@ -98,6 +98,15 @@ def main() -> int:
             )
         elif route["channel"] == "map_gis":
             channel_invariants_ok = all(token in not_good for token in ("卫星", "批量下载", "显示好看"))
+            channel_invariants_ok = channel_invariants_ok and all((
+                route.get("output_contract") == profile_data.get("contract") == "spatial_coordinate_evidence.v2",
+                route.get("object_set_owner") == profile_data.get("object_set_owner") == "downstream_consumer",
+                route.get("project_location_model") == profile_data.get("project_location_model") == "single_map_marker_centerpoint",
+                route.get("rendering_owner") == profile_data.get("rendering_owner") == "downstream_consumer",
+                route.get("display_validation_required_for_coordinate_package") is False,
+                (ROOT / route["validator"]).is_file(),
+                "tools/validate_osm_display_receipt.py" not in profile_data["required_validators"],
+            ))
         cases.append(
             {
                 "channel": route["channel"],

@@ -1,0 +1,258 @@
+{
+  "schema_version": "spatial_coordinate_evidence_fixture.v2",
+  "cases": [
+    {
+      "case_id": "valid_current_business_model",
+      "base": "valid.json",
+      "expected_valid": true
+    },
+    {
+      "case_id": "valid_four_sides_unavailable_does_not_block_centerpoint_package",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "four_side_coordinate_evidence.status", "value": "not_available"},
+        {"op": "set", "path": "four_side_coordinate_evidence.order_direction", "value": "not_applicable"},
+        {"op": "set", "path": "four_side_coordinate_evidence.corners", "value": []},
+        {"op": "set", "path": "four_side_coordinate_evidence.note", "value": "当次公开地图不足以合理识别四个角点"}
+      ],
+      "expected_valid": true
+    },
+    {
+      "case_id": "valid_osm_asset_with_visible_attribution",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "osm_use.asset_included", "value": true},
+        {"op": "set", "path": "osm_use.provider", "value": "OpenStreetMap Standard"},
+        {"op": "set", "path": "osm_use.attribution_visible", "value": true},
+        {"op": "set", "path": "osm_use.attribution_text", "value": "© OpenStreetMap contributors"},
+        {"op": "set", "path": "osm_use.asset_pointer", "value": "maps/example-osm-bounded-view.png"}
+      ],
+      "expected_valid": true
+    },
+    {
+      "case_id": "valid_not_assessed_without_distance_basis",
+      "base": "valid.json",
+      "mutations": [
+        {
+          "op": "set",
+          "path": "relative_access_findings",
+          "value": [
+            {
+              "finding_id": "FINDING-NOT-ASSESSED",
+              "subject_id": "PROJECT-CASE",
+              "reference_object_id": "AMENITY-SCHOOL",
+              "comparison_project_ids": ["PROJECT-CASE", "PROJECT-A", "PROJECT-B"],
+              "comparison_scope": "caller_supplied_set_only",
+              "finding": "not_assessed",
+              "basis_distance_ids": [],
+              "note": "当次条件不足，暂不判断"
+            }
+          ]
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "case_id": "reject_alternate_project_centerpoints",
+      "base": "valid.json",
+      "mutations": [
+        {
+          "op": "set",
+          "path": "objects.0.alternate_centerpoints",
+          "value": [{"longitude": 104.0552, "latitude": 30.6672}]
+        }
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["forbidden_legacy_spatial_field"]
+    },
+    {
+      "case_id": "reject_actual_entrance_field",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "objects.0.actual_entrance", "value": {"longitude": 104.0550, "latitude": 30.6670}}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["forbidden_legacy_spatial_field"]
+    },
+    {
+      "case_id": "reject_space_channel_added_competitor",
+      "base": "valid.json",
+      "mutations": [
+        {
+          "op": "append",
+          "path": "objects",
+          "value": {
+            "object_id": "PROJECT-UNREQUESTED",
+            "name": "空间渠道自行增加的竞品",
+            "role": "competitor",
+            "location_model": "single_map_marker_centerpoint",
+            "centerpoint": {"longitude": 104.0800, "latitude": 30.6700}
+          }
+        }
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["object_set_mismatch"]
+    },
+    {
+      "case_id": "reject_route_without_provider_auto_snap",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "distances.1.route_snap", "value": "actual_entrance_manual_snap"}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["route_snap_mismatch"]
+    },
+    {
+      "case_id": "reject_absolute_exclusive_amenity_claim",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "relative_access_findings.0.finding", "value": "absolute_exclusive_amenity"}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["absolute_exclusivity_forbidden"]
+    },
+    {
+      "case_id": "reject_absolute_exclusive_amenity_note",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "relative_access_findings.0.note", "value": "本案在全城市绝对独占该配套"}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["absolute_exclusivity_forbidden"]
+    },
+    {
+      "case_id": "reject_unknown_relative_reference",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "relative_access_findings.0.reference_object_id", "value": "PROJECT-UNREQUESTED"}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["relative_reference_unknown", "relative_basis_mismatch"]
+    },
+    {
+      "case_id": "reject_relative_basis_for_different_reference",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "relative_access_findings.0.reference_object_id", "value": "CITY-CENTER"}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["relative_basis_mismatch"]
+    },
+    {
+      "case_id": "reject_large_resource_as_point_distance",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "distances.3.distance_type", "value": "straight_line"}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["large_resource_requires_perpendicular_distance"]
+    },
+    {
+      "case_id": "reject_three_corner_four_side_evidence",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "delete", "path": "four_side_coordinate_evidence.corners.3"}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["four_side_corner_count_invalid"]
+    },
+    {
+      "case_id": "reject_non_clockwise_corner_order",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "four_side_coordinate_evidence.corners.2.order", "value": 2}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["four_side_clockwise_order_invalid"]
+    },
+    {
+      "case_id": "reject_counterclockwise_corner_coordinates",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "four_side_coordinate_evidence.corners.0.coordinate", "value": {"longitude": 104.0538, "latitude": 30.6680}},
+        {"op": "set", "path": "four_side_coordinate_evidence.corners.1.coordinate", "value": {"longitude": 104.0539, "latitude": 30.6661}},
+        {"op": "set", "path": "four_side_coordinate_evidence.corners.2.coordinate", "value": {"longitude": 104.0563, "latitude": 30.6662}},
+        {"op": "set", "path": "four_side_coordinate_evidence.corners.3.coordinate", "value": {"longitude": 104.0564, "latitude": 30.6680}}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["four_side_clockwise_geometry_invalid"]
+    },
+    {
+      "case_id": "reject_project_boundary_as_distance_anchor",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "objects.0.project_boundary", "value": "fixture://legacy-boundary"}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["forbidden_legacy_spatial_field"]
+    },
+    {
+      "case_id": "reject_osm_asset_without_attribution",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "osm_use.asset_included", "value": true},
+        {"op": "set", "path": "osm_use.provider", "value": "OpenStreetMap Standard"},
+        {"op": "set", "path": "osm_use.asset_pointer", "value": "maps/example-osm.png"}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["osm_attribution_required"]
+    },
+    {
+      "case_id": "reject_invalid_project_coordinate",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "objects.0.centerpoint.longitude", "value": 181}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["invalid_coordinate"]
+    },
+    {
+      "case_id": "reject_missing_case_centerpoint",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "delete", "path": "objects.0.centerpoint"}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["invalid_coordinate"]
+    },
+    {
+      "case_id": "reject_large_resource_centerpoint_fallback",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "objects.4.centerpoint", "value": {"longitude": 104.0600, "latitude": 30.6500}}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["large_resource_centerpoint_forbidden"]
+    },
+    {
+      "case_id": "reject_comparison_outside_caller_set",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "append", "path": "relative_access_findings.0.comparison_project_ids", "value": "PROJECT-UNREQUESTED"}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["relative_comparison_outside_caller_set"]
+    },
+    {
+      "case_id": "reject_four_sides_unavailable_without_reason",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "four_side_coordinate_evidence.status", "value": "not_available"},
+        {"op": "set", "path": "four_side_coordinate_evidence.order_direction", "value": "not_applicable"},
+        {"op": "set", "path": "four_side_coordinate_evidence.corners", "value": []},
+        {"op": "set", "path": "four_side_coordinate_evidence.note", "value": ""}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["four_side_unavailable_note_required"]
+    },
+    {
+      "case_id": "reject_osm_bulk_tile_download",
+      "base": "valid.json",
+      "mutations": [
+        {"op": "set", "path": "osm_use.bulk_tile_downloaded", "value": true}
+      ],
+      "expected_valid": false,
+      "expected_error_codes": ["osm_bulk_or_offline_forbidden"]
+    }
+  ]
+}

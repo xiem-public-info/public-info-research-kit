@@ -2,26 +2,34 @@
   "schema": "channel_capability_profile.v1",
   "profile_id": "osm-spatial.v1",
   "channel": "map_gis",
-  "status": "finite_view_spatial_evidence_route",
+  "status": "spatial_coordinate_evidence_v2_route",
+  "contract": "spatial_coordinate_evidence.v2",
+  "decision": "D-291",
+  "object_set_owner": "downstream_consumer",
+  "project_location_model": "single_map_marker_centerpoint",
+  "route_snap": "provider_auto_snap_from_centerpoints",
+  "rendering_owner": "downstream_consumer",
   "execution_owner": "installed_public_info_research_kit",
   "business_owner": "requesting_user_or_downstream_project",
   "good_at": [
-    "项目锚点、POI 身份、几何类型、坐标口径和空间关系核验",
-    "有限视窗内项目、竞品、道路和公共设施的关系表达",
-    "带可见 OpenStreetMap 署名的内部候选图或客户面关系图装配"
+    "调用方给定集合内的唯一项目中心点、紧凑配套中心点与资源几何",
+    "直线、步行、驾车与大型狭长资源垂距，路线接受平台自动吸附",
+    "本案四角点及相邻道路／路口坐标、现实阻隔与相对便利性"
   ],
   "not_good_at": [
     "把 OpenStreetMap Standard 描述成卫星影像",
     "用显示好看替代锚点、POI、几何、距离和比较对象验证",
     "批量下载、预取大范围公共瓦片或制作离线瓦片包",
-    "把代理点、直线距离和路线距离混写"
+    "把代理点、直线距离和路线距离混写",
+    "查实际入口、售楼部、多锚点、项目边界或最近边界",
+    "自行裁定竞品、输出绝对独占或代下游绘图"
   ],
   "golden_method": [
-    "先冻结项目锚点、比较范围、POI 清单和距离口径",
-    "逐项核验 POI 身份、坐标来源、几何类型和距离方法",
-    "空间事实通过后再装配有限视窗显示资产",
-    "保留清晰可见的 © OpenStreetMap contributors 署名",
-    "分别验收 spatial_fact_ready 与 customer_facing_map_ready"
+    "接收调用方对象集，为每个项目取得单一地图标注中心点",
+    "紧凑配套取中心点，大型或狭长资源取得可计算垂距的几何",
+    "尽量给出顺时针四角点及相邻道路／路口坐标；不可用不阻断其他结果",
+    "按中心点计算距离与自动吸附路线，记录阻隔与集合内相对便利性",
+    "交付 spatial_coordinate_evidence.v2；只在实际使用 OSM 资产时保留可见署名"
   ],
   "failure_classes": [
     "anchor_identity_gap",
@@ -33,7 +41,10 @@
     "tile_usage_boundary_violation"
   ],
   "required_validators": [
-    "tools/validate_osm_display_receipt.py",
+    "tools/validate_spatial_coordinate_evidence_v2.py",
     "tools/validate_public_evidence.py"
+  ],
+  "conditional_display_validators": [
+    "tools/validate_osm_display_receipt.py"
   ]
 }

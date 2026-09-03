@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "spatial_coordinate_evidence.v2",
+  "title": "Spatial Coordinate Evidence v2",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "input_ownership",
+    "provider",
+    "objects",
+    "four_side_coordinate_evidence",
+    "distances",
+    "barrier_observations",
+    "relative_access_findings",
+    "osm_use"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "spatial_coordinate_evidence.v2"
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input_ownership": {
+      "type": "object",
+      "required": [
+        "case_project_id",
+        "object_set_owner",
+        "competitor_ids",
+        "resource_ids",
+        "reference_ids"
+      ],
+      "properties": {
+        "case_project_id": {"type": "string", "minLength": 1},
+        "object_set_owner": {"const": "downstream_consumer"},
+        "competitor_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "resource_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "reference_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "provider": {
+      "type": "object",
+      "required": ["name", "coordinate_crs", "capture_date"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "coordinate_crs": {"type": "string", "minLength": 1},
+        "capture_date": {"type": "string", "minLength": 1}
+      }
+    },
+    "objects": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["object_id", "name", "role", "location_model"],
+        "properties": {
+          "object_id": {"type": "string", "minLength": 1},
+          "name": {"type": "string", "minLength": 1},
+          "role": {
+            "enum": [
+              "case_project",
+              "competitor",
+              "amenity_compact",
+              "amenity_large_or_elongated",
+              "reference_center"
+            ]
+          },
+          "location_model": {
+            "enum": [
+              "single_map_marker_centerpoint",
+              "geometry_for_perpendicular_distance"
+            ]
+          },
+          "centerpoint": {"$ref": "#/$defs/coordinate"},
+          "geometry_reference": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "four_side_coordinate_evidence": {
+      "type": "object",
+      "required": [
+        "status",
+        "case_project_id",
+        "rendering_owner",
+        "outline_use",
+        "order_direction",
+        "corners",
+        "note"
+      ],
+      "properties": {
+        "status": {"enum": ["ready", "not_available"]},
+        "case_project_id": {"type": "string", "minLength": 1},
+        "rendering_owner": {"const": "downstream_consumer"},
+        "outline_use": {"const": "downstream_approximate_outline_only"},
+        "order_direction": {"enum": ["clockwise", "not_applicable"]},
+        "corners": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["order", "coordinate", "nearby_reference"],
+            "properties": {
+              "order": {"type": "integer", "minimum": 1, "maximum": 4},
+              "coordinate": {"$ref": "#/$defs/coordinate"},
+              "nearby_reference": {
+                "type": "object",
+                "required": ["name", "kind", "coordinate"],
+                "properties": {
+                  "name": {"type": "string", "minLength": 1},
+                  "kind": {"enum": ["road", "intersection"]},
+                  "coordinate": {"$ref": "#/$defs/coordinate"}
+                }
+              }
+            }
+          }
+        },
+        "note": {"type": "string"}
+      }
+    },
+    "distances": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["distance_id", "from_id", "to_id", "distance_type", "distance_m"],
+        "properties": {
+          "distance_id": {"type": "string", "minLength": 1},
+          "from_id": {"type": "string", "minLength": 1},
+          "to_id": {"type": "string", "minLength": 1},
+          "distance_type": {
+            "enum": [
+              "straight_line",
+              "walking_route",
+              "driving_route",
+              "perpendicular_shortest_straight"
+            ]
+          },
+          "distance_m": {"type": "number", "minimum": 0},
+          "duration_min": {"type": ["number", "null"]},
+          "route_snap": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "barrier_observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from_id", "to_id", "barriers", "walking_effect"],
+        "properties": {
+          "from_id": {"type": "string", "minLength": 1},
+          "to_id": {"type": "string", "minLength": 1},
+          "barriers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "enum": [
+                "arterial_road",
+                "expressway",
+                "river",
+                "elevation",
+                "wall",
+                "closed_passage",
+                "park_or_large_open_space",
+                "none"
+              ]
+            }
+          },
+          "walking_effect": {
+            "enum": ["more_convenient", "less_convenient", "neutral", "not_assessed"]
+          },
+          "observation": {"type": "string"}
+        }
+      }
+    },
+    "relative_access_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "finding_id",
+          "subject_id",
+          "reference_object_id",
+          "comparison_project_ids",
+          "comparison_scope",
+          "finding",
+          "basis_distance_ids"
+        ],
+        "properties": {
+          "finding_id": {"type": "string", "minLength": 1},
+          "subject_id": {"type": "string", "minLength": 1},
+          "reference_object_id": {"type": "string", "minLength": 1},
+          "comparison_project_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+          "comparison_scope": {"const": "caller_supplied_set_only"},
+          "finding": {
+            "enum": [
+              "case_distance_advantage",
+              "case_walking_convenience_advantage",
+              "no_clear_case_advantage",
+              "not_assessed"
+            ]
+          },
+          "basis_distance_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "osm_use": {
+      "type": "object",
+      "required": [
+        "asset_included",
+        "provider",
+        "attribution_visible",
+        "attribution_text",
+        "asset_pointer",
+        "bulk_tile_downloaded",
+        "prefetch_executed",
+        "offline_tile_package_created"
+      ],
+      "properties": {
+        "asset_included": {"type": "boolean"},
+        "provider": {"type": ["string", "null"]},
+        "attribution_visible": {"type": "boolean"},
+        "attribution_text": {"type": ["string", "null"]},
+        "asset_pointer": {"type": ["string", "null"]},
+        "bulk_tile_downloaded": {"const": false},
+        "prefetch_executed": {"const": false},
+        "offline_tile_package_created": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "coordinate": {
+      "type": "object",
+      "required": ["longitude", "latitude"],
+      "properties": {
+        "longitude": {"type": "number", "minimum": -180, "maximum": 180},
+        "latitude": {"type": "number", "minimum": -90, "maximum": 90}
+      }
+    }
+  }
+}

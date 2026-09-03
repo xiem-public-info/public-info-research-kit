@@ -24,6 +24,7 @@ TESTS = (
     "run_official_source_fixture.py",
     "run_xhs_evidence_security.py",
     "run_osm_display_receipt.py",
+    "run_spatial_coordinate_evidence_v2.py",
     "run_doctor_policy.py",
     "run_per_machine_smoke_contract.py",
     "run_residential_bridge_lock.py",

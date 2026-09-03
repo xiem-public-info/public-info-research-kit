@@ -163,7 +163,7 @@ def build_plan(request: dict[str, Any]) -> dict[str, Any]:
             if not cfg.get("project_anchor"):
                 errors.append("map_gis requires project_anchor")
             else:
-                routes.append({"channel": "map_gis", "mode": "spatial_evidence", "skill": "skills/map-spatial-evidence", "capability_profile": CAPABILITY_PROFILES["map_gis"], "input_count": 1 + len(cfg.get("pois") or []), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False})
+                routes.append({"channel": "map_gis", "mode": "spatial_evidence", "skill": "skills/map-spatial-evidence", "capability_profile": CAPABILITY_PROFILES["map_gis"], "input_count": 1 + len(cfg.get("pois") or []), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False, "output_contract": "spatial_coordinate_evidence.v2", "validator": "tools/validate_spatial_coordinate_evidence_v2.py", "object_set_owner": "downstream_consumer", "project_location_model": "single_map_marker_centerpoint", "rendering_owner": "downstream_consumer", "display_validation_required_for_coordinate_package": False})
 
     canonical = json.dumps(request, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return {

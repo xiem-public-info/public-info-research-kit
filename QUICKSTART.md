@@ -1,6 +1,6 @@
 # Quickstart
 
-## 0.8.0-rc.1 候选版
+## 0.8.0-rc.2 候选版
 
 需要参加候选版试装的同事，请使用分支 `codex/public-v0.8-quality-parity`，不要从 `main` 安装。中文地址、命令和逐机验收说明见 [`RC_INSTALL_0.8.0.md`](RC_INSTALL_0.8.0.md)。普通稳定版用户继续使用 `main / v0.7.0`。
 
@@ -17,7 +17,7 @@
 只有应用内安装没有成功时，才复制执行这一条：
 
 ```bash
-codex plugin marketplace add xiem-public-info/public-info-research-kit && codex plugin add public-info-research-kit@public-info-research-public
+codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.2 && codex plugin add public-info-research-kit@public-info-research-public
 ```
 
 ## 开始任务

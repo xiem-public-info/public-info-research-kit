@@ -1,0 +1,234 @@
+{
+  "schema_version": "spatial_coordinate_evidence.v2",
+  "task_id": "SPATIAL-V2-FIXTURE-001",
+  "input_ownership": {
+    "case_project_id": "PROJECT-CASE",
+    "object_set_owner": "downstream_consumer",
+    "competitor_ids": ["PROJECT-A", "PROJECT-B"],
+    "resource_ids": ["AMENITY-SCHOOL", "RESOURCE-RIVER"],
+    "reference_ids": ["CITY-CENTER"]
+  },
+  "provider": {
+    "name": "example_map_platform",
+    "coordinate_crs": "GCJ-02",
+    "capture_date": "2026-09-02"
+  },
+  "objects": [
+    {
+      "object_id": "PROJECT-CASE",
+      "name": "本案示例",
+      "role": "case_project",
+      "location_model": "single_map_marker_centerpoint",
+      "centerpoint": {"longitude": 104.0551, "latitude": 30.6671}
+    },
+    {
+      "object_id": "PROJECT-A",
+      "name": "竞品 A",
+      "role": "competitor",
+      "location_model": "single_map_marker_centerpoint",
+      "centerpoint": {"longitude": 104.0682, "latitude": 30.6713}
+    },
+    {
+      "object_id": "PROJECT-B",
+      "name": "竞品 B",
+      "role": "competitor",
+      "location_model": "single_map_marker_centerpoint",
+      "centerpoint": {"longitude": 104.0435, "latitude": 30.6604}
+    },
+    {
+      "object_id": "AMENITY-SCHOOL",
+      "name": "示例学校",
+      "role": "amenity_compact",
+      "location_model": "single_map_marker_centerpoint",
+      "centerpoint": {"longitude": 104.0582, "latitude": 30.6652}
+    },
+    {
+      "object_id": "RESOURCE-RIVER",
+      "name": "示例河流",
+      "role": "amenity_large_or_elongated",
+      "location_model": "geometry_for_perpendicular_distance",
+      "geometry_reference": "fixture://resource-river-visible-geometry"
+    },
+    {
+      "object_id": "CITY-CENTER",
+      "name": "城市中心参照点",
+      "role": "reference_center",
+      "location_model": "single_map_marker_centerpoint",
+      "centerpoint": {"longitude": 104.0668, "latitude": 30.6570}
+    }
+  ],
+  "four_side_coordinate_evidence": {
+    "status": "ready",
+    "case_project_id": "PROJECT-CASE",
+    "rendering_owner": "downstream_consumer",
+    "outline_use": "downstream_approximate_outline_only",
+    "order_direction": "clockwise",
+    "corners": [
+      {
+        "order": 1,
+        "coordinate": {"longitude": 104.0538, "latitude": 30.6680},
+        "nearby_reference": {
+          "name": "示例路一段",
+          "kind": "road",
+          "coordinate": {"longitude": 104.0534, "latitude": 30.6681}
+        }
+      },
+      {
+        "order": 2,
+        "coordinate": {"longitude": 104.0564, "latitude": 30.6680},
+        "nearby_reference": {
+          "name": "示例路与北侧支路路口",
+          "kind": "intersection",
+          "coordinate": {"longitude": 104.0567, "latitude": 30.6682}
+        }
+      },
+      {
+        "order": 3,
+        "coordinate": {"longitude": 104.0563, "latitude": 30.6662},
+        "nearby_reference": {
+          "name": "南侧支路",
+          "kind": "road",
+          "coordinate": {"longitude": 104.0565, "latitude": 30.6660}
+        }
+      },
+      {
+        "order": 4,
+        "coordinate": {"longitude": 104.0539, "latitude": 30.6661},
+        "nearby_reference": {
+          "name": "西侧路口",
+          "kind": "intersection",
+          "coordinate": {"longitude": 104.0535, "latitude": 30.6659}
+        }
+      }
+    ],
+    "note": "四个角点按顺时针排列，仅供下游绘制近似轮廓"
+  },
+  "distances": [
+    {
+      "distance_id": "DIST-01",
+      "from_id": "PROJECT-CASE",
+      "to_id": "PROJECT-A",
+      "distance_type": "straight_line",
+      "distance_m": 1350
+    },
+    {
+      "distance_id": "DIST-02",
+      "from_id": "PROJECT-CASE",
+      "to_id": "AMENITY-SCHOOL",
+      "distance_type": "walking_route",
+      "distance_m": 520,
+      "duration_min": 8,
+      "route_snap": "provider_auto_snap_from_centerpoints"
+    },
+    {
+      "distance_id": "DIST-03",
+      "from_id": "PROJECT-A",
+      "to_id": "AMENITY-SCHOOL",
+      "distance_type": "walking_route",
+      "distance_m": 1680,
+      "duration_min": 24,
+      "route_snap": "provider_auto_snap_from_centerpoints"
+    },
+    {
+      "distance_id": "DIST-04",
+      "from_id": "PROJECT-CASE",
+      "to_id": "RESOURCE-RIVER",
+      "distance_type": "perpendicular_shortest_straight",
+      "distance_m": 740
+    },
+    {
+      "distance_id": "DIST-05",
+      "from_id": "PROJECT-CASE",
+      "to_id": "CITY-CENTER",
+      "distance_type": "driving_route",
+      "distance_m": 3200,
+      "duration_min": 11,
+      "route_snap": "provider_auto_snap_from_centerpoints"
+    },
+    {
+      "distance_id": "DIST-06",
+      "from_id": "PROJECT-CASE",
+      "to_id": "AMENITY-SCHOOL",
+      "distance_type": "straight_line",
+      "distance_m": 360
+    },
+    {
+      "distance_id": "DIST-07",
+      "from_id": "PROJECT-A",
+      "to_id": "AMENITY-SCHOOL",
+      "distance_type": "straight_line",
+      "distance_m": 1240
+    },
+    {
+      "distance_id": "DIST-08",
+      "from_id": "PROJECT-B",
+      "to_id": "AMENITY-SCHOOL",
+      "distance_type": "straight_line",
+      "distance_m": 1580
+    },
+    {
+      "distance_id": "DIST-09",
+      "from_id": "PROJECT-B",
+      "to_id": "AMENITY-SCHOOL",
+      "distance_type": "walking_route",
+      "distance_m": 2050,
+      "duration_min": 29,
+      "route_snap": "provider_auto_snap_from_centerpoints"
+    }
+  ],
+  "barrier_observations": [
+    {
+      "from_id": "PROJECT-CASE",
+      "to_id": "AMENITY-SCHOOL",
+      "barriers": ["none"],
+      "walking_effect": "more_convenient",
+      "observation": "现有步行路径不需跨越明显主干道或河流"
+    },
+    {
+      "from_id": "PROJECT-A",
+      "to_id": "AMENITY-SCHOOL",
+      "barriers": ["arterial_road"],
+      "walking_effect": "less_convenient",
+      "observation": "路线需跨越一条主干道"
+    },
+    {
+      "from_id": "PROJECT-B",
+      "to_id": "AMENITY-SCHOOL",
+      "barriers": ["river"],
+      "walking_effect": "less_convenient",
+      "observation": "路线需经桥梁跨河"
+    }
+  ],
+  "relative_access_findings": [
+    {
+      "finding_id": "FINDING-01",
+      "subject_id": "PROJECT-CASE",
+      "reference_object_id": "AMENITY-SCHOOL",
+      "comparison_project_ids": ["PROJECT-CASE", "PROJECT-A", "PROJECT-B"],
+      "comparison_scope": "caller_supplied_set_only",
+      "finding": "case_distance_advantage",
+      "basis_distance_ids": ["DIST-06", "DIST-07", "DIST-08"],
+      "note": "本案在调用方给定三项目集合内直线距离明显更短"
+    },
+    {
+      "finding_id": "FINDING-02",
+      "subject_id": "PROJECT-CASE",
+      "reference_object_id": "AMENITY-SCHOOL",
+      "comparison_project_ids": ["PROJECT-CASE", "PROJECT-A", "PROJECT-B"],
+      "comparison_scope": "caller_supplied_set_only",
+      "finding": "case_walking_convenience_advantage",
+      "basis_distance_ids": ["DIST-02", "DIST-03", "DIST-09"],
+      "note": "本案步行路线更短且无明显跨越阻隔"
+    }
+  ],
+  "osm_use": {
+    "asset_included": false,
+    "provider": null,
+    "attribution_visible": false,
+    "attribution_text": null,
+    "asset_pointer": null,
+    "bulk_tile_downloaded": false,
+    "prefetch_executed": false,
+    "offline_tile_package_created": false
+  }
+}
