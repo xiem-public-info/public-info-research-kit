@@ -15,8 +15,13 @@
     "thread_policy"
   ],
   "properties": {
-    "schema": {"const": "d292_research_orchestration.v1"},
-    "task_id": {"type": "string", "minLength": 1},
+    "schema": {
+      "const": "d292_research_orchestration.v1"
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
     "aggregate_surfaces": {
       "type": "array",
       "items": {
@@ -31,15 +36,38 @@
           "ordinary_original_source_surfaces"
         ],
         "properties": {
-          "platform": {"enum": ["wechat", "xhs"]},
-          "aggregate_surface_id": {"enum": ["wechat_ai_search", "xhs_ask_diandian"]},
-          "authorization_status": {"enum": ["authorized", "not_authorized", "unresolved"]},
-          "aggregate_output_role": {"const": "ai_aggregate_clue"},
-          "aggregate_answer_evidence_allowed": {"const": false},
+          "platform": {
+            "enum": [
+              "wechat",
+              "xhs"
+            ]
+          },
+          "aggregate_surface_id": {
+            "enum": [
+              "wechat_ai_search",
+              "xhs_ask_diandian"
+            ]
+          },
+          "authorization_status": {
+            "enum": [
+              "authorized",
+              "not_authorized",
+              "unresolved"
+            ]
+          },
+          "aggregate_output_role": {
+            "const": "ai_aggregate_clue"
+          },
+          "aggregate_answer_evidence_allowed": {
+            "const": false
+          },
           "ordinary_original_source_surfaces": {
             "type": "array",
             "minItems": 1,
-            "items": {"type": "string", "minLength": 1}
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         }
       }
@@ -47,11 +75,22 @@
     "competitor_lifecycle_precheck": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["applies", "complete_before_deep_retrieval", "downstream_decides_final_competitor_role", "objects"],
+      "required": [
+        "applies",
+        "complete_before_deep_retrieval",
+        "downstream_decides_final_competitor_role",
+        "objects"
+      ],
       "properties": {
-        "applies": {"type": "boolean"},
-        "complete_before_deep_retrieval": {"const": true},
-        "downstream_decides_final_competitor_role": {"const": true},
+        "applies": {
+          "type": "boolean"
+        },
+        "complete_before_deep_retrieval": {
+          "const": true
+        },
+        "downstream_decides_final_competitor_role": {
+          "const": true
+        },
         "objects": {
           "type": "array",
           "items": {
@@ -69,15 +108,50 @@
               "recommended_role"
             ],
             "properties": {
-              "object_id": {"type": "string", "minLength": 1},
-              "identity_closed": {"const": true},
-              "current_new_home_supply_checked": {"const": true},
-              "recent_six_month_content_checked": {"const": true},
-              "launch_and_actual_product_checked": {"const": true},
-              "delivery_date_checked": {"const": true},
-              "months_to_delivery": {"oneOf": [{"type": "integer"}, {"const": "unknown"}]},
-              "applicable_product_scope": {"enum": ["whole_project", "partial_tier", "unknown"]},
-              "recommended_role": {"enum": ["deep_search", "partial_tier", "tail_end_reference", "exclude_candidate"]}
+              "object_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "identity_closed": {
+                "const": true
+              },
+              "current_new_home_supply_checked": {
+                "const": true
+              },
+              "recent_six_month_content_checked": {
+                "const": true
+              },
+              "launch_and_actual_product_checked": {
+                "const": true
+              },
+              "delivery_date_checked": {
+                "const": true
+              },
+              "months_to_delivery": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "const": "unknown"
+                  }
+                ]
+              },
+              "applicable_product_scope": {
+                "enum": [
+                  "whole_project",
+                  "partial_tier",
+                  "unknown"
+                ]
+              },
+              "recommended_role": {
+                "enum": [
+                  "deep_search",
+                  "partial_tier",
+                  "tail_end_reference",
+                  "exclude_candidate"
+                ]
+              }
             }
           }
         }
@@ -96,13 +170,31 @@
         "global_dedup_unit"
       ],
       "properties": {
-        "minimum_per_project": {"type": "integer", "minimum": 0},
-        "target_per_project": {"type": "integer", "minimum": 0},
-        "target_is_maximum": {"const": false},
-        "preserve_qualified_excess": {"const": true},
-        "project_event_affiliation_count": {"type": "integer", "minimum": 0},
-        "unique_household_journey_count": {"type": "integer", "minimum": 0},
-        "global_dedup_unit": {"const": "independent_person_or_household_journey"}
+        "minimum_per_project": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "target_per_project": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "target_is_maximum": {
+          "const": false
+        },
+        "preserve_qualified_excess": {
+          "const": true
+        },
+        "project_event_affiliation_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unique_household_journey_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "global_dedup_unit": {
+          "const": "independent_person_or_household_journey"
+        }
       }
     },
     "first_return": {
@@ -117,19 +209,43 @@
         "merged_increment_proposal"
       ],
       "properties": {
-        "project_fact_support_assessed": {"const": true},
-        "competitor_relation_support_assessed": {"const": true},
-        "customer_choice_support_assessed": {"const": true},
-        "counterexample_support_assessed": {"const": true},
-        "semantic_core_support_status": {"enum": ["supported", "partial", "unsupported"]},
+        "project_fact_support_assessed": {
+          "const": true
+        },
+        "competitor_relation_support_assessed": {
+          "const": true
+        },
+        "customer_choice_support_assessed": {
+          "const": true
+        },
+        "counterexample_support_assessed": {
+          "const": true
+        },
+        "semantic_core_support_status": {
+          "enum": [
+            "supported",
+            "partial",
+            "unsupported"
+          ]
+        },
         "merged_increment_proposal": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["proposed", "downstream_authorization_required", "execution_authorized"],
+          "required": [
+            "proposed",
+            "downstream_authorization_required",
+            "execution_authorized"
+          ],
           "properties": {
-            "proposed": {"type": "boolean"},
-            "downstream_authorization_required": {"const": true},
-            "execution_authorized": {"const": false}
+            "proposed": {
+              "type": "boolean"
+            },
+            "downstream_authorization_required": {
+              "type": "boolean"
+            },
+            "execution_authorized": {
+              "type": "boolean"
+            }
           }
         }
       }
@@ -137,22 +253,45 @@
     "official_expression_policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["core_view_required", "necessary_original_wording_required", "source_locator_required"],
+      "required": [
+        "core_view_required",
+        "necessary_original_wording_required",
+        "source_locator_required"
+      ],
       "properties": {
-        "core_view_required": {"const": true},
-        "necessary_original_wording_required": {"const": true},
-        "source_locator_required": {"const": true}
+        "core_view_required": {
+          "const": true
+        },
+        "necessary_original_wording_required": {
+          "const": true
+        },
+        "source_locator_required": {
+          "const": true
+        }
       }
     },
     "thread_policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["current_retrieval_task_naturally_closed", "rotate_thread_after_close", "urge_or_interleave_next_batch"],
+      "required": [
+        "current_retrieval_task_naturally_closed",
+        "rotate_thread_after_close",
+        "urge_or_interleave_next_batch"
+      ],
       "properties": {
-        "current_retrieval_task_naturally_closed": {"type": "boolean"},
-        "rotate_thread_after_close": {"type": "boolean"},
-        "urge_or_interleave_next_batch": {"const": false}
+        "current_retrieval_task_naturally_closed": {
+          "type": "boolean"
+        },
+        "rotate_thread_after_close": {
+          "type": "boolean"
+        },
+        "urge_or_interleave_next_batch": {
+          "const": false
+        }
       }
+    },
+    "in_scope_iteration_package": {
+      "type": "object"
     }
   }
 }

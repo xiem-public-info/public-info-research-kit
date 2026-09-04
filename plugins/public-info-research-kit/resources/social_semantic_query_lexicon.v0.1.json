@@ -36,7 +36,7 @@
     "cross_task_query_promotion_with_human_acceptance"
   ],
   "controlled_pilots": [
-    "wechat_ai_search_offline_gate",
+    "wechat_ai_search_task_gate",
     "xhs_ask_diandian_independent_surface",
     "platform_special_syntax",
     "cross_task_reuse_observation",
@@ -64,14 +64,14 @@
     "正式名、异体字、历史名和跨城同名优先拆成独立查询",
     "聚合 AI 只生成候选方向、同义词、冲突和回源线索，不承担消费证据",
     "微信 AI 搜索与小红书问点点必须按平台和表面分别登记；普通搜索不得冒充聚合 AI",
-    "研究检索首次回传必须用项目事实、竞品关系、客户选择和反例检查统一语义核；不足时只返回一份合并增量提案",
+    "研究检索首次回传必须用项目事实、竞品关系、客户选择和反例检查统一语义核；不足时范围内继续研究，超范围才返回一份合并增量提案",
     "住宅竞品深搜前先做身份、当前新房供给、近六个月内容、开盘或加推、实际可选产品、交付期和适用产品层的轻量生命周期核验",
     "完整事件分别统计项目事件归属和全局独立家庭旅程；任务目标不是上限，已经取得的合格超额样本继续保留",
     "官方优秀表达同时保留核心观点、必要短原话和原文定位；只有摘要不算表达资产完成",
     "列表就绪后不得只看标题连续换词，须满足驻留门才可切换查询",
     "查询语义失败与输入、控制、渲染和安全停止分开记录",
     "只有正确提交并充分查看后的查询效果可以进入查询学习",
-    "业务语义内核可以提出增量查询，但未获 adaptive_extension 授权不得执行",
+    "业务语义内核提出线索，本包自主编排范围内增量；超范围才需 adaptive_extension 授权",
     "不得假定未经当前客户端验证的平台特殊语法、排序或筛选能力"
   ],
   "atom_families": {
@@ -207,7 +207,7 @@
     "aggregate_surface_identity_policy": "聚合任务必须记录 platform、aggregate_surface_id、current_authorization_status 与 ordinary_original_source_surface；微信 AI 搜索和小红书问点点是两个独立表面，普通搜索不得事后标记为聚合 AI",
     "residential_choice_recall_policy": "完整购房事件优先使用板块或通勤锚、购买意图或家庭任务、买房或看房日记、日常生活、新规产品、行动结果和价值冲突的组合；项目名加单一意图只作其中一种窄查询，不扩成固定矩阵",
     "residential_competitor_lifecycle_precheck_policy": "深度事件和官方表达检索前先核身份、当前新房供给、近六个月销售或产品内容、开盘加推预售、实际可选产品、交付期和适用产品层；家书或交付信号触发交付日期核验，不足十二个月到交付时只建议下游降为尾盘参照",
-    "first_return_feedback_policy": "首次回传必须把真实标题、账号、日期、生命周期、行动词、身份冲突和低效词喂给下一轮独立查询，并检查项目事实、竞品关系、客户选择与反例是否共同支持统一语义核；不足时返回一个合并 proposed_incremental_batch，未经授权不得执行",
+    "first_return_feedback_policy": "首次回传必须把真实标题、账号、日期、生命周期、行动词、身份冲突和低效词喂给下一轮独立查询，并检查项目事实、竞品关系、客户选择与反例是否共同支持统一语义核；不足时范围内继续 in_scope_iteration_batch，超范围返回合并 proposed_incremental_batch 待裁定",
     "official_expression_fidelity_policy": "官方表达资产必须同时保留核心观点、必要短原话、标题、账号或主体、日期、生命周期和原文定位；只有摘要不得标记完成",
     "phase_order": ["身份与对象", "竞品生命周期轻量核验", "分平台聚合解歧与信息密度", "原文列表回源", "体验与选择", "竞品或替代", "反例与冲突", "统一语义核支持判断", "收敛"],
     "freeze_before_live": true,

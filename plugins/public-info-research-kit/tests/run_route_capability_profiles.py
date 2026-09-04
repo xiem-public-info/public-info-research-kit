@@ -80,11 +80,11 @@ def main() -> int:
             if route.get("surface_id") == "wechat_ai_search":
                 channel_invariants_ok = channel_invariants_ok and all(
                     (
-                        route.get("mode") == "aggregate_ai_gate_preparation",
+                        route.get("mode") == "aggregate_ai_task_retrieval",
                         route.get("gate_request_schema") == "wechat_ai_search_gate_request.v1",
                         route.get("gate_tool") == "tools/check_wechat_ai_search_gate_preflight.py",
                         route.get("research_orchestration_schema") == "d292_research_orchestration.v1",
-                        route.get("status") == "gate_ready_not_live_validated",
+                        route.get("status") == "task_driven_retrieval_ready_not_live_revalidated",
                         route.get("execution_authorized") is False,
                         route.get("real_gui_validated") is False,
                         route.get("original_source_backread_required") is True,

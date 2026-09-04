@@ -18,7 +18,10 @@ description: 将调用方给定的项目、配套和参照对象转为中心点�
 
 本渠道不绘图。旧 `tools/assemble_osm_asset.py` 和 `tools/validate_osm_display_receipt.py` 仅保留用于历史或独立下游显示任务，不是新空间任务必经步骤。实际使用 OSM 底图、截图或拼接资产时才要求可见 `© OpenStreetMap contributors` 署名；未使用 OSM 资产不强制署名。OSM Standard 不得称为卫星影像，不得批量抓取、预取公共瓦片或制作离线瓦片包。
 
-## 使用边界（0.8.0-rc.2）
+
+收到用户或下游的检索合同，即默认授权全部检索渠道和公开搜索表面按需使用。下游只给业务目标、主体和内容需求；本工具包选择渠道、AI 使用顺序和精确词。AI→原文、原文→AI→后续计划均属常规研究。每条查询提交前冻结，范围内迭代无需另批；超出对象、目标或预算才请求裁定。权限不代表工具、登录、访问或真实渠道已验证。 规则见 `resources/retrieval_authority_current.json`，合同编译见 `tools/compile_retrieval_execution_request.py`。
+
+## 使用边界（0.8.0-rc.3）
 
 - 使用本人的正常账号和本机正常界面，保持合理频率；完整保留当前可见桌面研究能力。
 - 不迁移、上传或交接 Cookie、token、profile、扫码凭证、本地存储、私聊、通讯录或非公开资料。

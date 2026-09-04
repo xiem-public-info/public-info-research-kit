@@ -1,15 +1,32 @@
 {
   "schema": "adaptive_query_sufficiency_contract.v1",
   "status": "active_public_default_for_research_retrieval",
-  "source_decisions": ["D-237", "D-240", "D-241"],
+  "source_decisions": [
+    "D-237",
+    "D-240",
+    "D-241"
+  ],
   "purpose": "把固定查询覆盖与业务证据充分性分开；允许上游评估缺口并提出增量查询，同时由请求方或下游业务 Owner 保留验收、增量授权和最终解释权。",
   "applicability": {
     "schema": "query_sufficiency_applicability.v1",
     "d237_required_gate_id": "GATE-D237-RESEARCH-SUFFICIENCY-DEFAULT",
     "default_policy_for_real_retrieval": "d237_required",
-    "allowed_policies": ["d237_required", "exempt_simple_direct_retrieval"],
-    "simple_direct_retrieval_types": ["known_url_read", "specified_document_fetch", "single_fact_verification", "exact_record_retrieval"],
-    "required_exemption_fields": ["exemption_type", "evidence_target", "stop_condition", "human_authorization_ref"],
+    "allowed_policies": [
+      "d237_required",
+      "exempt_simple_direct_retrieval"
+    ],
+    "simple_direct_retrieval_types": [
+      "known_url_read",
+      "specified_document_fetch",
+      "single_fact_verification",
+      "exact_record_retrieval"
+    ],
+    "required_exemption_fields": [
+      "exemption_type",
+      "evidence_target",
+      "stop_condition",
+      "human_authorization_ref"
+    ],
     "research_characteristics_forbid_exemption": [
       "multiple_independent_queries",
       "support_and_counterevidence_required",
@@ -41,10 +58,30 @@
       "query_learning_record"
     ]
   },
-  "acceptance_modes": ["count_based", "quality_sufficiency", "hybrid"],
-  "batch_states": ["initial_frozen_batch", "proposed_incremental_batch", "approved_incremental_batch"],
-  "evidence_sufficiency_statuses": ["sufficient", "partially_sufficient", "expression_supply_gap", "not_assessed"],
-  "marginal_information_gain_assessments": ["high", "medium", "low", "none", "unknown"],
+  "acceptance_modes": [
+    "count_based",
+    "quality_sufficiency",
+    "hybrid"
+  ],
+  "batch_states": [
+    "initial_frozen_batch",
+    "proposed_incremental_batch",
+    "approved_incremental_batch",
+    "in_scope_iteration_batch"
+  ],
+  "evidence_sufficiency_statuses": [
+    "sufficient",
+    "partially_sufficient",
+    "expression_supply_gap",
+    "not_assessed"
+  ],
+  "marginal_information_gain_assessments": [
+    "high",
+    "medium",
+    "low",
+    "none",
+    "unknown"
+  ],
   "failure_classes": [
     "query_semantic_failure",
     "identity_collision",
@@ -57,8 +94,16 @@
     "evidence_conversion_failure"
   ],
   "query_recommendation": {
-    "statuses": ["candidate", "recommended", "rejected"],
-    "human_review_statuses": ["pending", "accepted", "rejected"],
+    "statuses": [
+      "candidate",
+      "recommended",
+      "rejected"
+    ],
+    "human_review_statuses": [
+      "pending",
+      "accepted",
+      "rejected"
+    ],
     "minimum_validated_task_count_for_recommended": 2,
     "human_acceptance_required_for_recommended": true,
     "human_review_trigger": "promotion_threshold_reached_only",
@@ -66,9 +111,20 @@
     "candidate_stage_human_review_required": false,
     "review_batch_schema": "query_promotion_review_batch.v1"
   },
-  "query_attribution_statuses": ["recorded", "not_recorded_legacy_receipt"],
+  "query_attribution_statuses": [
+    "recorded",
+    "not_recorded_legacy_receipt"
+  ],
   "package_schema": "adaptive_query_sufficiency_package.v1",
-  "required_package_sections": ["task_id", "business_question_ref", "business_question_family", "consumer_contract", "batch", "receipt", "query_learning_records"],
+  "required_package_sections": [
+    "task_id",
+    "business_question_ref",
+    "business_question_family",
+    "consumer_contract",
+    "batch",
+    "receipt",
+    "query_learning_records"
+  ],
   "required_query_fields": [
     "query_id",
     "exact_query_text",

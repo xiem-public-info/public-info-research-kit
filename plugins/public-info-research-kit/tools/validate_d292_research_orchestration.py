@@ -7,6 +7,9 @@ import argparse
 import json
 from pathlib import Path
 from typing import Any
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from validate_adaptive_query_sufficiency import validate_package
 
 
 EXPECTED_SURFACES = {
@@ -151,9 +154,13 @@ def validate(contract: dict[str, Any]) -> dict[str, Any]:
         proposal = {}
     if support in {"partial", "unsupported"} and proposal.get("proposed") is not True:
         errors.append("incomplete_semantic_core_requires_one_merged_increment_proposal")
-    if proposal.get("downstream_authorization_required") is not True:
+    iteration = contract.get("in_scope_iteration_package")
+    in_scope = isinstance(iteration, dict) and iteration.get("task_id") == contract.get("task_id") and iteration.get("batch", {}).get("batch_state") == "in_scope_iteration_batch" and validate_package(iteration)["passed"]
+    if iteration is not None and not in_scope:
+        errors.append("invalid_in_scope_iteration_package")
+    if proposal.get("downstream_authorization_required") is not (False if in_scope else True):
         errors.append("merged_increment_requires_downstream_authorization")
-    if proposal.get("execution_authorized") is not False:
+    if proposal.get("execution_authorized") is not in_scope:
         errors.append("merged_increment_cannot_self_authorize")
 
     official = contract.get("official_expression_policy")
@@ -182,7 +189,7 @@ def validate(contract: dict[str, Any]) -> dict[str, Any]:
         "aggregate_surface_count": len(surfaces),
         "errors": errors,
         "live_authority_expanded": False,
-        "incremental_execution_authorized": False,
+        "incremental_execution_authorized": in_scope and not errors,
         "platform_opened": False,
         "network_accessed": False,
         "external_write_executed": False,

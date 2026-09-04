@@ -44,7 +44,7 @@ def main() -> int:
     valid = fixture["valid_request"]
     cases = [
         run_case("valid_owner_scoped_offline_gate", valid, "gate_ready_not_live_validated", True),
-        run_case("require_live_is_rejected", valid, "wechat_ai_search_live_not_validated", False, require_live=True),
+        run_case("require_live_is_rejected", valid, "retrieval_task_contract_required", False, require_live=True),
     ]
     for row in fixture["negative_cases"]:
         request = copy.deepcopy(valid)

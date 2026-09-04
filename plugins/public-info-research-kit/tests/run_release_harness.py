@@ -14,6 +14,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = ROOT.parents[1]
 TESTS = (
+    "run_task_driven_retrieval.py",
     "run_route_capability_profiles.py",
     "run_portable_channel_preflight.py",
     "run_wechat_ai_search_gate_preflight.py",

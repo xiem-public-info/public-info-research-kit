@@ -5,7 +5,10 @@ description: 在真人首次预开的微信公开搜一搜中，以 Direct Compu
 
 # 微信 Lite 公开文章研究
 
-仅在任务已明确要求微信关键词检索或公众号账号清单研究时使用。`wechat_ai_search` 当前只提供离线 Gate，不进入本 Skill 的真实执行热路径。
+本包判断微信适合检索目标时使用，覆盖 AI、文章、视频、小程序和公众号等公开搜索表面；无需下游指定微信或 AI。
+
+
+收到用户或下游的检索合同，即默认授权全部检索渠道和公开搜索表面按需使用。下游只给业务目标、主体和内容需求；本工具包选择渠道、AI 使用顺序和精确词。AI→原文、原文→AI→后续计划均属常规研究。每条查询提交前冻结，范围内迭代无需另批；超出对象、目标或预算才请求裁定。权限不代表工具、登录、访问或真实渠道已验证。 规则见 `resources/retrieval_authority_current.json`，合同编译见 `tools/compile_retrieval_execution_request.py`。
 
 ## 前置条件
 
@@ -18,12 +21,13 @@ description: 在真人首次预开的微信公开搜一搜中，以 Direct Compu
 - 终端用户自行安装并授权 Computer Use。公开包只提醒和检测，不安装、不启用、不授予系统权限，也不代替用户登录。
 - 当前可靠启动方式是使用者先登录微信并手动打开公开“搜一搜”，并让该页面保持在 Computer Use 当前可操作的主屏执行面。Plugin 从可见搜一搜页面开始；中途除微信真实退出登录外，不要求使用者重新打开。
 
-## 微信 AI 搜索表面边界
+## 微信 AI 及其他公开表面
 
-- 若路由结果为 `aggregate_ai_gate_preparation`，读取 `resources/channel-capability-profiles/wechat-ai-search.v1.json`，并运行 `tools/check_wechat_ai_search_gate_preflight.py`。
-- 当前状态上限是 `gate_ready_not_live_validated`：`execution_authorized=false`、`real_gui_validated=false`。不得打开微信 AI、输入真实查询、操作登录或借普通搜索冒充聚合表面。
-- 聚合输出只能交付对象解歧、信息密度、标题、账号、日期、生命周期、冲突、反例和原始来源导航线索；正式消费前必须用新的独立查询回到普通微信文章表面和原文。
-- 未来 live 能力需由具名真实任务另行冻结查询、频率、配额、停止线和验收口径，并取得用户明确授权；本候选不预授予。
+- 由本包判断先 AI 解歧，还是先读文章再用 AI 澄清和制定后续计划。读取 `resources/channel-capability-profiles/wechat-ai-search.v1.json`。
+- 编译业务合同与本包计划后运行 `tools/check_wechat_ai_search_gate_preflight.py --request <请求文件> --require-live`。该检查器内部重新验证所附 `owner_request` 的任务、查询、共享桌面、工具和登录条件，不接受借用其他任务回执。
+- `task_authorized_not_executed` 只表示权限和检查通过；`real_gui_validated=false`。实际执行依赖当前可观察公开表面，不能凭预检虚构已执行。
+- AI 只做解歧、语义澄清、计划和回源导航。文章原文、视频实际可见文字等承担证据；不把普通搜索或问点点改标为微信 AI。
+- 视频、小程序、公众号搜索同样继承任务权限，按最新画面选择对应公开表面；不可见、无访问权限或工具审批阻断时如实停在该处，不倒退到退役路线。
 
 ## 关键词模式：`WECHAT-LITE-DIRECT-CU-V1`
 
@@ -57,13 +61,13 @@ description: 在真人首次预开的微信公开搜一搜中，以 Direct Compu
 
 结果列表就绪后应用 `query_dwell_gate`：只有达到任务冻结的高质量开文／阅读目标、已浏览两个内容确有推进的结果批次仍无高质量候选、出现明显身份／主题漂移，或触发停止线时才能换词。不得只看首屏标题连续切换查询。宽到细任务必须先形成当前阶段结论再进入下一阶段。
 
-每个查询结束时记录查询效果、结果批次、实际开文数、来源角色覆盖、边际信息增益和失败类别。只有正确提交且充分查看后的低相关结果才能记 `query_semantic_failure`；输入、窗口、渲染和安全停止不得拿来评价关键词质量。业务语义内核可以提出下一批查询，但未获 `adaptive_extension` 授权且未冻结为可执行查询前不得继续运行。
+每个查询结束时记录查询效果、结果批次、实际开文数、来源角色覆盖、边际信息增益和失败类别。只有正确提交且充分查看后的低相关结果才能记 `query_semantic_failure`；输入、窗口、渲染和安全停止不得拿来评价关键词质量。业务语义内核可以提出下一批查询，范围内按原任务授权逐条冻结后继续，超范围另行裁定。
 
 ## 停止线
 
 验证码、登录、安全提示、风控、焦点不明、账号身份含混、页面不可读或共享桌面冲突出现时立即停止并回报；不得尝试绕过。若出现 `noWindowsAvailable`，先把它视为搜一搜离开当前主屏可操作执行面的环境信号：停止当前歧义动作，不重复粘贴或提交；由使用者恢复主屏布局后在新任务或新操作上下文继续，不自动搬窗、重启微信或建设恢复状态机。分别使用 `query_transport_failure`、`route_control_failure`、`source_render_failure` 或 `safety_stop`，不要笼统写成搜索失败。
 
-## 使用边界（0.8.0-rc.2）
+## 使用边界（0.8.0-rc.3）
 
 - 使用本人的正常账号和本机正常界面，保持合理频率；完整保留当前可见桌面研究能力。
 - 不迁移、上传或交接 Cookie、token、profile、扫码凭证、本地存储、私聊、通讯录或非公开资料。

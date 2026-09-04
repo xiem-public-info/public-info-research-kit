@@ -1,6 +1,6 @@
 {
   "name": "public-info-research-kit",
-  "version": "0.8.0-rc.2",
+  "version": "0.8.0-rc.3",
   "description": "面向公众自助使用的公开信息研究工具包，覆盖渠道画像、充分性、网页、微信、小红书、文档、Feed、地图与证据交付。",
   "author": {
     "name": "xiem-public-info",

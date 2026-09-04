@@ -4,23 +4,21 @@
   "channel": "wechat",
   "surface_id": "wechat_ai_search",
   "route": "WECHAT-AI-SEARCH-SURFACE-V1",
-  "status": "gate_ready_not_live_validated",
+  "status": "task_driven_retrieval_ready_not_live_revalidated",
   "execution_owner": "installed_public_info_research_kit",
   "business_owner": "requesting_user_or_downstream_project",
   "good_at": [
-    "离线检查微信 AI 搜索表面的身份与用途声明",
+    "根据收到的检索合同检查任务权限、微信 AI 表面身份与执行条件",
     "约束聚合线索只用于对象解歧、信息密度、原始来源导航、反例和生命周期线索",
     "要求所有可消费主张回到微信普通文章结果、公众号文章列表或已知公开文章原文"
   ],
   "not_good_at": [
-    "当前不具备任何微信 AI 真实表面执行授权",
-    "不打开微信、不输入真实查询、不操作登录或账号",
     "不把聚合回答当作事实、官方表达或用户声音",
     "不允许普通微信搜索或小红书问点点冒充微信 AI 搜索"
   ],
   "human_prerequisites": [
-    "本候选只需离线审核，无须打开微信或准备登录态",
-    "未来 live 能力必须由具名真实任务另行冻结查询、频率、配额、停止线和验收口径，并取得用户明确授权"
+    "检索合同到达即默认覆盖全部公开检索渠道与表面，按需使用，无需逐项授权",
+    "使用者维护正常登录与 Computer Use 权限；本机当前表面和共享桌面条件须可观察"
   ],
   "package_policy": {
     "install_or_enable_computer_use": false,
@@ -31,8 +29,8 @@
   "golden_method": [
     "先固定 platform=wechat 与 aggregate_surface_id=wechat_ai_search",
     "声明聚合用途、普通原文回源面和 aggregate_answer_evidence_allowed=false",
-    "执行离线门槛并保留失败状态与零外部动作回执",
-    "若未来获独立 live Gate，聚合轮仍只交付标题、账号、日期、生命周期、冲突、反例和回源线索",
+    "通过任务授权、渠道就绪和 AI 表面检查；每条查询提交前冻结",
+    "AI 只交付解歧、语义澄清、后续计划、冲突、反例与回源线索",
     "使用新的独立 query_id 与 exact_query_text 回到普通微信原文表面核验"
   ],
   "failure_classes": [
@@ -61,9 +59,9 @@
     "tools/validate_public_evidence.py"
   ],
   "gate_policy": {
-    "offline_gate_preparation_allowed": true,
-    "live_execution_authorized": false,
+    "task_contract_authority_inherited": true,
+    "per_surface_authorization_required": false,
     "real_gui_validated": false,
-    "status_ceiling": "gate_ready_not_live_validated"
+    "preflight_does_not_execute": true
   }
 }

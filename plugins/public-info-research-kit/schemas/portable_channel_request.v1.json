@@ -20,22 +20,58 @@
     "query_plan",
     "shared_gui",
     "computer_use",
-    "end_user_session",
-    "live_gate"
+    "end_user_session"
   ],
   "properties": {
-    "schema": {"const": "portable_channel_request.v1"},
-    "task_id": {"type": "string", "minLength": 1},
-    "channel": {"enum": ["wechat", "xhs"]},
-    "channel_profile": {"enum": ["wechat.v1", "xhs.v1"]},
-    "execution_owner": {"const": "installed_public_info_research_kit"},
-    "downstream_business_owner": {"type": "string", "minLength": 1},
-    "business_question": {"type": "string", "minLength": 1},
-    "intent": {"type": "string", "minLength": 1},
-    "evidence_type": {"type": "string", "minLength": 1},
-    "usage_boundary": {"type": "string", "minLength": 1},
-    "stop_condition": {"type": "string", "minLength": 1},
-    "query_plan_schema": {"const": "social_query_plan.v1"},
+    "schema": {
+      "const": "portable_channel_request.v1"
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "channel": {
+      "enum": [
+        "wechat",
+        "xhs"
+      ]
+    },
+    "channel_profile": {
+      "enum": [
+        "wechat.v1",
+        "xhs.v1"
+      ]
+    },
+    "execution_owner": {
+      "const": "installed_public_info_research_kit"
+    },
+    "downstream_business_owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "business_question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "usage_boundary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stop_condition": {
+      "type": "string",
+      "minLength": 1
+    },
+    "query_plan_schema": {
+      "const": "social_query_plan.v1"
+    },
     "query_plan": {
       "type": "array",
       "minItems": 1,
@@ -50,18 +86,46 @@
           "acceptance"
         ],
         "properties": {
-          "query_id": {"type": "string", "minLength": 1},
-          "platform": {"enum": ["wechat", "xhs"]},
-          "exact_query_text": {"type": "string", "minLength": 1},
-          "execution_state": {"enum": ["frozen", "proposed_incremental"]},
+          "query_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "platform": {
+            "enum": [
+              "wechat",
+              "xhs"
+            ]
+          },
+          "exact_query_text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "execution_state": {
+            "enum": [
+              "frozen",
+              "proposed_incremental"
+            ]
+          },
           "acceptance": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["minimum_result_batches", "minimum_actual_opens"],
+            "required": [
+              "minimum_result_batches",
+              "minimum_actual_opens"
+            ],
             "properties": {
-              "minimum_result_batches": {"type": "integer", "minimum": 1},
-              "minimum_actual_opens": {"type": "integer", "minimum": 1}
+              "minimum_result_batches": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "minimum_actual_opens": {
+                "type": "integer",
+                "minimum": 0
+              }
             }
+          },
+          "surface_id": {
+            "type": "string"
           }
         }
       }
@@ -69,45 +133,130 @@
     "shared_gui": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["resource_id", "serialization_required", "lease_state"],
+      "required": [
+        "resource_id",
+        "serialization_required",
+        "lease_state"
+      ],
       "properties": {
-        "resource_id": {"const": "high_state_ui"},
-        "serialization_required": {"const": true},
-        "lease_state": {"enum": ["planned", "acquired"]}
+        "resource_id": {
+          "const": "high_state_ui"
+        },
+        "serialization_required": {
+          "const": true
+        },
+        "lease_state": {
+          "enum": [
+            "planned",
+            "acquired"
+          ]
+        }
       }
     },
     "computer_use": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["installation_owner", "package_action", "available", "permissions_ready"],
+      "required": [
+        "installation_owner",
+        "package_action",
+        "available",
+        "permissions_ready"
+      ],
       "properties": {
-        "installation_owner": {"const": "end_user"},
-        "package_action": {"const": "remind_and_detect_only"},
-        "available": {"type": "boolean"},
-        "permissions_ready": {"type": "boolean"}
+        "installation_owner": {
+          "const": "end_user"
+        },
+        "package_action": {
+          "const": "remind_and_detect_only"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "permissions_ready": {
+          "type": "boolean"
+        }
       }
     },
     "end_user_session": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["login_owner", "logged_in", "surface"],
+      "required": [
+        "login_owner",
+        "logged_in",
+        "surface"
+      ],
       "properties": {
-        "login_owner": {"const": "end_user"},
-        "logged_in": {"type": "boolean"},
-        "surface": {"enum": ["wechat_public_search_preopened", "existing_normal_visible_chrome"]}
+        "login_owner": {
+          "const": "end_user"
+        },
+        "logged_in": {
+          "type": "boolean"
+        },
+        "surface": {
+          "enum": [
+            "wechat_public_search_preopened",
+            "existing_normal_visible_chrome"
+          ]
+        }
       }
     },
     "live_gate": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["authorized", "approved_by", "read_only", "stop_condition"],
+      "required": [
+        "authorized",
+        "approved_by",
+        "read_only",
+        "stop_condition"
+      ],
       "properties": {
-        "authorized": {"type": "boolean"},
-        "approved_by": {"const": "end_user"},
-        "read_only": {"const": true},
-        "stop_condition": {"type": "string", "minLength": 1}
+        "authorized": {
+          "type": "boolean"
+        },
+        "approved_by": {
+          "const": "end_user"
+        },
+        "read_only": {
+          "const": true
+        },
+        "stop_condition": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
-    "adaptive_extension_authorized": {"type": "boolean"}
-  }
+    "adaptive_extension_authorized": {
+      "type": "boolean"
+    },
+    "retrieval_task": {
+      "type": "object"
+    },
+    "surface_id": {
+      "type": "string"
+    },
+    "scope_expansion_requested": {
+      "type": "boolean"
+    },
+    "budget_exhausted": {
+      "type": "boolean"
+    },
+    "operation": {
+      "const": "public_retrieval"
+    },
+    "usage": {
+      "type": "object"
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "retrieval_task"
+      ]
+    },
+    {
+      "required": [
+        "live_gate"
+      ]
+    }
+  ]
 }

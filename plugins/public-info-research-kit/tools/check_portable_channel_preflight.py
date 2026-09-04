@@ -8,6 +8,9 @@ import hashlib
 import json
 from pathlib import Path
 from typing import Any
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from retrieval_task_policy import validate_task_authorization, POLICY_ID
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,6 +38,7 @@ ALLOWED_TOP_LEVEL = {
     "end_user_session",
     "live_gate",
     "adaptive_extension_authorized",
+    "retrieval_task", "surface_id", "scope_expansion_requested", "budget_exhausted", "operation", "usage",
 }
 FORBIDDEN_CONTROL_FIELDS = {
     "requested_executor",
@@ -94,7 +98,7 @@ def _validate_queries(request: dict[str, Any], channel: str, require_live: bool)
         if not isinstance(row, dict):
             errors.append(f"{prefix}_must_be_object")
             continue
-        allowed = {"query_id", "platform", "exact_query_text", "execution_state", "acceptance"}
+        allowed = {"query_id", "platform", "exact_query_text", "execution_state", "acceptance", "surface_id"}
         unknown = sorted(set(row) - allowed)
         if unknown:
             errors.append(f"{prefix}_unknown_fields:{','.join(unknown)}")
@@ -122,7 +126,7 @@ def _validate_queries(request: dict[str, Any], channel: str, require_live: bool)
                 errors.append(f"{prefix}_acceptance_unknown_fields")
             for field in ("minimum_result_batches", "minimum_actual_opens"):
                 value = acceptance.get(field)
-                if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+                if not isinstance(value, int) or isinstance(value, bool) or value < (0 if field == "minimum_actual_opens" and row.get("surface_id", request.get("surface_id")) in {"wechat_ai_search", "wechat_video_search", "wechat_mini_program_search", "wechat_public_account_search", "xhs_ask_diandian"} else 1):
                     errors.append(f"{prefix}_{field}_positive_integer_required")
     return errors
 
@@ -213,7 +217,14 @@ def validate(request: dict[str, Any], *, require_live: bool = False) -> dict[str
             errors.append("channel_surface_not_ready")
 
     live_gate = request.get("live_gate")
-    if not isinstance(live_gate, dict):
+    task_valid = False
+    if "retrieval_task" in request:
+        task_valid, task_status = validate_task_authorization(request)
+        if not task_valid:
+            errors.append(task_status)
+    if live_gate is None and task_valid:
+        pass
+    elif not isinstance(live_gate, dict):
         errors.append("live_gate_required")
     else:
         if set(live_gate) - {"authorized", "approved_by", "read_only", "stop_condition"}:
@@ -227,7 +238,7 @@ def validate(request: dict[str, Any], *, require_live: bool = False) -> dict[str
         elif not require_live and live_gate.get("authorized") is not True:
             warnings.append("dry_preflight_only_live_gate_not_authorized")
 
-    if request.get("adaptive_extension_authorized") is not True:
+    if not task_valid and request.get("adaptive_extension_authorized") is not True:
         warnings.append("adaptive_extension_not_authorized_no_incremental_execution")
 
     if "computer_use_not_ready" in errors:
@@ -256,6 +267,7 @@ def validate(request: dict[str, Any], *, require_live: bool = False) -> dict[str
         "profile_sha256": _canonical_sha256(profile) if profile else None,
         "require_live": require_live,
         "execution_authorized": require_live and not errors,
+        "authorization_basis": POLICY_ID if task_valid else "legacy_explicit_live_gate",
         "computer_use_action": "end_user_installs_and_authorizes_independently_package_only_reminds_and_detects",
         "automatic_computer_use_install_enable_or_permission_action": False,
         "platform_opened": False,

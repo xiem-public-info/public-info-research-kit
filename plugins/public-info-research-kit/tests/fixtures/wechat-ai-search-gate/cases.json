@@ -43,7 +43,7 @@
     {
       "case_id": "live_request_is_not_authorized",
       "set": {"live_execution_requested": true},
-      "expected_status": "wechat_ai_search_live_not_validated"
+      "expected_status": "retrieval_task_contract_required"
     },
     {
       "case_id": "wrong_owner_is_rejected",

@@ -1,0 +1,49 @@
+{
+  "schema": "retrieval_authority_policy.v1",
+  "policy_id": "TASK-DRIVEN-RETRIEVAL-AUTHORITY-V1",
+  "decision_id": "D-293",
+  "authorization_source": "received_downstream_retrieval_contract",
+  "default_channel_scope": "all_engineering_retrieval_channels_as_needed",
+  "default_surface_scope": "all_public_retrieval_surfaces_within_the_selected_channel",
+  "downstream_responsibility": [
+    "business_question",
+    "subjects",
+    "content_needs",
+    "business_acceptance"
+  ],
+  "owner_responsibility": [
+    "channel_selection",
+    "surface_selection",
+    "AI_usage_and_sequence",
+    "query_compilation",
+    "in_scope_iteration",
+    "execution_and_evidence"
+  ],
+  "per_channel_or_surface_user_authorization_required": false,
+  "query_freeze_point": "before_each_query_submission_not_all_future_queries_at_task_start",
+  "in_scope_iteration": "AI_to_original_and_original_to_AI_to_next_plan_are_normal_research",
+  "explicit_restrictions_take_precedence": true,
+  "capability_validation_is_not_authorization": true,
+  "authorization_does_not_claim_platform_access_or_live_validation": true,
+  "excluded_operations": [
+    "private_content_access_without_existing_permission",
+    "login_or_account_change",
+    "purchase",
+    "external_write_or_publish",
+    "engagement",
+    "security_or_tool_approval_bypass"
+  ],
+  "wechat_public_surfaces": [
+    "wechat_ai_search",
+    "wechat_global_article_results",
+    "wechat_video_search",
+    "wechat_mini_program_search",
+    "wechat_public_account_search",
+    "public_account_article_list",
+    "public_account_internal_search",
+    "known_public_article_url"
+  ],
+  "entrypoint": "tools/compile_retrieval_execution_request.py",
+  "authority_check": "tools/retrieval_task_policy.py",
+  "live_result": "record_actual_surface_and_outcome_separately_from_authorization"
+}

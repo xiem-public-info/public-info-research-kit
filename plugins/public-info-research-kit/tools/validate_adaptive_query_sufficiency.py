@@ -7,6 +7,9 @@ import argparse
 import json
 from pathlib import Path
 from typing import Any
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from retrieval_task_policy import validate_task_authorization
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -368,8 +371,18 @@ def validate_package(payload: dict[str, Any]) -> dict[str, Any]:
     needs_auth = receipt.get("needs_downstream_authorization")
     if batch_state == "proposed_incremental_batch" and needs_auth is not True:
         return result("incremental_batch_authorization_mismatch", False)
-    if batch_state in {"initial_frozen_batch", "approved_incremental_batch"} and needs_auth is not False:
+    if batch_state in {"initial_frozen_batch", "approved_incremental_batch", "in_scope_iteration_batch"} and needs_auth is not False:
         return result("incremental_batch_authorization_mismatch", False)
+    if batch_state == "in_scope_iteration_batch":
+        execution = payload.get("execution_request")
+        if not isinstance(execution, dict) or execution.get("task_id") != payload.get("task_id"):
+            return result("retrieval_task_scope_mismatch", False)
+        valid, status = validate_task_authorization(execution)
+        if not valid:
+            return result(status, False)
+        frozen = {(q.get("query_id"), q.get("exact_query_text")) for q in execution.get("query_plan", []) if isinstance(q, dict) and q.get("execution_state") == "frozen"}
+        if any((q.get("query_id"), q.get("exact_query_text")) not in frozen for q in batch["queries"]):
+            return result("iteration_queries_not_in_execution_request", False)
     if batch_state == "approved_incremental_batch" and extension.get("authorized") is not True:
         return result("adaptive_extension_not_authorized", False)
     if receipt.get("evidence_sufficiency_status") not in SUFFICIENCY_STATUSES:
@@ -453,9 +466,9 @@ def validate_package(payload: dict[str, Any]) -> dict[str, Any]:
         query_learning_record_count=len(learning_records),
         promotion_review_batch_count=len(review_batches),
         adaptive_extension_authorized=extension.get("authorized") is True,
-        incremental_execution_authorized=batch_state == "approved_incremental_batch" and extension.get("authorized") is True,
+        incremental_execution_authorized=batch_state == "in_scope_iteration_batch" or (batch_state == "approved_incremental_batch" and extension.get("authorized") is True),
         live_channel_authorized=False,
-        portable_channel_preflight_still_required=batch_state == "approved_incremental_batch",
+        portable_channel_preflight_still_required=batch_state in {"approved_incremental_batch", "in_scope_iteration_batch"},
     )
 
 

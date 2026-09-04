@@ -8,11 +8,16 @@ import hashlib
 import json
 from pathlib import Path
 from typing import Any
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from retrieval_task_policy import validate_task_authorization
+from check_portable_channel_preflight import validate as validate_owner
 
 
 ROOT = Path(__file__).resolve().parents[1]
 PROFILE_PATH = ROOT / "resources/channel-capability-profiles/wechat-ai-search.v1.json"
 ALLOWED_PURPOSES = {
+    "semantic_clarification", "next_query_planning",
     "object_disambiguation",
     "content_supply_density_estimation",
     "original_source_navigation",
@@ -114,7 +119,7 @@ def validate(request: dict[str, Any], *, require_live: bool = False) -> dict[str
     missing = sorted(field for field in REQUIRED_FIELDS if field not in request or request.get(field) in (None, ""))
     if missing:
         return _receipt("invalid_request", False, request, profile, missing_fields=missing)
-    unknown = sorted(set(request) - REQUIRED_FIELDS)
+    unknown = sorted(set(request) - REQUIRED_FIELDS - {"owner_request"})
     if unknown:
         return _receipt("invalid_request", False, request, profile, unknown_fields=unknown)
     if request.get("schema") != "wechat_ai_search_gate_request.v1":
@@ -145,8 +150,27 @@ def validate(request: dict[str, Any], *, require_live: bool = False) -> dict[str
         or any(surface not in ALLOWED_ORIGINAL_SURFACES for surface in original_surfaces)
     ):
         return _receipt("original_source_surface_required", False, request, profile)
-    if require_live or request.get("live_execution_requested") is not False or request.get("real_gui_validated") is not False:
-        return _receipt("wechat_ai_search_live_not_validated", False, request, profile)
+    if request.get("real_gui_validated") is not False:
+        return _receipt("preflight_cannot_claim_gui_validation", False, request, profile)
+    if not isinstance(request.get("live_execution_requested"), bool):
+        return _receipt("invalid_request", False, request, profile)
+    if require_live or request.get("live_execution_requested") or "owner_request" in request:
+        owner_request = request.get("owner_request")
+        if not isinstance(owner_request, dict):
+            return _receipt("retrieval_task_contract_required", False, request, profile)
+        valid, status = validate_task_authorization(owner_request)
+        if not valid:
+            return _receipt(status, False, request, profile)
+        if any(owner_request.get(key) != request.get(key) for key in ("task_id", "channel", "business_question", "downstream_business_owner")) or owner_request.get("surface_id") != "wechat_ai_search":
+            return _receipt("owner_request_scope_mismatch", False, request, profile)
+        if any(q.get("surface_id") != "wechat_ai_search" for q in owner_request.get("query_plan", [])):
+            return _receipt("owner_request_scope_mismatch", False, request, profile)
+        owner = validate_owner(owner_request, require_live=bool(require_live or request.get("live_execution_requested")))
+        if not owner["passed"]:
+            return _receipt("owner_preflight_not_ready", False, request, profile, owner_receipt=owner)
+        return _receipt("task_authorized_not_executed", True, request, profile,
+            execution_authorized=owner["execution_authorized"], owner_receipt=owner,
+            aggregate_output_role="ai_aggregate_clue", original_source_backread_required=True)
 
     return _receipt(
         "gate_ready_not_live_validated",
