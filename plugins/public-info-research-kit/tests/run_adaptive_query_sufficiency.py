@@ -181,6 +181,19 @@ def completion_cases(validator, make_payload, applicability_schema):
     cases.append(check("mode_name_alone_is_not_research_criteria", validator.validate_applicability(app), "d237_consumer_contract_required", False))
     app.update(count_target=5, quality_criteria=["能回到原始报告的支持与反对论据"])
     cases.append(check("original_qualitative_goal_and_soft_target_are_usable", validator.validate_applicability(app), "pass", True))
+    # Also reject a contradictory exemption supplied directly to the checker.
+    direct = {'schema':applicability_schema, 'task_id':'explicit-direct-research',
+        'route_receipt':{'primary_route_id':'ROUTE-WECHAT-KNOWN-URL','required_gate_ids':['GATE-D237-RESEARCH-SUFFICIENCY-DEFAULT']},
+        'sufficiency_policy':'exempt_simple_direct_retrieval',
+        'simple_direct_retrieval_exemption':{'exemption_type':'known_url_read','evidence_target':'https://example.com/article',
+            'stop_condition':'Read the supplied article','human_authorization_ref':'received_task:explicit-direct-research'}}
+    mandatory = {'count_threshold':5, 'quality_criteria':['支持原任务判断'],
+        'diversity_requirements':{'minimum_independent_sources':3}, 'required_object_ids':['甲','乙']}
+    for label, fields in [(key,{key:value}) for key,value in mandatory.items()] + [('combined',mandatory), ('nested_qualification',{'qualification_policy':mandatory})]:
+        request = copy.deepcopy(direct); request.update(copy.deepcopy(fields))
+        cases.append(check('explicit_exemption_cannot_erase_'+label, validator.validate_applicability(request), 'research_requirements_forbid_simple_exemption', False))
+    optional = copy.deepcopy(direct); optional.update(count_target=5, diversity_targets={'minimum_independent_sources':3}, marginal_gain_fields=['new_qualified_count'])
+    cases.append(check('optional_targets_do_not_forbid_direct_reading', validator.validate_applicability(optional), 'pass', True))
     return cases
 
 

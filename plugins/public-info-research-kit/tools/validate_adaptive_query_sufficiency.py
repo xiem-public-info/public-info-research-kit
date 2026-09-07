@@ -82,6 +82,19 @@ def positive_integer(value: Any) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value >= 1
 
 
+def explicit_research_requirements(payload: dict[str, Any]) -> list[str]:
+    """Hard business requirements survive a direct-read action; optional targets do not."""
+    fields = ("count_threshold", "quality_criteria", "diversity_requirements", "required_object_ids")
+    policy = payload.get("qualification_policy")
+    sources = (payload, policy) if isinstance(policy, dict) else (payload,)
+
+    def has_requirement(value: object) -> bool:
+        values = value.values() if isinstance(value, dict) else value if isinstance(value, list) else (value,)
+        return any(item not in (None, "", [], {}, False) for item in values)
+
+    return [field for field in fields if any(has_requirement(source.get(field)) for source in sources)]
+
+
 def validate_applicability(payload: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(payload, dict) or payload.get("schema") != APPLICABILITY["schema"]:
         return applicability_result("invalid_schema", False)
@@ -137,6 +150,14 @@ def validate_applicability(payload: dict[str, Any]) -> dict[str, Any]:
             sufficiency_policy=policy,
             acceptance_mode=acceptance_mode,
             defaulted_from_omission="sufficiency_policy" not in payload,
+        )
+
+    blocking_requirements = explicit_research_requirements(payload)
+    if blocking_requirements:
+        return applicability_result(
+            "research_requirements_forbid_simple_exemption", False,
+            task_id=task_id, d237_required=True,
+            blocking_requirements=blocking_requirements,
         )
 
     exemption = payload.get("simple_direct_retrieval_exemption")

@@ -3,7 +3,7 @@
   "version": "0.8.0-rc.3",
   "status": "unreleased_candidate_revision",
   "base_release_tag": "v0.8.0-rc.3",
-  "candidate_revision": "2026-09-07-scoped-review-fixes",
+  "candidate_revision": "2026-09-07-direct-read-requirement-fix",
   "distribution_model": "public_repository_direct_use_without_maintainer_authorization",
   "license": "MIT",
   "repository": "xiem-public-info/public-info-research-kit",
@@ -63,8 +63,8 @@
   ],
   "validation": {
     "harness_schema": "public_release_harness_report.v1",
-    "test_runner_count": 4,
-    "fixture_case_count": 126,
+    "test_runner_count": 3,
+    "fixture_case_count": 136,
     "fixture_failure_count": 0,
     "golden_task_fixture_count": 5,
     "negative_fixture_file_count": 4,
@@ -79,25 +79,19 @@
       {
         "test": "run_task_driven_retrieval.py",
         "status": "pass",
-        "case_count": 51,
+        "case_count": 68,
         "failure_count": 0
       },
       {
         "test": "run_adaptive_query_sufficiency.py",
         "status": "pass",
-        "case_count": 48,
+        "case_count": 55,
         "failure_count": 0
       },
       {
         "test": "run_d292_research_orchestration.py",
         "status": "pass",
         "case_count": 13,
-        "failure_count": 0
-      },
-      {
-        "test": "run_route_capability_profiles.py",
-        "status": "pass",
-        "case_count": 14,
         "failure_count": 0
       }
     ]
@@ -297,8 +291,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/schemas/adaptive_query_sufficiency_contract.v1.json",
-      "sha256": "bb6ccc2034eccc3870be17d51a1409f720606b6344bbebcda36d4faeee17e734",
-      "bytes": 7087
+      "sha256": "cfdfdc2df3014df04de30cf6b3e2347adcd32b1c0c4adc9a6d3a327d31757d35",
+      "bytes": 7496
     },
     {
       "path": "plugins/public-info-research-kit/schemas/d292_research_orchestration.v1.json",
@@ -452,8 +446,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_adaptive_query_sufficiency.py",
-      "sha256": "5cc9533297c42b3df7a42d4c8456fadaf8824674f0cf2ab1c6d03160cbe45525",
-      "bytes": 18428
+      "sha256": "fe096cd238b67af7888d31761837c2bcb4d42530c45ae92620fd60ab3824bea5",
+      "bytes": 19946
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_d292_research_orchestration.py",
@@ -517,8 +511,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_task_driven_retrieval.py",
-      "sha256": "da3745dbd6f73fa60cda5a5c87d782f59a414f72ba162f1e3bb02bb841833e87",
-      "bytes": 9714
+      "sha256": "d618dd59927de557178fe3fa76fea9af6949606083ed33d365a18484409075b4",
+      "bytes": 12722
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_wechat_ai_search_gate_preflight.py",
@@ -552,8 +546,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/compile_retrieval_execution_request.py",
-      "sha256": "75cec2e0a19345b1ac7a20352eef8889f760fa1bb762586ad1302956e3e34127",
-      "bytes": 6649
+      "sha256": "71d3f22c2b00677dadf0860ff0bc3cf9113108170780616b0402116fb2d58eaa",
+      "bytes": 6801
     },
     {
       "path": "plugins/public-info-research-kit/tools/doctor.py",
@@ -587,8 +581,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_adaptive_query_sufficiency.py",
-      "sha256": "f6c4d032d70dd07a55a2c941119495b5fc9eef3cfe898a32a189a3bdd4c92765",
-      "bytes": 34342
+      "sha256": "4fbea339c902b521c953f049bf80b672b06a083d1f84eb3b7f9dbe5c8579a054",
+      "bytes": 35399
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_d292_research_orchestration.py",
@@ -637,8 +631,8 @@
     },
     {
       "path": "scripts/build_release_manifest.py",
-      "sha256": "756c9d7bfa792ccb86fc1c7be6f55382af8ec92bd08a283680cbd0b64bde69d2",
-      "bytes": 7085
+      "sha256": "8e047a6295c17613b347ece42a136e5a206d71ca989deb0d48db5d69a8fda52b",
+      "bytes": 7093
     }
   ],
   "prior_full_validation": {
@@ -656,5 +650,47 @@
     "business_acceptance_validated": false,
     "second_user_uat_validated": false
   },
-  "private_revision_commit": "69640d768fa794b2d10d1e616f51b7a3bea6327b"
+  "private_revision_commit": "e597a7c069c886f529af4e09d1088bc5c3a38f06",
+  "prior_targeted_validation": {
+    "candidate_commit": "66a759ac963e610f272c3d308b0fd39813c293ad",
+    "harness_schema": "public_release_harness_report.v1",
+    "test_runner_count": 4,
+    "fixture_case_count": 126,
+    "fixture_failure_count": 0,
+    "golden_task_fixture_count": 5,
+    "negative_fixture_file_count": 4,
+    "release_tree_scan_passed": true,
+    "offline_only": true,
+    "real_gui_validated": false,
+    "business_acceptance_validated": false,
+    "second_user_uat_validated": false,
+    "scope": "affected_existing_tests_only",
+    "full_harness_rerun": false,
+    "fixture_reports": [
+      {
+        "test": "run_task_driven_retrieval.py",
+        "status": "pass",
+        "case_count": 51,
+        "failure_count": 0
+      },
+      {
+        "test": "run_adaptive_query_sufficiency.py",
+        "status": "pass",
+        "case_count": 48,
+        "failure_count": 0
+      },
+      {
+        "test": "run_d292_research_orchestration.py",
+        "status": "pass",
+        "case_count": 13,
+        "failure_count": 0
+      },
+      {
+        "test": "run_route_capability_profiles.py",
+        "status": "pass",
+        "case_count": 14,
+        "failure_count": 0
+      }
+    ]
+  }
 }

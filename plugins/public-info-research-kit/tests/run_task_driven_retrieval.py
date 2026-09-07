@@ -92,6 +92,42 @@ def main():
         check('original_requirement_'+field, mapped['sufficiency_applicability'][field] == standards['sufficiency'][field])
     check('mapping_does_not_rewrite_task', standards == original and mapped['retrieval_task'] == original)
     check('mapped_actual_requirements_accepted', validate_applicability(mapped['sufficiency_applicability'])['passed'])
+    # A direct-read action must not erase substantive requirements on the whole task.
+    hard_requirements = {'count_threshold':5, 'quality_criteria':['原文支持业务判断'],
+        'diversity_requirements':{'minimum_independent_sources':3}, 'required_object_ids':['甲','乙']}
+    for location in ('sufficiency', 'task_root'):
+        for label, fields in [('combined', hard_requirements)] + [(key, {key:value}) for key,value in hard_requirements.items()]:
+            requested = copy.deepcopy(direct_task)
+            if location == 'sufficiency': requested['sufficiency'] = copy.deepcopy(fields)
+            else: requested.update(copy.deepcopy(fields))
+            original = copy.deepcopy(requested)
+            built = compile_request(requested, direct_plan)
+            applicability = built['sufficiency_applicability']
+            outcome = validate_applicability(applicability)
+            check('direct_action_preserves_'+location+'_'+label,
+                outcome['d237_required'] and not outcome['passed']
+                and outcome['status'] == 'd237_consumer_contract_required'
+                and applicability.get('sufficiency_policy') != 'exempt_simple_direct_retrieval'
+                and all(applicability[field] == value for field,value in fields.items())
+                and requested == original and built['retrieval_task'] == original)
+    research = copy.deepcopy(direct_task); research['sufficiency'] = {**hard_requirements, 'acceptance_mode':'hybrid'}
+    outcome = validate_applicability(compile_request(research, direct_plan)['sufficiency_applicability'])
+    check('known_link_with_complete_research_mode_stays_research', outcome['passed'] and outcome['d237_required'])
+    research['sufficiency'].pop('acceptance_mode')
+    research_plan = copy.deepcopy(direct_plan); research_plan['research_characteristics'] = ['source_or_project_diversity_required']
+    outcome = validate_applicability(compile_request(research, research_plan)['sufficiency_applicability'])
+    check('declared_diversity_keeps_research_requirement', not outcome['passed'] and outcome['d237_required'])
+    for label, optional in (
+        ('count_target', {'count_target':5}),
+        ('diversity_targets', {'diversity_targets':{'minimum_independent_sources':3}}),
+        ('gain_fields', {'marginal_gain_fields':['new_qualified_count']}),
+        ('empty_requirements', {'count_threshold':None,'quality_criteria':[],'diversity_requirements':{},'required_object_ids':[]}),
+        ('empty_nested_conditions', {'count_threshold':0,'quality_criteria':[''],'diversity_requirements':{'minimum_independent_sources':None},'required_object_ids':[]})):
+        simple = copy.deepcopy(direct_task); simple['sufficiency'] = optional
+        built = compile_request(simple, direct_plan)
+        outcome = validate_applicability(built['sufficiency_applicability'])
+        check('direct_read_not_blocked_by_'+label, outcome['passed'] and not outcome['d237_required'] and built['retrieval_task'] == simple)
+
     report={'status':'pass' if all(c['passed'] for c in cases) else 'fail','case_count':len(cases),'failure_count':sum(not c['passed'] for c in cases),'cases':cases,'platform_opened':False,'network_accessed':False}
     print(json.dumps(report,indent=2)); return int(report['status']!='pass')
 if __name__=='__main__': raise SystemExit(main())

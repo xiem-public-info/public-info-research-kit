@@ -8,6 +8,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from retrieval_task_policy import task_subjects, validate_task_authorization
+from validate_adaptive_query_sufficiency import explicit_research_requirements
 
 
 def compile_sufficiency_input(task: dict, plan: dict) -> dict:
@@ -50,7 +51,9 @@ def compile_sufficiency_input(task: dict, plan: dict) -> dict:
     if len(plan.get("queries", [])) > 1 and isinstance(result.get("research_characteristics", []), list):
         result["research_characteristics"] = [*result.get("research_characteristics", []), "multiple_independent_queries"]
     direct = plan.get("simple_direct_retrieval_exemption")
-    if isinstance(direct, dict) and not any(key in result for key in ("sufficiency_policy", "acceptance_mode", "qualification_policy", "diversity_policy")):
+    if (isinstance(direct, dict)
+            and not any(key in result for key in ("sufficiency_policy", "acceptance_mode", "qualification_policy", "diversity_policy"))
+            and not explicit_research_requirements(result)):
         result["sufficiency_policy"] = "exempt_simple_direct_retrieval"
         result["simple_direct_retrieval_exemption"] = {
             **direct,

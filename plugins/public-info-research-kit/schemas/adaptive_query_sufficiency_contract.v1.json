@@ -35,7 +35,8 @@
       "adaptive_extension_possible",
       "market_or_industry_generalization"
     ],
-    "boundary": "真实研究须有原任务明确的实际完成要求，不能只有模式名称。简单直接读取由本工程依据用户原始请求记录目标、停止条件和原请求引用，无需用户另批豁免。"
+    "boundary": "真实研究须有原任务明确的实际完成要求，不能只有模式名称。简单直接读取由本工程依据用户原始请求记录目标、停止条件和原请求引用，无需用户另批豁免。",
+    "direct_read_requirement_boundary": "原任务已有实质最低数量、必需质量或多样性、关键对象要求时，不得因当前动作是直接读取、缺少旧模式字段或未额外标记研究特征而豁免。缺模式时由本工程依据原任务整理适用性，不新增用户授权。count_target、diversity_targets、增益统计提示及空占位不作为硬性研究要求。"
   },
   "ownership": {
     "business_owner": [
