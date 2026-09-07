@@ -1,20 +1,20 @@
-# v0.8.0-rc.3 中文安装与使用说明
+# v0.8.0-rc.4 中文安装与使用说明
 
-这是供同事跨电脑试装的公开预发布版，不是稳定版。固定标签为 `v0.8.0-rc.3`，候选分支为 `codex/public-v0.8-quality-parity`；公开 `main / v0.7.0` 不受影响。
+这是供同事跨电脑试装的公开预发布版，不是稳定版。固定标签为 `v0.8.0-rc.4`，候选分支为 `codex/public-v0.8-quality-parity`；公开 `main` 同步此版本，旧稳定版可通过 `v0.7.0` 标签获取。
 
 ## 安装地址
 
 - 候选分支：<https://github.com/xiem-public-info/public-info-research-kit/tree/codex/public-v0.8-quality-parity>
-- 固定版本下载：[v0.8.0-rc.3](https://github.com/xiem-public-info/public-info-research-kit/releases/tag/v0.8.0-rc.3)
+- 固定版本下载：[v0.8.0-rc.4](https://github.com/xiem-public-info/public-info-research-kit/releases/tag/v0.8.0-rc.4)
 
 ## 推荐安装方式
 
-在 Codex 中发送候选分支地址，并说明：“请安装这个 GitHub 候选分支中的 `public-info-research-kit` Plugin。”
+在 Codex 中发送本仓库地址或固定标签地址，并说明：“请安装这个 GitHub 候选分支中的 `public-info-research-kit` Plugin。”
 
 如果应用内安装没有成功，在终端依次执行：
 
 ```bash
-codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.3
+codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.4
 codex plugin add public-info-research-kit@public-info-research-public
 ```
 

@@ -61,9 +61,10 @@ def main() -> int:
     manifest = {
         "schema": "public_info_self_service_release_manifest.v3",
         "version": version,
-        "status": "unreleased_candidate_revision",
+        "status": "published_prerelease",
         "base_release_tag": "v0.8.0-rc.3",
-        "candidate_revision": "2026-09-07-direct-read-requirement-fix",
+        "release_tag": "v0.8.0-rc.4",
+        "candidate_revision": "2026-09-07-public-rc4-release",
         "distribution_model": "public_repository_direct_use_without_maintainer_authorization",
         "license": "MIT",
         "repository": "xiem-public-info/public-info-research-kit",
