@@ -42,6 +42,8 @@ def compile_sufficiency_input(task: dict, plan: dict) -> dict:
         received = result.get("research_characteristics", [])
         planned = plan["research_characteristics"]
         result["research_characteristics"] = list(dict.fromkeys(received + planned)) if isinstance(received, list) and isinstance(planned, list) else received if not isinstance(received, list) else planned
+    if len(plan.get("queries", [])) > 1 and isinstance(result.get("research_characteristics", []), list):
+        result["research_characteristics"] = [*result.get("research_characteristics", []), "multiple_independent_queries"]
     direct = plan.get("simple_direct_retrieval_exemption")
     if isinstance(direct, dict) and not any(key in result for key in ("sufficiency_policy", "acceptance_mode", "qualification_policy", "diversity_policy")):
         result["sufficiency_policy"] = "exempt_simple_direct_retrieval"

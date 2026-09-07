@@ -64,7 +64,7 @@
   "validation": {
     "harness_schema": "public_release_harness_report.v1",
     "test_runner_count": 15,
-    "fixture_case_count": 203,
+    "fixture_case_count": 204,
     "fixture_failure_count": 0,
     "golden_task_fixture_count": 5,
     "negative_fixture_file_count": 4,
@@ -489,8 +489,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_task_driven_retrieval.py",
-      "sha256": "588242720780982d664ae118d335fce98f3e21a8945e73f1f6cd66b5d9f869cf",
-      "bytes": 8264
+      "sha256": "7fe4a29614a844151d957878781aceca37bd342b609ec7d9bff089a2f9bbc8e6",
+      "bytes": 8588
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_wechat_ai_search_gate_preflight.py",
@@ -524,8 +524,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/compile_retrieval_execution_request.py",
-      "sha256": "1eda20d706a8376012f89f66b7afcc4143066d76399b80a1cbb2bc8b20585116",
-      "bytes": 5983
+      "sha256": "bca11eea98f3620924c49a871c691872d76e3083df4e14c5a6cd84c44ab9056d",
+      "bytes": 6212
     },
     {
       "path": "plugins/public-info-research-kit/tools/doctor.py",

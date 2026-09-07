@@ -76,6 +76,8 @@ def main():
     for characteristic in ("multiple_independent_queries", "comparative_or_pattern_judgment", "support_and_counterevidence_required", "adaptive_extension_possible"):
         complex_plan = copy.deepcopy(direct_plan); complex_plan["research_characteristics"] = [characteristic]
         check("direct_url_does_not_exempt_" + characteristic, not validate_applicability(compile_request(direct_task, complex_plan)["sufficiency_applicability"])["passed"])
+    multi_plan = copy.deepcopy(direct_plan); multi_plan["queries"] = [{"query_id": "a", "exact_query_text": "a"}, {"query_id": "b", "exact_query_text": "b"}]
+    check("multiple_queries_cannot_hide_as_direct_read", not validate_applicability(compile_request(direct_task, multi_plan)["sufficiency_applicability"])["passed"])
     required = copy.deepcopy(direct_task); required["sufficiency"] = {"policy": "d237_required", "acceptance_mode": "quality_sufficiency"}
     check("explicit_research_standard_preserved", validate_applicability(compile_request(required, direct_plan)["sufficiency_applicability"])["d237_required"])
     report={'status':'pass' if all(c['passed'] for c in cases) else 'fail','case_count':len(cases),'failure_count':sum(not c['passed'] for c in cases),'cases':cases,'platform_opened':False,'network_accessed':False}
