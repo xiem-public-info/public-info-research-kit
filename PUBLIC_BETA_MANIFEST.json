@@ -3,7 +3,7 @@
   "version": "0.8.0-rc.3",
   "status": "unreleased_candidate_revision",
   "base_release_tag": "v0.8.0-rc.3",
-  "candidate_revision": "2026-09-07-channel-alignment",
+  "candidate_revision": "2026-09-07-scoped-review-fixes",
   "distribution_model": "public_repository_direct_use_without_maintainer_authorization",
   "license": "MIT",
   "repository": "xiem-public-info/public-info-research-kit",
@@ -63,8 +63,8 @@
   ],
   "validation": {
     "harness_schema": "public_release_harness_report.v1",
-    "test_runner_count": 15,
-    "fixture_case_count": 204,
+    "test_runner_count": 4,
+    "fixture_case_count": 126,
     "fixture_failure_count": 0,
     "golden_task_fixture_count": 5,
     "negative_fixture_file_count": 4,
@@ -72,7 +72,35 @@
     "offline_only": true,
     "real_gui_validated": false,
     "business_acceptance_validated": false,
-    "second_user_uat_validated": false
+    "second_user_uat_validated": false,
+    "scope": "affected_existing_tests_only",
+    "full_harness_rerun": false,
+    "fixture_reports": [
+      {
+        "test": "run_task_driven_retrieval.py",
+        "status": "pass",
+        "case_count": 51,
+        "failure_count": 0
+      },
+      {
+        "test": "run_adaptive_query_sufficiency.py",
+        "status": "pass",
+        "case_count": 48,
+        "failure_count": 0
+      },
+      {
+        "test": "run_d292_research_orchestration.py",
+        "status": "pass",
+        "case_count": 13,
+        "failure_count": 0
+      },
+      {
+        "test": "run_route_capability_profiles.py",
+        "status": "pass",
+        "case_count": 14,
+        "failure_count": 0
+      }
+    ]
   },
   "interop": {
     "manifest": "plugins/public-info-research-kit/schemas/public_interop_manifest.v1.json",
@@ -269,8 +297,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/schemas/adaptive_query_sufficiency_contract.v1.json",
-      "sha256": "a6aa07a5916459746ec505f1d20267f053727cf2556adb39e19818e364d31744",
-      "bytes": 5450
+      "sha256": "bb6ccc2034eccc3870be17d51a1409f720606b6344bbebcda36d4faeee17e734",
+      "bytes": 7087
     },
     {
       "path": "plugins/public-info-research-kit/schemas/d292_research_orchestration.v1.json",
@@ -324,13 +352,13 @@
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-evidence-delivery/SKILL.md",
-      "sha256": "8f0d28570761b94aaa1fe5b604618ca43036acebae00aa23f39af60ee42430ad",
-      "bytes": 4702
+      "sha256": "baf3e0416ba5a0fdfa1e9e75221033f348e418f438b3d5da983cb44af9da541d",
+      "bytes": 5877
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-info-intake-router/SKILL.md",
-      "sha256": "6c6b701b0fb899667c39f60912b204d7767b7a37765953276adde9ffa31f5d17",
-      "bytes": 8655
+      "sha256": "f05d94d1d6d28783f39a3392b737d2fa771d51b1321804efd146e9fa76ae3a7a",
+      "bytes": 9174
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-web-official-resolver/SKILL.md",
@@ -374,8 +402,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/fixtures/golden-tasks/golden_query_promotion.json",
-      "sha256": "030d6653f546e1ebbd9c8b27cca5db76061ebb94268ebba2af51fd4b23ce9564",
-      "bytes": 3444
+      "sha256": "0aaea15ba1675d951214c37a36199c58ab9ce5b233de60cc155b41c5f6eeceef",
+      "bytes": 4225
     },
     {
       "path": "plugins/public-info-research-kit/tests/fixtures/golden-tasks/golden_research_partial.json",
@@ -424,8 +452,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_adaptive_query_sufficiency.py",
-      "sha256": "46f649aefdd24d1f807168713f29a1d0fbfb4180ceba82bbb3ef2dc5c7490f29",
-      "bytes": 11053
+      "sha256": "5cc9533297c42b3df7a42d4c8456fadaf8824674f0cf2ab1c6d03160cbe45525",
+      "bytes": 18428
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_d292_research_orchestration.py",
@@ -474,8 +502,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_route_capability_profiles.py",
-      "sha256": "34293859c7bbd0377115d78417685facdce49f170a4aab823fdf944151c7ac83",
-      "bytes": 8036
+      "sha256": "c3e285c18f993c43182d267b31350395d906a34ea3198d0b26a36b10bb973108",
+      "bytes": 8521
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_social_query_plan.py",
@@ -489,8 +517,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_task_driven_retrieval.py",
-      "sha256": "7fe4a29614a844151d957878781aceca37bd342b609ec7d9bff089a2f9bbc8e6",
-      "bytes": 8588
+      "sha256": "da3745dbd6f73fa60cda5a5c87d782f59a414f72ba162f1e3bb02bb841833e87",
+      "bytes": 9714
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_wechat_ai_search_gate_preflight.py",
@@ -524,8 +552,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/compile_retrieval_execution_request.py",
-      "sha256": "bca11eea98f3620924c49a871c691872d76e3083df4e14c5a6cd84c44ab9056d",
-      "bytes": 6212
+      "sha256": "75cec2e0a19345b1ac7a20352eef8889f760fa1bb762586ad1302956e3e34127",
+      "bytes": 6649
     },
     {
       "path": "plugins/public-info-research-kit/tools/doctor.py",
@@ -559,8 +587,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_adaptive_query_sufficiency.py",
-      "sha256": "22b6a8b7577492620dfe8703de0d46b3278faa0312daa04cdae2cf0de9cc4a17",
-      "bytes": 26913
+      "sha256": "f6c4d032d70dd07a55a2c941119495b5fc9eef3cfe898a32a189a3bdd4c92765",
+      "bytes": 34342
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_d292_research_orchestration.py",
@@ -609,8 +637,24 @@
     },
     {
       "path": "scripts/build_release_manifest.py",
-      "sha256": "67169407d5ed7cba3fc32e031b085a2b8f950d1050c2918feee7293dbfb6c6b9",
-      "bytes": 7004
+      "sha256": "756c9d7bfa792ccb86fc1c7be6f55382af8ec92bd08a283680cbd0b64bde69d2",
+      "bytes": 7085
     }
-  ]
+  ],
+  "prior_full_validation": {
+    "candidate_commit": "b18f0a1f134171aa177f183bcc0f1785446396e2",
+    "description": "Previously recorded full offline harness; not rerun for this scoped revision.",
+    "harness_schema": "public_release_harness_report.v1",
+    "test_runner_count": 15,
+    "fixture_case_count": 204,
+    "fixture_failure_count": 0,
+    "golden_task_fixture_count": 5,
+    "negative_fixture_file_count": 4,
+    "release_tree_scan_passed": true,
+    "offline_only": true,
+    "real_gui_validated": false,
+    "business_acceptance_validated": false,
+    "second_user_uat_validated": false
+  },
+  "private_revision_commit": "69640d768fa794b2d10d1e616f51b7a3bea6327b"
 }

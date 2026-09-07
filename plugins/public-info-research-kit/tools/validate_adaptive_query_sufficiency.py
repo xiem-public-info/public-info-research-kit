@@ -125,6 +125,10 @@ def validate_applicability(payload: dict[str, Any]) -> dict[str, Any]:
                 defaulted_from_omission="sufficiency_policy" not in payload,
                 required_field="acceptance_mode",
             )
+        missing_requirements = research_requirement_gaps(payload)
+        if missing_requirements:
+            return applicability_result("d237_consumer_contract_required", False,
+                                        task_id=task_id, d237_required=True, missing_fields=missing_requirements)
         return applicability_result(
             "pass",
             True,
@@ -221,10 +225,12 @@ def validate_learning_record(
     query_by_id: dict[str, dict[str, Any]],
     review_batches: dict[str, dict[str, Any]],
     business_question_family: str,
+    project_diversity_required: bool = False,
 ) -> dict[str, Any] | None:
     if not isinstance(record, dict):
         return result("invalid_query_learning_record", False, record_index=index)
-    missing = [field for field in CONTRACT["query_learning_required_fields"] if field not in record]
+    required = [*CONTRACT["query_learning_required_fields"], *(["qualified_project_or_brand_count"] if project_diversity_required else [])]
+    missing = [field for field in required if field not in record]
     if missing:
         return result("invalid_query_learning_record", False, record_index=index, missing_fields=missing)
     query_id = record.get("query_id")
@@ -261,7 +267,7 @@ def validate_learning_record(
     for field in ("result_batch_count", "actual_open_count", "validated_task_count"):
         if not nonnegative_number(record.get(field)):
             return result("invalid_query_learning_record", False, record_index=index, invalid_field=field)
-    if attribution == "recorded" and not nonnegative_number(record.get("qualified_project_or_brand_count")):
+    if attribution == "recorded" and "qualified_project_or_brand_count" in record and not nonnegative_number(record["qualified_project_or_brand_count"]):
         return result("invalid_query_learning_record", False, record_index=index)
     if record.get("marginal_information_gain") not in MARGINAL_GAIN:
         return result("invalid_query_learning_record", False, record_index=index, invalid_field="marginal_information_gain")
@@ -302,6 +308,133 @@ def validate_learning_record(
     return None
 
 
+def research_requirement_gaps(contract: dict[str, Any]) -> list[str]:
+    """Read business requirements already supplied; a mode name is not a goal."""
+    gaps = []
+    mode = contract.get("acceptance_mode")
+    if mode in {"count_based", "hybrid"}:
+        for field in ("count_threshold", "count_target"):
+            value = contract.get(field)
+            if isinstance(value, int) and not isinstance(value, bool) and value > 0:
+                break
+        else:
+            gaps.append("count_threshold_or_target")
+    if mode in {"quality_sufficiency", "hybrid"} and not quality_requirements(contract):
+        gaps.append("quality_criteria_or_qualification_policy")
+    return gaps
+
+
+def quality_requirements(contract: dict[str, Any]) -> list[str]:
+    criteria = contract.get("quality_criteria")
+    if isinstance(criteria, list) and criteria and all(isinstance(x, str) and x.strip() for x in criteria):
+        return list(criteria)
+    policy = contract.get("qualification_policy")
+    return [policy] if isinstance(policy, str) and policy.strip() else []
+
+
+def validate_gain_fields(contract: dict[str, Any], gain: dict[str, Any]) -> dict[str, Any] | None:
+    # Unmeasured or inapplicable dimensions stay absent, never fabricated as zero.
+    required = contract.get("marginal_gain_fields", [])
+    if not isinstance(required, list) or not all(isinstance(k, str) and k for k in required):
+        return result("invalid_marginal_gain_fields", False)
+    missing = [field for field in required if field not in gain]
+    if missing:
+        return result("invalid_marginal_information_gain", False, missing_fields=missing)
+    if not isinstance(gain.get("assessment_basis"), str) or not gain["assessment_basis"].strip():
+        return result("invalid_marginal_information_gain", False, invalid_field="assessment_basis")
+    for field, value in gain.items():
+        if field.endswith("_count") and (not isinstance(value, (int, float)) or isinstance(value, bool) or not 0 <= value < float("inf")):
+            return result("invalid_marginal_information_gain", False, invalid_field=field)
+    rate = gain.get("duplicate_rate")
+    if rate is not None and (not isinstance(rate, (int, float)) or isinstance(rate, bool) or not 0 <= rate <= 1):
+        return result("invalid_marginal_information_gain", False, invalid_field="duplicate_rate")
+    return None
+
+
+def validate_completion_claim(contract: dict[str, Any], receipt: dict[str, Any]) -> dict[str, Any] | None:
+    """Check only a sufficient claim, using deduplicated task-usable evidence.
+
+    This is not an evidence database or a quality score. The owner qualifies
+    referenced material for this task, including reused material. Query learning
+    counts describe a batch and cannot establish a cumulative completion count.
+    """
+    if receipt.get("evidence_sufficiency_status") != "sufficient":
+        return None
+    diversity = contract.get("diversity_requirements", {})
+    numeric_dimensions = {
+        "minimum_project_or_brand_count": "project_or_brand_id",
+        "minimum_source_role_count": "source_role",
+        "minimum_independent_sources": "source_id",
+        "minimum_source_count": "source_id",
+    }
+    required_objects = contract.get("required_object_ids", [])
+    if not isinstance(required_objects, list) or not all(isinstance(x, str) and x for x in required_objects):
+        return result("invalid_required_object_ids", False)
+    threshold = contract.get("count_threshold")
+    needs_evidence = threshold is not None or bool(required_objects) or any(key in diversity for key in (*numeric_dimensions, "maximum_qualified_items_per_project_or_brand"))
+    rows = receipt.get("cumulative_evidence")
+    if needs_evidence and not isinstance(rows, list):
+        return result("cumulative_evidence_required_for_sufficient_claim", False, partial_delivery_allowed=True)
+    unique: dict[str, dict[str, Any]] = {}
+    if rows is not None:
+        if not isinstance(rows, list):
+            return result("invalid_cumulative_evidence", False)
+        for row in rows:
+            item = {"evidence_item_id": row} if isinstance(row, str) else row
+            if not isinstance(item, dict) or not isinstance(item.get("evidence_item_id"), str) or not item["evidence_item_id"].strip():
+                return result("invalid_cumulative_evidence", False)
+            identity = item["evidence_item_id"]
+            previous = unique.get(identity, {})
+            if any(key in previous and key in item and previous[key] != item[key]
+                   for key in ("object_id", "project_or_brand_id", "source_id", "source_role")):
+                return result("cumulative_evidence_identity_conflict", False, evidence_item_id=identity)
+            unique[identity] = {**previous, **item}
+    unmet = []
+    if threshold is not None and (not isinstance(threshold, int) or isinstance(threshold, bool) or threshold <= 0):
+        return result("count_threshold_required", False)
+    if threshold is not None and len(unique) < threshold:
+        unmet.append("count_threshold")
+    for field, dimension in numeric_dimensions.items():
+        if field not in diversity:
+            continue
+        minimum = diversity[field]
+        if not isinstance(minimum, int) or isinstance(minimum, bool) or minimum < 1:
+            return result("invalid_diversity_requirements", False, invalid_field=field)
+        values = {item[dimension] for item in unique.values() if isinstance(item.get(dimension), str) and item[dimension]}
+        if len(values) < minimum:
+            unmet.append(field)
+    maximum = diversity.get("maximum_qualified_items_per_project_or_brand")
+    if maximum is not None:
+        if not isinstance(maximum, int) or isinstance(maximum, bool) or maximum < 1:
+            return result("invalid_diversity_requirements", False)
+        groups: dict[str, int] = {}
+        for item in unique.values():
+            group = item.get("project_or_brand_id")
+            if not isinstance(group, str) or not group:
+                unmet.append("project_or_brand_identity_required")
+                break
+            groups[group] = groups.get(group, 0) + 1
+        if groups and max(groups.values()) > maximum:
+            unmet.append("maximum_qualified_items_per_project_or_brand")
+    covered = {item["object_id"] for item in unique.values() if isinstance(item.get("object_id"), str)}
+    unmet.extend("required_object:" + identity for identity in required_objects if identity not in covered)
+    # Quality and nonnumeric business requirements keep an evidence-based owner
+    # judgment. Optional goals and remaining_gap prose never become hard gates.
+    judgments = receipt.get("requirement_assessments", {})
+    if not isinstance(judgments, dict):
+        return result("invalid_requirement_assessments", False)
+    criteria = quality_requirements(contract)
+    criteria += [key for key in diversity if key not in {*numeric_dimensions, "maximum_qualified_items_per_project_or_brand"}]
+    for criterion in criteria:
+        assessment = judgments.get(criterion, {})
+        if not isinstance(assessment, dict) or assessment.get("met") is not True or not isinstance(assessment.get("basis"), str) or not assessment["basis"].strip():
+            unmet.append(criterion)
+    if unmet:
+        return result("sufficiency_claim_contradicts_requirements", False,
+                      unmet_requirements=unmet, cumulative_qualified_count=len(unique), partial_delivery_allowed=True)
+    return None
+
+
 def validate_package(payload: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(payload, dict) or payload.get("schema") != CONTRACT["package_schema"]:
         return result("invalid_schema", False)
@@ -317,9 +450,9 @@ def validate_package(payload: dict[str, Any]) -> dict[str, Any]:
     acceptance_mode = consumer.get("acceptance_mode")
     if acceptance_mode not in ACCEPTANCE_MODES:
         return result("invalid_acceptance_mode", False)
-    if acceptance_mode in {"count_based", "hybrid"} and not positive_integer(consumer.get("count_threshold")):
+    if acceptance_mode in {"count_based", "hybrid"} and not any(positive_integer(consumer.get(field)) for field in ("count_threshold", "count_target")):
         return result("count_threshold_required", False)
-    if acceptance_mode in {"quality_sufficiency", "hybrid"} and not nonempty_string_list(consumer.get("quality_criteria")):
+    if acceptance_mode in {"quality_sufficiency", "hybrid"} and not quality_requirements(consumer):
         return result("quality_criteria_required", False)
     qualified_classes = consumer.get("qualified_match_classes")
     if not nonempty_string_list(qualified_classes):
@@ -330,7 +463,7 @@ def validate_package(payload: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(diversity, dict):
         return result("diversity_requirements_required", False)
     for field in ("minimum_source_role_count", "minimum_project_or_brand_count", "maximum_qualified_items_per_project_or_brand"):
-        if not positive_integer(diversity.get(field)):
+        if field in diversity and not positive_integer(diversity[field]):
             return result("invalid_diversity_requirements", False, invalid_field=field)
     if not nonempty(consumer.get("evidence_usage_permission")):
         return result("evidence_usage_permission_required", False)
@@ -390,25 +523,11 @@ def validate_package(payload: dict[str, Any]) -> dict[str, Any]:
     if batch_state == "proposed_incremental_batch" and receipt.get("evidence_sufficiency_status") != "not_assessed":
         return result("proposed_incremental_batch_cannot_claim_sufficiency", False)
     marginal = receipt.get("marginal_information_gain")
-    required_gain = (
-        "assessment",
-        "new_qualified_count",
-        "new_distinct_source_role_count",
-        "new_qualified_project_or_brand_count",
-        "new_expression_pattern_count",
-        "duplicate_rate",
-        "assessment_basis",
-    )
-    if not isinstance(marginal, dict) or marginal.get("assessment") not in MARGINAL_GAIN or any(field not in marginal for field in required_gain):
+    if not isinstance(marginal, dict) or marginal.get("assessment") not in MARGINAL_GAIN:
         return result("invalid_marginal_information_gain", False)
-    for field in required_gain[1:5]:
-        if not nonnegative_number(marginal.get(field)):
-            return result("invalid_marginal_information_gain", False, invalid_field=field)
-    duplicate_rate = marginal.get("duplicate_rate")
-    if duplicate_rate is not None and (not nonnegative_number(duplicate_rate) or duplicate_rate > 1):
-        return result("invalid_marginal_information_gain", False, invalid_field="duplicate_rate")
-    if not nonempty(marginal.get("assessment_basis")):
-        return result("invalid_marginal_information_gain", False, invalid_field="assessment_basis")
+    invalid_gain = validate_gain_fields(consumer, marginal)
+    if invalid_gain:
+        return invalid_gain
     if receipt.get("failure_class") not in FAILURE_CLASSES or not nonempty(receipt.get("remaining_gap")) or not nonempty(receipt.get("stop_reason")):
         return result("invalid_receipt", False)
     for field in ("executed_result_batch_count", "actual_open_count"):
@@ -436,6 +555,7 @@ def validate_package(payload: dict[str, Any]) -> dict[str, Any]:
                 query_by_id,
                 review_batches,
                 payload["business_question_family"],
+                project_diversity_required=any("project_or_brand" in key for key in diversity),
             )
             if invalid:
                 return invalid
@@ -452,6 +572,10 @@ def validate_package(payload: dict[str, Any]) -> dict[str, Any]:
             ]
             if short:
                 return result("sufficient_claim_requires_query_execution_floors", False, short_query_ids=short)
+
+    invalid_claim = validate_completion_claim(consumer, receipt)
+    if invalid_claim:
+        return invalid_claim
 
     return result(
         "pass",

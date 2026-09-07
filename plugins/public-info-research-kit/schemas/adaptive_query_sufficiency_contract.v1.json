@@ -34,7 +34,8 @@
       "comparative_or_pattern_judgment",
       "adaptive_extension_possible",
       "market_or_industry_generalization"
-    ]
+    ],
+    "boundary": "真实研究须有原任务明确的实际完成要求，不能只有模式名称。简单直接读取由本工程依据用户原始请求记录目标、停止条件和原请求引用，无需用户另批豁免。"
   },
   "ownership": {
     "business_owner": [
@@ -142,7 +143,6 @@
     "qualification_counts",
     "qualified_count",
     "qualified_rate",
-    "qualified_project_or_brand_count",
     "result_batch_count",
     "actual_open_count",
     "marginal_information_gain",
@@ -157,7 +157,7 @@
   ],
   "behavior_boundaries": [
     "真实研究检索未声明策略时默认启用 D-237；缺少 acceptance_mode 时返回 d237_consumer_contract_required",
-    "简单定向获取只有显式人工豁免且不存在研究特征时才可豁免",
+    "简单直接读取由本工程依据原用户请求记录适用性，不索取额外豁免；有复杂研究要求时仍检查充分性",
     "完成固定查询数或固定样本数不自动证明业务充分",
     "proposed_incremental_batch 必须 needs_downstream_authorization=true 且 live_channel_authorized=false",
     "approved_incremental_batch 必须有 adaptive_extension 授权和数量、时间、成本边界",
@@ -167,5 +167,15 @@
     "真实学习记录与业务样本不得进入公开发行 fixture",
     "content_supply_gap 只描述当前平台、当前查询批次和当前语义，不能外推为全网没有"
   ],
-  "validator": "tools/validate_adaptive_query_sufficiency.py"
+  "validator": "tools/validate_adaptive_query_sufficiency.py",
+  "completion_claim_policy": {
+    "scope": "Use only requirements explicit in the original business task; owner maps them into the existing contract without inventing quotas or scores.",
+    "count_threshold": "Hard minimum; count_target is aspirational and does not block completion.",
+    "quality_criteria": "Required qualitative conditions; optional improvements stay outside this list.",
+    "diversity_requirements": "Hard coverage conditions; diversity_targets are aspirational.",
+    "cumulative_evidence": "For a sufficient claim with numeric or object requirements, list task-qualified evidence_item_id references, including reused material. Duplicate identities count once. Add project_or_brand_id, source_id, source_role or object_id only for applicable coverage requirements.",
+    "requirement_assessments": "Existing receipt mapping from each required quality criterion or other qualitative requirement to met plus an evidence-based basis. No quality score; the model assesses substantive support.",
+    "partial_delivery": "A truthful partial receipt remains deliverable. A contradiction rejects only the sufficient claim. Do not infer criticality from remaining_gap prose.",
+    "marginal_gain": "assessment and assessment_basis are sufficient unless the business contract explicitly requires marginal_gain_fields. Absent means unmeasured or inapplicable, not zero."
+  }
 }

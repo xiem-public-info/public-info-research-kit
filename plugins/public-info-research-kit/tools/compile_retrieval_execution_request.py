@@ -31,12 +31,17 @@ def compile_sufficiency_input(task: dict, plan: dict) -> dict:
             "required_gate_ids": [] if plan["channel"] == "map_gis" else ["GATE-D237-RESEARCH-SUFFICIENCY-DEFAULT"],
         },
     }
-    for key in ("sufficiency_policy", "acceptance_mode", "qualification_policy", "diversity_policy", "research_characteristics", "simple_direct_retrieval_exemption", "adaptive_extension"):
+    for key in ("sufficiency_policy", "acceptance_mode", "qualification_policy", "diversity_policy", "quality_criteria", "count_threshold", "count_target", "diversity_requirements", "diversity_targets", "required_object_ids", "marginal_gain_fields", "research_characteristics", "simple_direct_retrieval_exemption", "adaptive_extension"):
         source_key = "policy" if key == "sufficiency_policy" else key
         if source_key in sufficiency:
             result[key] = sufficiency[source_key]
         elif key in task:
             result[key] = task[key]
+    policy = result.get("qualification_policy")
+    if isinstance(policy, dict):
+        for key in ("quality_criteria", "count_threshold", "count_target", "diversity_requirements", "required_object_ids"):
+            if key in policy:
+                result.setdefault(key, policy[key])
     # The owner classifies the received request; this is not a second approval.
     if "research_characteristics" in plan:
         received = result.get("research_characteristics", [])

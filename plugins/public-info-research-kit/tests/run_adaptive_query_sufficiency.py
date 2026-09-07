@@ -90,6 +90,100 @@ def approved_incremental() -> dict:
     return payload
 
 
+def completion_cases(validator, make_payload, applicability_schema):
+    cases = []
+    def check_package(name, payload, status="pass", passed=True):
+        cases.append(check(name, validator.validate_package(payload), status, passed))
+
+    original = make_payload()
+    original["receipt"]["evidence_sufficiency_status"] = "sufficient"
+    check_package("status_only_cannot_prove_cumulative_completion", original,
+                  "cumulative_evidence_required_for_sufficient_claim", False)
+
+    complete = make_payload()
+    contract = complete["consumer_contract"]
+    contract["count_threshold"] = 5
+    contract["diversity_requirements"] = {"minimum_project_or_brand_count": 3,
+        "maximum_qualified_items_per_project_or_brand": 2, "minimum_independent_sources": 3}
+    complete["receipt"].update(evidence_sufficiency_status="sufficient",
+        remaining_gap="非关键补充图片仍缺，不影响本次已明确要求",
+        cumulative_evidence=[{"evidence_item_id": identity,
+            "project_or_brand_id": "project-"+str(index % 3),
+            "source_id": "source-"+str(index % 3), "object_id": "subject"}
+            for index, identity in enumerate(["reused-1", "reused-2", "reused-3", "new-1", "new-2"])],
+        requirement_assessments={criterion: {"met": True, "basis": "上述累计材料支持本条件；包含本任务可复用的既有证据"}
+            for criterion in contract["quality_criteria"]})
+    check_package("three_reused_plus_two_new_meet_five", complete)
+    check_package("noncritical_gap_does_not_block_sufficient_claim", complete)
+    custom = copy.deepcopy(complete)
+    custom["consumer_contract"]["diversity_requirements"]["覆盖业务所需视角"] = True
+    custom["receipt"]["requirement_assessments"]["覆盖业务所需视角"] = {"met": True, "basis": "本任务累计证据已覆盖指定视角"}
+    unchanged = copy.deepcopy(custom)
+    check_package("nonnumeric_business_requirement_is_assessed", custom)
+    cases.append(check("validation_preserves_original_requirements", {"status": "pass", "passed": custom == unchanged}, "pass", True))
+    short = copy.deepcopy(complete)
+    short["receipt"]["cumulative_evidence"] = short["receipt"]["cumulative_evidence"][-2:]
+    check_package("two_cumulative_items_cannot_claim_five", short, "sufficiency_claim_contradicts_requirements", False)
+    short["receipt"]["evidence_sufficiency_status"] = "partially_sufficient"
+    check_package("two_valid_items_remain_deliverable_as_partial", short)
+
+    duplicate = copy.deepcopy(complete)
+    duplicate["receipt"]["cumulative_evidence"].append(copy.deepcopy(duplicate["receipt"]["cumulative_evidence"][0]))
+    check_package("reused_duplicate_does_not_invalidate_valid_set", duplicate)
+    duplicate["receipt"]["cumulative_evidence"] = duplicate["receipt"]["cumulative_evidence"][:4] + [duplicate["receipt"]["cumulative_evidence"][0]]
+    check_package("duplicate_cannot_make_four_equal_five", duplicate, "sufficiency_claim_contradicts_requirements", False)
+    reused = copy.deepcopy(complete)
+    reused["receipt"]["cumulative_evidence"].append(dict(reused["receipt"]["cumulative_evidence"][0], reuse_note="在后续批次再次引用"))
+    check_package("reuse_annotation_does_not_change_evidence_identity", reused)
+    conflict = copy.deepcopy(complete)
+    conflicting = dict(conflict["receipt"]["cumulative_evidence"][0], source_id="different-source")
+    conflict["receipt"]["cumulative_evidence"].append(conflicting)
+    check_package("conflicting_identity_is_not_double_counted", conflict, "cumulative_evidence_identity_conflict", False)
+
+    for field, value in [("minimum_independent_sources", 4), ("minimum_project_or_brand_count", 4), ("maximum_qualified_items_per_project_or_brand", 1)]:
+        payload = copy.deepcopy(complete); payload["consumer_contract"]["diversity_requirements"][field] = value
+        check_package("hard_"+field+"_participates", payload, "sufficiency_claim_contradicts_requirements", False)
+    objects = copy.deepcopy(complete); objects["consumer_contract"]["required_object_ids"] = ["subject"]
+    check_package("explicit_required_object_is_covered", objects)
+    objects["consumer_contract"]["required_object_ids"].append("missing-critical-object")
+    check_package("critical_object_gap_rejects_only_completion", objects, "sufficiency_claim_contradicts_requirements", False)
+    quality = copy.deepcopy(complete)
+    quality["receipt"]["requirement_assessments"][quality["consumer_contract"]["quality_criteria"][0]]["met"] = False
+    check_package("meeting_count_does_not_override_failed_quality", quality, "sufficiency_claim_contradicts_requirements", False)
+
+    target = copy.deepcopy(short); target["receipt"]["evidence_sufficiency_status"] = "sufficient"
+    target["consumer_contract"].pop("count_threshold"); target["consumer_contract"]["count_target"] = 5
+    target["consumer_contract"]["diversity_requirements"] = {}
+    target["consumer_contract"]["diversity_targets"] = {"minimum_independent_sources": 99}
+    check_package("aspirational_count_and_diversity_are_not_hard_floors", target)
+    target["consumer_contract"]["acceptance_mode"] = "quality_sufficiency"
+    target["consumer_contract"].pop("count_target"); target["receipt"].pop("cumulative_evidence")
+    check_package("quality_only_task_has_no_invented_count_floor", target)
+
+    generic = make_payload()
+    generic["consumer_contract"]["qualified_match_classes"] = ["original_report"]
+    generic["consumer_contract"]["non_counted_match_classes"] = ["source_clue"]
+    generic["consumer_contract"]["diversity_requirements"] = {"minimum_independent_sources": 3}
+    for record in generic["query_learning_records"]:
+        total = sum(record["qualification_counts"].values())
+        record["qualification_counts"] = {"original_report": record["qualified_count"], "source_clue": total-record["qualified_count"]}
+        record.pop("qualified_project_or_brand_count", None)
+    generic["receipt"]["marginal_information_gain"] = {"assessment": "low", "assessment_basis": "本批来源重复，未增加关键论据"}
+    check_package("generic_report_omits_inapplicable_legacy_counters", generic)
+    generic["consumer_contract"]["marginal_gain_fields"] = ["new_qualified_count"]
+    check_package("explicit_gain_requirement_cannot_disappear", generic, "invalid_marginal_information_gain", False)
+    generic["receipt"]["marginal_information_gain"]["new_qualified_count"] = 0
+    check_package("applicable_zero_gain_is_distinct_from_absence", generic)
+
+    app = {"schema": applicability_schema, "task_id": "business-criteria",
+        "route_receipt": {"primary_route_id": "ROUTE-OFFICIAL-RESOLVER", "required_gate_ids": ["GATE-D237-RESEARCH-SUFFICIENCY-DEFAULT"]},
+        "acceptance_mode": "hybrid"}
+    cases.append(check("mode_name_alone_is_not_research_criteria", validator.validate_applicability(app), "d237_consumer_contract_required", False))
+    app.update(count_target=5, quality_criteria=["能回到原始报告的支持与反对论据"])
+    cases.append(check("original_qualitative_goal_and_soft_target_are_usable", validator.validate_applicability(app), "pass", True))
+    return cases
+
+
 def main() -> int:
     cases: list[dict] = []
     partial = load("golden-tasks/golden_research_partial.json")
@@ -185,6 +279,7 @@ def main() -> int:
         "task_id": "APP-DEFAULT-01",
         "route_receipt": {"primary_route_id": "ROUTE-XHS", "required_gate_ids": ["GATE-D237-RESEARCH-SUFFICIENCY-DEFAULT"]},
         "acceptance_mode": "hybrid",
+        "count_threshold": 5, "quality_criteria": ["来源对应原问题"],
         "research_characteristics": ["multiple_independent_queries"],
     }
     receipt = MODULE.validate_applicability(applicability)
@@ -201,6 +296,8 @@ def main() -> int:
         "route_receipt": {"primary_route_id": "ROUTE-DOCS", "required_gate_ids": []},
     }
     cases.append(check("non_retrieval_is_not_applicable", MODULE.validate_applicability(non_retrieval), "not_applicable_non_retrieval_task", True))
+
+    cases.extend(completion_cases(MODULE, lambda: copy.deepcopy(partial), "query_sufficiency_applicability.v1"))
 
     report = {
         "schema": "adaptive_query_sufficiency_fixture_report.v1",

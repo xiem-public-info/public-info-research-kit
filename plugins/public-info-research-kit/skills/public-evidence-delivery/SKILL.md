@@ -18,6 +18,10 @@ description: 将公开信息整理为可复盘证据包，区分事实候选、�
 11. 失败按 `query_semantic_failure`、`identity_collision`、`content_supply_gap`、`query_transport_failure`、`route_control_failure`、`source_render_failure`、`safety_stop`、`operator_transient_error_recovered` 和 `evidence_conversion_failure` 分层；查询未正确提交不得记成语义失败，`content_supply_gap` 不得外推为全网没有。
 12. 对异常动作、增量授权、查询晋升、软证据拒收和跨工程接受边界，按随 Plugin 安装的 `resources/decision-playbook.v1.md` 处理。
 
+充分性按本任务可用的累计成果判断，包括可复用旧证据与新增证据，同一证据 ID 只计一次，不以单批新增计数代替累计计数。声明 `sufficient` 时，在现有充分性包中用 `receipt.cumulative_evidence` 引用已按本任务资格计入的证据；仅在原合同要求时附项目、来源或关键对象标识。`count_threshold` 和 `diversity_requirements` 表示原任务最低要求，`count_target` 和 `diversity_targets` 表示期望目标；由本工程据原意映射，不让下游另填技术表。质量及其他业务条件由 `requirement_assessments` 保留是否满足与证据依据，不新增评分。检查器拒绝与原要求矛盾的完成声明，但有效部分可按 `partially_sufficient` 交付；`remaining_gap` 中出现“缺”字不构成阻断，非关键缺口不否定已成立结果。
+
+增益只记录任务适用且实际观察的维度，未测或不适用可省略，不能伪填零。保留总体判断与依据；只有原任务在 `marginal_gain_fields` 中已明确要求的维度才必填。A／B／C、项目多样性和表达类型均不作为所有研究的统一字段。
+
 轻量阅读、素材和内部判断按用途直接交付，不为套用本 Skill 额外建包、建档或补齐无关字段。独立成立的结果可以先交付，原任务是否完成仍按业务目标判断。图片先看对象、视角、用途缺口，再选最可能补齐的来源；已有截图满足研究用途时先用，入选正式图片需要清晰度时再定向补取原图。完整购房事件沿用下游已裁定定义，按需记录希望取得的进展（desired_progress），区分原声、推断和未取得；不新增统一因素、不回填历史或因此扩搜。
 
 本 Skill 负责证据外壳，不替业务 Owner 作最终客户判断，也不向外部系统自动发送。

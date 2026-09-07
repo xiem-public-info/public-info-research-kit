@@ -22,7 +22,7 @@ def main():
     plan={k:copy.deepcopy(v) for k,v in base.items() if k in ('channel','shared_gui','computer_use','end_user_session','stop_condition')}
     plan['queries']=base['query_plan']
     singular=copy.deepcopy(task); singular['subject']=singular.pop('subjects')[0]
-    singular['sufficiency']={'policy':'d237_required','acceptance_mode':'quality_sufficiency','stop_condition':'original task stop'}
+    singular['sufficiency']={'policy':'d237_required','acceptance_mode':'quality_sufficiency','quality_criteria':['原文能回答已明确的业务问题'],'stop_condition':'original task stop'}
     compiled=compile_request(singular,plan)
     check('singular_subject_preserved',compiled['subjects']==[singular['subject']] and compiled['retrieval_task']==singular)
     check('business_sufficiency_mapped',validate_applicability(compiled['sufficiency_applicability'])['passed'])
@@ -80,6 +80,18 @@ def main():
     check("multiple_queries_cannot_hide_as_direct_read", not validate_applicability(compile_request(direct_task, multi_plan)["sufficiency_applicability"])["passed"])
     required = copy.deepcopy(direct_task); required["sufficiency"] = {"policy": "d237_required", "acceptance_mode": "quality_sufficiency"}
     check("explicit_research_standard_preserved", validate_applicability(compile_request(required, direct_plan)["sufficiency_applicability"])["d237_required"])
+    standards = copy.deepcopy(task)
+    standards['sufficiency'] = {'policy':'d237_required', 'acceptance_mode':'hybrid',
+        'count_threshold':5, 'count_target':8, 'quality_criteria':['Original source supports the business question'],
+        'diversity_requirements':{'minimum_independent_sources':3}, 'required_object_ids':['subject'],
+        'marginal_gain_fields':['new_qualified_count']}
+    original = copy.deepcopy(standards)
+    compiled_standards = compile_request(standards, plan)
+    mapped = compiled_standards.get('owner_request', compiled_standards)
+    for field in ('count_threshold','count_target','quality_criteria','diversity_requirements','required_object_ids','marginal_gain_fields'):
+        check('original_requirement_'+field, mapped['sufficiency_applicability'][field] == standards['sufficiency'][field])
+    check('mapping_does_not_rewrite_task', standards == original and mapped['retrieval_task'] == original)
+    check('mapped_actual_requirements_accepted', validate_applicability(mapped['sufficiency_applicability'])['passed'])
     report={'status':'pass' if all(c['passed'] for c in cases) else 'fail','case_count':len(cases),'failure_count':sum(not c['passed'] for c in cases),'cases':cases,'platform_opened':False,'network_accessed':False}
     print(json.dumps(report,indent=2)); return int(report['status']!='pass')
 if __name__=='__main__': raise SystemExit(main())

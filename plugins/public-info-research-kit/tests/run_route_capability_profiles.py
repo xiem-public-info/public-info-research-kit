@@ -131,6 +131,13 @@ def main() -> int:
     request["channel_scope"] = ["wechat"]
     known = MODULE.build_plan(request)
     cases.append({"case_id": "known_link_reads_without_search", "passed": known["status"] == "pass" and [r["mode"] for r in known["routes"]] == ["known_url_browser_open"]})
+    generic = copy.deepcopy(request)
+    generic['business_question'] = '通过网络搜索比较 SaaS 板块竞品并整理行业动态'
+    generic['channel_scope'] = ['public_web']
+    generic['public_web'] = {'queries': ['SaaS 行业动态']}
+    general_plan = MODULE.build_plan(generic)
+    cases.append({'case_id': 'general_search_keeps_public_web_route',
+        'passed': general_plan['status'] == 'pass' and [r['channel'] for r in general_plan['routes']] == ['public_web']})
     report = {
         "schema": "route_capability_profile_fixture_report.v1",
         "status": "pass" if result["status"] == "pass" and all(row["passed"] for row in cases) else "fail",
