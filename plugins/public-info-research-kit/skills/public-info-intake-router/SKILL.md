@@ -13,14 +13,14 @@ description: 将研究问题路由到微信、小红书、静态或动态公开�
 ## 工作合同
 
 1. 先确认业务问题、需要什么证据、使用边界和停止条件。
-2. 下游只需提供 `task_id`、`business_question`、`subjects` 与已有业务限制；本包生成渠道计划，随后运行 `python tools/route_task.py --request <请求文件>`。
+2. 下游只需提供 `task_id`、`business_question`、`subjects` 与已有业务限制；本包生成渠道计划，将本包选择的 `channel_scope` 及渠道输入填入内部请求后运行 `python tools/route_task.py --request <请求文件>`；兼容原合同的单数 `subject`，不得要求下游填写渠道表面和技术版本。
 3. 读取路由结果中的 `capability_profile`。它说明该渠道擅长、不擅长、黄金方法、失败分类和停止线；不要用一个渠道的经验替代另一个渠道的画像。
-4. 对真实研究检索先生成 `query_sufficiency_applicability.v1`，运行 `python tools/validate_adaptive_query_sufficiency.py --applicability-input <适用性文件>`。未显式声明时默认 `d237_required`；缺少 `acceptance_mode` 时返回 `d237_consumer_contract_required`，不得静默降级。只有具名链接读取、指定文件获取、单事实核验或精确记录读取，且有真人豁免引用时，才可用 `exempt_simple_direct_retrieval`。
+4. 将原业务合同的 `sufficiency` 映射为 `query_sufficiency_applicability.v1`（编译结果的 `sufficiency_applicability`），对真实研究检索，运行 `python tools/validate_adaptive_query_sufficiency.py --applicability-input <适用性文件>`。未显式声明时默认 `d237_required`；缺少 `acceptance_mode` 时返回 `d237_consumer_contract_required`，不得静默降级。只有具名链接读取、指定文件获取、单事实核验或精确记录读取，且有真人豁免引用时，才可用 `exempt_simple_direct_retrieval`。
 5. 微信／小红书业务研究默认 `searcher_mode=researcher`。先闭合城市、正式名、单一别名、分期、主体和时间阶段；同名、异体字或历史名分别生成独立查询，不塞进一个长查询。
 6. 读取 `resources/social_semantic_query_lexicon.v0.1.json`，围绕 `business_question + judgment_gap`，用身份、生命周期、业务意图、渠道表面、来源角色、体验机制、客户任务、比较角色、反例、内容形态和时间等语义原子形成少量查询候选。
 7. 把查询写入 `social_query_plan.v1`。每条须有唯一 `query_id`、独立 `exact_query_text`、执行状态、查询假设、来源角色目标、结果批次下限、实际开读下限、预期信息增益和失败归因要求；运行 `python tools/validate_social_query_plan.py --plan <计划文件>`，只有 `executable_query_ids` 中的冻结查询可执行。
 8. 住宅比较研究在深搜前完成身份、当前新房供给、近六个月内容、开盘／加推／实际可选产品、交付期和适用产品层的轻量生命周期核验；不足 12 个月到交付只建议下游降为尾盘参照，不替下游裁定正式竞品角色。
-9. 研究任务的首次回传要主动检查项目事实、竞品关系、客户选择和反例是否共同支持统一语义核；完整事件分别统计项目归属与全局独立家庭旅程；官方表达同时保留核心观点、必要短原话和原文定位。用 `d292_research_orchestration.v1` 和 `tools/validate_d292_research_orchestration.py` 校验这些边界。
+9. 首次回传回答原业务问题，说明已成立判断、冲突、缺口及是否继续。住宅比较研究才检查项目事实、竞品关系、客户选择和反例的统一语义核；完整购房事件、官方表达资产按任务需要启用。使用 D-292 包时，不适用的专用段声明 `applies=false`，通用首次回传声明 `residential_semantic_core_applies=false`，不得用这些标志跳过任务已经要求的住宅研究内容。
 10. 业务语义内核可以依据负例、冲突、缺口和边际信息增益生成一份合并 `proposed_incremental`，范围内按原任务授权逐条冻结后执行，超范围另行裁定。形成或验收充分性包时运行 `python tools/validate_adaptive_query_sufficiency.py --input <充分性包>`。
 11. 本包用 `tools/compile_retrieval_execution_request.py --task <收到的业务合同> --plan <本包计划> --output <执行请求>` 编译。计划含 `channel`、`surface_id` 和 `queries`；每条查询含编号、精确词、frozen 状态和任务配额。`shared_gui`、`computer_use`、`end_user_session` 由本包核实际环境后填写，不能要求下游填写或自动假定为已就绪。微信 AI 编译结果直接交 AI 预检；其他微信／小红书在真实 GUI 动作前，把冻结查询转换为 `portable_channel_request.v1`，运行 `python tools/check_portable_channel_preflight.py --request <请求文件> --require-live`。执行 Owner 固定为已安装的公开信息研究包；下游保留业务问题、验收和解释权，不能指定执行器、回退、坐标或登录态。
 12. `wechat_ai_search` 与 `xhs_ask_diandian` 是两个独立平台表面，普通搜索不得冒充；聚合回答只用于解歧、信息密度、扩词、反例和回源导航。微信 AI 从任务合同继承权限，运行 `tools/check_wechat_ai_search_gate_preflight.py --require-live` 检查实际执行条件，结果不代表已执行或已通过真实验收。
@@ -34,7 +34,7 @@ description: 将研究问题路由到微信、小红书、静态或动态公开�
 
 ## 输出
 
-输出必须包含：任务编号、业务问题、判断缺口、渠道与模式、渠道画像、业务 Owner、执行 Owner、`searcher_mode`、对象身份、精确输入、查询计划版本、每条查询的最小结果批次与实际开读数、增量授权状态、证据目标、使用边界、停止条件和预期验证器。
+以下字段由本包用于内部执行计划，业务交付只呈现需要的结论和限制；按当前渠道填写适用字段，不要求下游预填：任务编号、业务问题、判断缺口、渠道与模式、渠道画像、业务 Owner、执行 Owner、`searcher_mode`、对象身份、精确输入、查询计划版本、每条查询的最小结果批次与实际开读数、增量授权状态、证据目标、使用边界、停止条件和预期验证器。
 
 本 Skill 不打开微信、小红书、浏览器或地图，不联网，不生成平台事实，也不代表真实检索已经完成。
 

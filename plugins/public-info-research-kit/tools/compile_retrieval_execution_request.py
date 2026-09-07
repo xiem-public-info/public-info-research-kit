@@ -7,7 +7,37 @@ import json
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from retrieval_task_policy import validate_task_authorization
+from retrieval_task_policy import task_subjects, validate_task_authorization
+
+
+def compile_sufficiency_input(task: dict, plan: dict) -> dict:
+    """Map the existing business template to the existing D-237 checker.
+
+    Missing business criteria stay missing; technical routing is owner supplied.
+    This is an input for validation, not an acceptance or execution receipt.
+    """
+    route_ids = {
+        "wechat": "ROUTE-WECHAT-DESKTOP", "xhs": "ROUTE-XHS",
+        "public_web": "ROUTE-OFFICIAL-RESOLVER", "map_gis": "ROUTE-MAP",
+    }
+    sufficiency = task.get("sufficiency", {})
+    if not isinstance(sufficiency, dict):
+        raise ValueError("retrieval_sufficiency_invalid")
+    result = {
+        "schema": "query_sufficiency_applicability.v1",
+        "task_id": task["task_id"],
+        "route_receipt": {
+            "primary_route_id": route_ids.get(plan["channel"], "ROUTE-OFFICIAL-RESOLVER"),
+            "required_gate_ids": [] if plan["channel"] == "map_gis" else ["GATE-D237-RESEARCH-SUFFICIENCY-DEFAULT"],
+        },
+    }
+    for key in ("sufficiency_policy", "acceptance_mode", "qualification_policy", "diversity_policy", "research_characteristics", "simple_direct_retrieval_exemption", "adaptive_extension"):
+        source_key = "policy" if key == "sufficiency_policy" else key
+        if source_key in sufficiency:
+            result[key] = sufficiency[source_key]
+        elif key in task:
+            result[key] = task[key]
+    return result
 
 
 def compile_request(task: dict, plan: dict) -> dict:
@@ -16,9 +46,9 @@ def compile_request(task: dict, plan: dict) -> dict:
         retrieval_task=copy.deepcopy(task), channel=channel, channel_profile=f'{channel}.v1',
         execution_owner='installed_public_info_research_kit',
         downstream_business_owner=task.get('business_owner', 'requesting_user_or_downstream_project'),
-        business_question=task['business_question'], intent=plan.get('intent', 'business_research'),
+        business_question=task['business_question'], subjects=task_subjects(task), sufficiency_applicability=compile_sufficiency_input(task, plan), intent=plan.get('intent', 'business_research'),
         evidence_type='public_evidence', usage_boundary=task.get('usage_boundary', 'internal_research'),
-        stop_condition=plan.get('stop_condition') or task.get('stop_condition') or 'Stop when sufficient, no material gain, or safety boundary reached',
+        stop_condition=task.get('stop_condition') or task.get('sufficiency', {}).get('stop_condition') or plan.get('stop_condition') or 'Stop when sufficient, no material gain, or safety boundary reached',
         query_plan_schema='social_query_plan.v1', query_plan=copy.deepcopy(plan['queries']))
     for key in ('surface_id', 'scope_expansion_requested', 'budget_exhausted', 'operation', 'usage', 'shared_gui', 'computer_use', 'end_user_session'):
         if key in plan:

@@ -13,7 +13,6 @@ from typing import Any
 SCHEMA = "public_info_research_request.v1"
 REQUIRED = (
     "task_id",
-    "subject",
     "business_question",
     "requested_evidence",
     "channel_scope",
@@ -81,7 +80,7 @@ def _route_wechat(request: dict[str, Any], errors: list[str]) -> list[dict[str, 
                 "gate_tool": "tools/check_wechat_ai_search_gate_preflight.py",
                 "research_orchestration_schema": "d292_research_orchestration.v1",
                 "research_orchestration_tool": "tools/validate_d292_research_orchestration.py",
-                "status": "task_driven_retrieval_ready_not_live_revalidated",
+                "status": "task_driven_retrieval_ready",
                 "execution_authorized": False,
                 "real_gui_validated": False,
                 "original_source_backread_required": True,
@@ -96,7 +95,7 @@ def _route_wechat(request: dict[str, Any], errors: list[str]) -> list[dict[str, 
             "capability_profile": CAPABILITY_PROFILES["wechat"],
             "input_count": len(value),
             "uses_declared_task_scope": True,
-            "requires_shared_gui_serialization": requires_gui,
+            "requires_shared_gui_serialization": requires_gui or cfg.get("uses_shared_desktop", False),
             "searcher_mode": request.get("searcher_mode") or "researcher",
             "query_strategy": SOCIAL_STRATEGY,
             "query_plan_schema": "social_query_plan.v1",
@@ -122,6 +121,9 @@ def build_plan(request: dict[str, Any]) -> dict[str, Any]:
         if not _nonempty(request.get(field)):
             errors.append(f"missing required field: {field}")
 
+    if not _nonempty(request.get("subjects") or request.get("subject")):
+        errors.append("missing subject identity")
+
     channel_scope = request.get("channel_scope")
     if not isinstance(channel_scope, list) or not channel_scope:
         errors.append("channel_scope must be a non-empty list")
@@ -146,14 +148,14 @@ def build_plan(request: dict[str, Any]) -> dict[str, Any]:
             if not inputs:
                 errors.append(f"{channel} requires known_urls or queries")
             else:
-                routes.append({"channel": channel, "mode": "official_source_resolution", "skill": "skills/public-web-official-resolver", "capability_profile": CAPABILITY_PROFILES[channel], "input_count": len(inputs), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False})
+                routes.append({"channel": channel, "mode": "official_source_resolution", "skill": "skills/public-web-official-resolver", "capability_profile": CAPABILITY_PROFILES[channel], "input_count": len(inputs), "uses_declared_task_scope": True, "requires_shared_gui_serialization": cfg.get("uses_shared_desktop", False), "default_executes_platform": False})
         elif channel == "public_dynamic_page":
             cfg = request.get("public_dynamic_page") or {}
             inputs = (cfg.get("known_urls") or []) + (cfg.get("queries") or [])
             if not inputs:
                 errors.append("public_dynamic_page requires known_urls or queries")
             else:
-                routes.append({"channel": channel, "mode": "public_dynamic_runtime_capture", "skill": "skills/public-web-official-resolver", "capability_profile": CAPABILITY_PROFILES[channel], "input_count": len(inputs), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False, "static_probe_first": True, "browser_runtime_only_if_needed": True})
+                routes.append({"channel": channel, "mode": "public_dynamic_runtime_capture", "skill": "skills/public-web-official-resolver", "capability_profile": CAPABILITY_PROFILES[channel], "input_count": len(inputs), "uses_declared_task_scope": True, "requires_shared_gui_serialization": cfg.get("uses_shared_desktop", True), "default_executes_platform": False, "static_probe_first": True, "browser_runtime_only_if_needed": True})
         elif channel == "rss_feed":
             cfg = request.get("rss_feed") or {}
             feeds = cfg.get("feed_urls") or []
@@ -166,8 +168,15 @@ def build_plan(request: dict[str, Any]) -> dict[str, Any]:
             if not cfg.get("project_anchor"):
                 errors.append("map_gis requires project_anchor")
             else:
-                routes.append({"channel": "map_gis", "mode": "spatial_evidence", "skill": "skills/map-spatial-evidence", "capability_profile": CAPABILITY_PROFILES["map_gis"], "input_count": 1 + len(cfg.get("pois") or []), "uses_declared_task_scope": True, "requires_shared_gui_serialization": False, "default_executes_platform": False, "output_contract": "spatial_coordinate_evidence.v2", "validator": "tools/validate_spatial_coordinate_evidence_v2.py", "object_set_owner": "downstream_consumer", "project_location_model": "single_map_marker_centerpoint", "rendering_owner": "downstream_consumer", "display_validation_required_for_coordinate_package": False})
+                routes.append({"channel": "map_gis", "mode": "spatial_evidence", "skill": "skills/map-spatial-evidence", "capability_profile": CAPABILITY_PROFILES["map_gis"], "input_count": 1 + len(cfg.get("pois") or []), "uses_declared_task_scope": True, "requires_shared_gui_serialization": cfg.get("uses_shared_desktop", True), "default_executes_platform": False, "output_contract": "spatial_coordinate_evidence.v2", "validator": "tools/validate_spatial_coordinate_evidence_v2.py", "object_set_owner": "downstream_consumer", "project_location_model": "single_map_marker_centerpoint", "rendering_owner": "downstream_consumer", "display_validation_required_for_coordinate_package": False})
 
+    for route in routes:
+        selected = request.get(route["channel"]) or {}
+        if "uses_shared_desktop" in selected and not isinstance(selected["uses_shared_desktop"], bool):
+            errors.append("uses_shared_desktop must be a boolean supplied by the execution owner")
+        route["shared_gui_policy"] = "serialize_actual_shared_desktop_use; HTTP_API_and_file_processing_can_run_in_parallel"
+        if route["channel"] not in {"wechat", "xhs"}:
+            route["high_state_owner_preflight_required"] = False
     canonical = json.dumps(request, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return {
         "schema": "public_info_route_plan.v1",

@@ -14,6 +14,8 @@ description: 将调用方给定的项目、配套和参照对象转为中心点�
 5. 记录实际可观察的主干道、河流、高差、围墙和未开放通道等阻隔，只在调用方给定集合内判断距离或步行便利性，不输出绝对“独占配套”。
 6. 按 `tests/fixtures/spatial_coordinate_evidence_v2/schema.json` 组织数据，使用 `tools/validate_spatial_coordinate_evidence_v2.py` 校验。校验仅证明结构与业务边界，不证明真实地图坐标或路线正确。
 
+按对象部分交付：可靠点位照常交付；未取得的对象用 `location_status=not_available` 与 `gap_reason` 保留，坐标不伪填。任务用途已经接受的门牌或区域示意用 `approximate_only`，保留 `accepted_use_ref` 和用途限制，不冒充精确中心点，也不用于精确距离或路线计算。检查器的 `delivery_status=partial` 不代表任务完成；本案或关键精度缺失时按原业务目标保留未完成。
+
 普通交付只呈现坐标、距离、阻隔、相对便利性和必要缺口；地图平台、坐标制式、采集日期留在后台便于复算，不向客户正文堆放工程状态。
 
 本渠道不绘图。旧 `tools/assemble_osm_asset.py` 和 `tools/validate_osm_display_receipt.py` 仅保留用于历史或独立下游显示任务，不是新空间任务必经步骤。实际使用 OSM 底图、截图或拼接资产时才要求可见 `© OpenStreetMap contributors` 署名；未使用 OSM 资产不强制署名。OSM Standard 不得称为卫星影像，不得批量抓取、预取公共瓦片或制作离线瓦片包。

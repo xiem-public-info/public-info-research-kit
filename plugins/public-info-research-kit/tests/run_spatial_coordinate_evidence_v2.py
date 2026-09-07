@@ -86,6 +86,7 @@ def main() -> int:
         schema["properties"]["distances"]["items"]["properties"]["distance_type"]["enum"]
     )
     schema_checks = {
+        "malformed_payload_reports_invalid": validator.delivery_summary(None, validator.validate_contract(None))["delivery_status"] == "invalid",
         "schema_id_matches": schema.get("$id") == validator.SCHEMA_VERSION,
         "schema_version_const_matches": (
             schema["properties"]["schema_version"].get("const") == validator.SCHEMA_VERSION
@@ -132,6 +133,9 @@ def main() -> int:
         expected_codes = sorted(case.get("expected_error_codes", []))
         expected_codes_seen = all(code in actual_codes for code in expected_codes)
         passed = actual_valid == case["expected_valid"] and expected_codes_seen
+        if "expected_delivery_status" in case:
+            delivery = validator.delivery_summary(contract, errors)
+            passed = passed and delivery["delivery_status"] == case["expected_delivery_status"] and delivery["task_completion"] == "not_assessed_against_business_goal"
         results.append(
             {
                 "case_id": case["case_id"],

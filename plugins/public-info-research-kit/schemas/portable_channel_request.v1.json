@@ -245,6 +245,14 @@
     },
     "usage": {
       "type": "object"
+    },
+    "subjects": {
+      "type": "array",
+      "minItems": 1
+    },
+    "sufficiency_applicability": {
+      "type": "object",
+      "description": "Owner mapping of received business sufficiency; not an acceptance receipt."
     }
   },
   "anyOf": [

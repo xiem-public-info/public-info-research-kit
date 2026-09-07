@@ -77,76 +77,79 @@ def validate(contract: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(lifecycle, dict):
         errors.append("competitor_lifecycle_precheck_required")
         lifecycle = {}
-    if lifecycle.get("complete_before_deep_retrieval") is not True:
-        errors.append("lifecycle_precheck_must_precede_deep_retrieval")
-    if lifecycle.get("downstream_decides_final_competitor_role") is not True:
-        errors.append("downstream_competitor_authority_required")
-    objects = lifecycle.get("objects")
-    if lifecycle.get("applies") is True and (not isinstance(objects, list) or not objects):
-        errors.append("lifecycle_objects_required")
-    for index, row in enumerate(objects or []):
-        prefix = f"competitor_lifecycle_precheck.objects[{index}]"
-        if not isinstance(row, dict) or not _nonempty(row.get("object_id")):
-            errors.append(f"{prefix}_object_id_required")
-            continue
-        for field in (
-            "identity_closed",
-            "current_new_home_supply_checked",
-            "recent_six_month_content_checked",
-            "launch_and_actual_product_checked",
-            "delivery_date_checked",
-        ):
-            if row.get(field) is not True:
-                errors.append(f"{prefix}_{field}_required")
-        months = row.get("months_to_delivery")
-        if months != "unknown" and not isinstance(months, int):
-            errors.append(f"{prefix}_months_to_delivery_invalid")
-        if isinstance(months, int) and 0 <= months < 12 and row.get("recommended_role") != "tail_end_reference":
-            errors.append(f"{prefix}_delivery_under_12_months_requires_tail_end_reference")
-        if row.get("applicable_product_scope") not in {"whole_project", "partial_tier", "unknown"}:
-            errors.append(f"{prefix}_applicable_product_scope_invalid")
-        if row.get("recommended_role") not in {"deep_search", "partial_tier", "tail_end_reference", "exclude_candidate"}:
-            errors.append(f"{prefix}_recommended_role_invalid")
+    if lifecycle.get("applies") is not False:
+        if lifecycle.get("complete_before_deep_retrieval") is not True:
+            errors.append("lifecycle_precheck_must_precede_deep_retrieval")
+        if lifecycle.get("downstream_decides_final_competitor_role") is not True:
+            errors.append("downstream_competitor_authority_required")
+        objects = lifecycle.get("objects")
+        if lifecycle.get("applies") is True and (not isinstance(objects, list) or not objects):
+            errors.append("lifecycle_objects_required")
+        for index, row in enumerate(objects or []):
+            prefix = f"competitor_lifecycle_precheck.objects[{index}]"
+            if not isinstance(row, dict) or not _nonempty(row.get("object_id")):
+                errors.append(f"{prefix}_object_id_required")
+                continue
+            for field in (
+                "identity_closed",
+                "current_new_home_supply_checked",
+                "recent_six_month_content_checked",
+                "launch_and_actual_product_checked",
+                "delivery_date_checked",
+            ):
+                if row.get(field) is not True:
+                    errors.append(f"{prefix}_{field}_required")
+            months = row.get("months_to_delivery")
+            if months != "unknown" and not isinstance(months, int):
+                errors.append(f"{prefix}_months_to_delivery_invalid")
+            if isinstance(months, int) and 0 <= months < 12 and row.get("recommended_role") != "tail_end_reference":
+                errors.append(f"{prefix}_delivery_under_12_months_requires_tail_end_reference")
+            if row.get("applicable_product_scope") not in {"whole_project", "partial_tier", "unknown"}:
+                errors.append(f"{prefix}_applicable_product_scope_invalid")
+            if row.get("recommended_role") not in {"deep_search", "partial_tier", "tail_end_reference", "exclude_candidate"}:
+                errors.append(f"{prefix}_recommended_role_invalid")
 
     counts = contract.get("complete_event_count_policy")
     if not isinstance(counts, dict):
         errors.append("complete_event_count_policy_required")
         counts = {}
-    for field in (
-        "minimum_per_project",
-        "target_per_project",
-        "project_event_affiliation_count",
-        "unique_household_journey_count",
-    ):
-        if not _nonnegative_int(counts.get(field)):
-            errors.append(f"{field}_must_be_nonnegative_integer")
-    minimum = counts.get("minimum_per_project")
-    target = counts.get("target_per_project")
-    if _nonnegative_int(minimum) and _nonnegative_int(target) and target < minimum:
-        errors.append("target_per_project_cannot_be_below_minimum")
-    if counts.get("target_is_maximum") is not False or counts.get("preserve_qualified_excess") is not True:
-        errors.append("target_is_not_maximum_and_qualified_excess_must_be_preserved")
-    if counts.get("global_dedup_unit") != "independent_person_or_household_journey":
-        errors.append("global_household_journey_dedup_required")
-    affiliations = counts.get("project_event_affiliation_count")
-    journeys = counts.get("unique_household_journey_count")
-    if _nonnegative_int(affiliations) and _nonnegative_int(journeys) and journeys > affiliations:
-        errors.append("unique_household_journey_count_cannot_exceed_project_affiliations")
+    if counts.get("applies") is not False:
+        for field in (
+            "minimum_per_project",
+            "target_per_project",
+            "project_event_affiliation_count",
+            "unique_household_journey_count",
+        ):
+            if not _nonnegative_int(counts.get(field)):
+                errors.append(f"{field}_must_be_nonnegative_integer")
+        minimum = counts.get("minimum_per_project")
+        target = counts.get("target_per_project")
+        if _nonnegative_int(minimum) and _nonnegative_int(target) and target < minimum:
+            errors.append("target_per_project_cannot_be_below_minimum")
+        if counts.get("target_is_maximum") is not False or counts.get("preserve_qualified_excess") is not True:
+            errors.append("target_is_not_maximum_and_qualified_excess_must_be_preserved")
+        if counts.get("global_dedup_unit") != "independent_person_or_household_journey":
+            errors.append("global_household_journey_dedup_required")
+        affiliations = counts.get("project_event_affiliation_count")
+        journeys = counts.get("unique_household_journey_count")
+        if _nonnegative_int(affiliations) and _nonnegative_int(journeys) and journeys > affiliations:
+            errors.append("unique_household_journey_count_cannot_exceed_project_affiliations")
 
     first_return = contract.get("first_return")
     if not isinstance(first_return, dict):
         errors.append("first_return_required")
         first_return = {}
-    for field in (
-        "project_fact_support_assessed",
-        "competitor_relation_support_assessed",
-        "customer_choice_support_assessed",
-        "counterexample_support_assessed",
-    ):
-        if first_return.get(field) is not True:
-            errors.append(f"first_return_{field}_required")
+    if first_return.get("residential_semantic_core_applies") is not False:
+        for field in (
+            "project_fact_support_assessed",
+            "competitor_relation_support_assessed",
+            "customer_choice_support_assessed",
+            "counterexample_support_assessed",
+        ):
+            if first_return.get(field) is not True:
+                errors.append(f"first_return_{field}_required")
     support = first_return.get("semantic_core_support_status")
-    if support not in {"supported", "partial", "unsupported"}:
+    if support not in ({"not_applicable"} if first_return.get("residential_semantic_core_applies") is False else {"supported", "partial", "unsupported"}):
         errors.append("semantic_core_support_status_invalid")
     proposal = first_return.get("merged_increment_proposal")
     if not isinstance(proposal, dict):
@@ -164,10 +167,10 @@ def validate(contract: dict[str, Any]) -> dict[str, Any]:
         errors.append("merged_increment_cannot_self_authorize")
 
     official = contract.get("official_expression_policy")
-    if not isinstance(official, dict) or any(
+    if not isinstance(official, dict) or (official.get("applies") is not False and any(
         official.get(field) is not True
         for field in ("core_view_required", "necessary_original_wording_required", "source_locator_required")
-    ):
+    )):
         errors.append("official_expression_requires_core_view_wording_and_source")
 
     thread = contract.get("thread_policy")

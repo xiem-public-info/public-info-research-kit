@@ -75,12 +75,7 @@
     "competitor_lifecycle_precheck": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "applies",
-        "complete_before_deep_retrieval",
-        "downstream_decides_final_competitor_role",
-        "objects"
-      ],
+      "required": [],
       "properties": {
         "applies": {
           "type": "boolean"
@@ -155,20 +150,35 @@
             }
           }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "applies": {
+                "const": false
+              }
+            },
+            "required": [
+              "applies"
+            ]
+          },
+          "then": {},
+          "else": {
+            "required": [
+              "applies",
+              "complete_before_deep_retrieval",
+              "downstream_decides_final_competitor_role",
+              "objects"
+            ]
+          }
+        }
+      ]
     },
     "complete_event_count_policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "minimum_per_project",
-        "target_per_project",
-        "target_is_maximum",
-        "preserve_qualified_excess",
-        "project_event_affiliation_count",
-        "unique_household_journey_count",
-        "global_dedup_unit"
-      ],
+      "required": [],
       "properties": {
         "minimum_per_project": {
           "type": "integer",
@@ -194,17 +204,42 @@
         },
         "global_dedup_unit": {
           "const": "independent_person_or_household_journey"
+        },
+        "applies": {
+          "type": "boolean"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "applies": {
+                "const": false
+              }
+            },
+            "required": [
+              "applies"
+            ]
+          },
+          "then": {},
+          "else": {
+            "required": [
+              "minimum_per_project",
+              "target_per_project",
+              "target_is_maximum",
+              "preserve_qualified_excess",
+              "project_event_affiliation_count",
+              "unique_household_journey_count",
+              "global_dedup_unit"
+            ]
+          }
+        }
+      ]
     },
     "first_return": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "project_fact_support_assessed",
-        "competitor_relation_support_assessed",
-        "customer_choice_support_assessed",
-        "counterexample_support_assessed",
         "semantic_core_support_status",
         "merged_increment_proposal"
       ],
@@ -225,7 +260,8 @@
           "enum": [
             "supported",
             "partial",
-            "unsupported"
+            "unsupported",
+            "not_applicable"
           ]
         },
         "merged_increment_proposal": {
@@ -247,17 +283,56 @@
               "type": "boolean"
             }
           }
+        },
+        "residential_semantic_core_applies": {
+          "type": "boolean"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "residential_semantic_core_applies": {
+                "const": false
+              }
+            },
+            "required": [
+              "residential_semantic_core_applies"
+            ]
+          },
+          "then": {
+            "properties": {
+              "semantic_core_support_status": {
+                "const": "not_applicable"
+              }
+            }
+          },
+          "else": {
+            "required": [
+              "project_fact_support_assessed",
+              "competitor_relation_support_assessed",
+              "customer_choice_support_assessed",
+              "counterexample_support_assessed",
+              "semantic_core_support_status",
+              "merged_increment_proposal"
+            ],
+            "properties": {
+              "semantic_core_support_status": {
+                "enum": [
+                  "supported",
+                  "partial",
+                  "unsupported"
+                ]
+              }
+            }
+          }
+        }
+      ]
     },
     "official_expression_policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "core_view_required",
-        "necessary_original_wording_required",
-        "source_locator_required"
-      ],
+      "required": [],
       "properties": {
         "core_view_required": {
           "const": true
@@ -267,8 +342,33 @@
         },
         "source_locator_required": {
           "const": true
+        },
+        "applies": {
+          "type": "boolean"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "applies": {
+                "const": false
+              }
+            },
+            "required": [
+              "applies"
+            ]
+          },
+          "then": {},
+          "else": {
+            "required": [
+              "core_view_required",
+              "necessary_original_wording_required",
+              "source_locator_required"
+            ]
+          }
+        }
+      ]
     },
     "thread_policy": {
       "type": "object",

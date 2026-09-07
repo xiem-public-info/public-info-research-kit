@@ -268,6 +268,7 @@ def validate_contract(data: Any) -> list[dict[str, str]]:
 
     objects = _require_list(data, "objects", "$", errors)
     object_by_id: dict[str, dict[str, Any]] = {}
+    unavailable_ids: set[str] = set()
     case_objects: list[dict[str, Any]] = []
     for index, obj in enumerate(objects):
         path = f"$.objects.{index}"
@@ -294,6 +295,29 @@ def validate_contract(data: Any) -> list[dict[str, str]]:
         if role == "case_project":
             case_objects.append(obj)
 
+        location_status = obj.get("location_status", "verified")
+        if location_status not in {"verified", "not_available", "approximate_only"}:
+            errors.append(_error("location_status_invalid", path, "位置状态必须明确为可靠、未取得或近似辅助"))
+        if location_status in {"not_available", "approximate_only"}:
+            unavailable_ids.add(object_id)
+            if not _nonempty_string(obj.get("gap_reason")):
+                errors.append(_error("location_gap_reason_required", path, "未取得精确位置时须说明缺口"))
+            if obj.get("centerpoint") is not None or obj.get("geometry_reference") is not None:
+                errors.append(_error("gap_cannot_claim_precise_location", path, "缺口或近似材料不能同时声称已有精确中心点或几何"))
+            if location_status == "approximate_only":
+                if obj.get("location_model") != "address_or_area_illustration":
+                    errors.append(_error("approximate_model_required", path, "近似定位须明确为门牌或区域示意"))
+                auxiliary = obj.get("approximate_location", {})
+                if not isinstance(auxiliary, dict):
+                    auxiliary = {}
+                _validate_coordinate(auxiliary.get("coordinate"), f"{path}.approximate_location.coordinate", errors)
+                if not _nonempty_string(auxiliary.get("accepted_use_ref")) or not _nonempty_string(auxiliary.get("usage_boundary")):
+                    errors.append(_error("approximate_use_required", path, "须引用任务已接受的示意用途并说明精度限制"))
+            elif obj.get("approximate_location") is not None:
+                errors.append(_error("unavailable_has_approximation", path, "有近似材料时须使用 approximate_only"))
+            continue
+        if obj.get("approximate_location") is not None:
+            errors.append(_error("approximation_cannot_be_verified_center", path, "近似材料不得冒充精确中心点"))
         if role in POINT_ROLES:
             if obj.get("location_model") != PROJECT_LOCATION_MODEL:
                 errors.append(
@@ -521,6 +545,9 @@ def validate_contract(data: Any) -> list[dict[str, str]]:
         if from_id not in object_by_id or to_id not in object_by_id:
             errors.append(_error("distance_object_unknown", path, "距离两端必须来自调用方对象清单"))
             continue
+        if from_id in unavailable_ids or to_id in unavailable_ids:
+            errors.append(_error("distance_requires_verified_location", path, "未取得或近似位置不得参与正式距离或路线计算"))
+            continue
         if object_by_id[from_id].get("role") not in {"case_project", "competitor"}:
             errors.append(
                 _error(
@@ -648,6 +675,8 @@ def validate_contract(data: Any) -> list[dict[str, str]]:
         if finding.get("subject_id") != case_project_id:
             errors.append(_error("relative_subject_mismatch", f"{path}.subject_id", "相对优势判断主体必须为本案"))
         reference_object_id = finding.get("reference_object_id")
+        if finding_value != "not_assessed" and unavailable_ids.intersection(comparison_id_set | {reference_object_id}):
+            errors.append(_error("relative_finding_requires_verified_locations", path, "相关位置缺口未闭合时不得作该组比较结论"))
         if (
             reference_object_id not in object_by_id
             or object_by_id[reference_object_id].get("role")
@@ -724,6 +753,23 @@ def validate_contract(data: Any) -> list[dict[str, str]]:
     return errors
 
 
+def delivery_summary(data: Any, errors: list[dict[str, str]]) -> dict[str, Any]:
+    """Report material availability without claiming the business task is done."""
+    groups = {"verified": [], "not_available": [], "approximate_only": []}
+    objects = data.get("objects", []) if isinstance(data, dict) else []
+    for obj in objects if isinstance(objects, list) else []:
+        if isinstance(obj, dict) and obj.get("location_status", "verified") in groups:
+            groups[obj.get("location_status", "verified")].append(obj.get("object_id"))
+    has_gaps = bool(groups["not_available"] or groups["approximate_only"])
+    return {
+        "delivery_status": "invalid" if errors else ("partial" if has_gaps else "complete_coordinate_set"),
+        "usable_object_ids": [] if errors else groups["verified"],
+        "unavailable_object_ids": groups["not_available"],
+        "auxiliary_object_ids": [] if errors else groups["approximate_only"],
+        "task_completion": "not_assessed_against_business_goal",
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate spatial_coordinate_evidence.v2 locally.")
     parser.add_argument("--input", required=True, type=Path, help="Path to a spatial evidence JSON package.")
@@ -736,6 +782,7 @@ def main() -> int:
         "schema_version": SCHEMA_VERSION,
         "error_count": len(errors),
         "errors": errors,
+        **delivery_summary(data, errors),
         "boundary": "local contract validation only; no map service, API, rendering, competitor decision or downstream write",
     }
     print(json.dumps(result, ensure_ascii=False, indent=2))

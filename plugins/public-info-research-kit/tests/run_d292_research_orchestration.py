@@ -74,6 +74,14 @@ def main() -> int:
     row["thread_policy"]["rotate_thread_after_close"] = True
     cases.append(run_case("thread_rotates_only_after_natural_close", row, False, "thread_rotation_before_natural_close_forbidden"))
 
+    ordinary = copy.deepcopy(valid)
+    ordinary["competitor_lifecycle_precheck"] = {"applies": False}
+    ordinary["complete_event_count_policy"] = {"applies": False}
+    ordinary["official_expression_policy"] = {"applies": False}
+    ordinary["first_return"] = {"residential_semantic_core_applies": False, "semantic_core_support_status": "not_applicable", "merged_increment_proposal": {"proposed": False, "downstream_authorization_required": True, "execution_authorized": False}}
+    cases.append(run_case("customer_concerns_without_complete_events", ordinary, True))
+    ordinary["first_return"]["merged_increment_proposal"]["execution_authorized"] = True
+    cases.append(run_case("generic_research_cannot_self_authorize_extension", ordinary, False, "merged_increment_cannot_self_authorize"))
     report = {
         "schema": "d292_research_orchestration_fixture_report.v1",
         "status": "pass" if all(row["passed"] for row in cases) else "fail",

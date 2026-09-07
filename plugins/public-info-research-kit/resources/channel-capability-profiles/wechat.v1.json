@@ -23,7 +23,7 @@
   "human_prerequisites": [
     "终端用户自行安装并授权 Computer Use",
     "终端用户登录自己的微信账号",
-    "首次由终端用户手动打开公开搜一搜并保持在可操作主屏"
+    "首次由终端用户打开公开搜一搜；当前截图仍确认公开表面时不要求重开"
   ],
   "package_policy": {
     "install_or_enable_computer_use": false,
@@ -32,6 +32,7 @@
     "remind_and_detect_only": true
   },
   "golden_method": [
+    "先加载当前 Computer Use 使用说明并取得最新完整截图；附带非图像元数据不作为定位或验收依据",
     "先闭合城市、正式名、单一别名、分期、主体和时间阶段",
     "按语义原子编译少量独立查询并冻结 query_id 与 exact_query_text",
     "执行便携式渠道预检，确认执行 Owner、共享桌面串行、登录态与停止线",
@@ -70,5 +71,8 @@
     "tools/validate_social_query_plan.py",
     "tools/check_portable_channel_preflight.py",
     "tools/validate_public_evidence.py"
-  ]
+  ],
+  "human_prerequisites_scope": "GUI discovery only; supplied public URLs can be read directly in an available browser",
+  "forbidden_routes_scope": "WeChat GUI discovery; known public article browser reading uses the existing known-url skill",
+  "known_url_reading_policy": "Use an available browser directly; if content is insufficient, current GUI reading may be used within the same task, with shared desktop serialization and no retired fallback."
 }

@@ -4,7 +4,7 @@
   "channel": "wechat",
   "surface_id": "wechat_ai_search",
   "route": "WECHAT-AI-SEARCH-SURFACE-V1",
-  "status": "task_driven_retrieval_ready_not_live_revalidated",
+  "status": "task_driven_retrieval_ready",
   "execution_owner": "installed_public_info_research_kit",
   "business_owner": "requesting_user_or_downstream_project",
   "good_at": [
@@ -55,7 +55,6 @@
   ],
   "required_validators": [
     "tools/check_wechat_ai_search_gate_preflight.py",
-    "tools/validate_d292_research_orchestration.py",
     "tools/validate_public_evidence.py"
   ],
   "gate_policy": {
@@ -63,5 +62,7 @@
     "per_surface_authorization_required": false,
     "real_gui_validated": false,
     "preflight_does_not_execute": true
-  }
+  },
+  "validation_scope": "task authority and current surface readiness are separate; this package does not certify any installation live",
+  "conditional_research_validator": "tools/validate_d292_research_orchestration.py when delivering the applicable D-292 orchestration contract"
 }

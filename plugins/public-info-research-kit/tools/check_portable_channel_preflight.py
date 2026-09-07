@@ -27,6 +27,8 @@ ALLOWED_TOP_LEVEL = {
     "execution_owner",
     "downstream_business_owner",
     "business_question",
+    "subjects",
+    "sufficiency_applicability",
     "intent",
     "evidence_type",
     "usage_boundary",

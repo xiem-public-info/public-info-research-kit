@@ -10,7 +10,7 @@ from compile_retrieval_execution_request import compile_request
 from check_portable_channel_preflight import validate as owner
 from check_wechat_ai_search_gate_preflight import validate as ai
 from retrieval_task_policy import validate_task_authorization
-from validate_adaptive_query_sufficiency import validate_package
+from validate_adaptive_query_sufficiency import validate_package, validate_applicability
 from validate_d292_research_orchestration import validate as orchestration
 from run_portable_channel_preflight import base_request
 
@@ -21,6 +21,13 @@ def main():
     base=base_request(); task={'task_id':base['task_id'],'business_question':base['business_question'],'subjects':['Example project']}
     plan={k:copy.deepcopy(v) for k,v in base.items() if k in ('channel','shared_gui','computer_use','end_user_session','stop_condition')}
     plan['queries']=base['query_plan']
+    singular=copy.deepcopy(task); singular['subject']=singular.pop('subjects')[0]
+    singular['sufficiency']={'policy':'d237_required','acceptance_mode':'quality_sufficiency','stop_condition':'original task stop'}
+    compiled=compile_request(singular,plan)
+    check('singular_subject_preserved',compiled['subjects']==[singular['subject']] and compiled['retrieval_task']==singular)
+    check('business_sufficiency_mapped',validate_applicability(compiled['sufficiency_applicability'])['passed'])
+    check('original_stop_wins',compiled['stop_condition']=='original task stop')
+    check('missing_criteria_not_invented',validate_applicability(compile_request(task,plan)['sufficiency_applicability'])['status']=='d237_consumer_contract_required')
     for surface in ('wechat_ai_search','wechat_global_article_results','wechat_video_search','wechat_mini_program_search','wechat_public_account_search'):
         selected=copy.deepcopy(plan); selected['surface_id']=surface
         request=compile_request(task,selected)

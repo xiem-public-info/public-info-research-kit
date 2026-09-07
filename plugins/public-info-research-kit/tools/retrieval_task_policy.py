@@ -10,6 +10,14 @@ CHANNEL_ALIASES = {
 }
 
 
+def task_subjects(task: dict[str, Any]) -> list:
+    """Accept the old C-32 singular spelling without changing the received task."""
+    value = task.get("subjects") if "subjects" in task else task.get("subject")
+    if isinstance(value, (str, dict)) and value:
+        return [value]
+    return value if isinstance(value, list) else []
+
+
 def validate_task_authorization(request: dict[str, Any]) -> tuple[bool, str]:
     """Validate the received business contract, not a self-declared allow flag.
 
@@ -24,7 +32,7 @@ def validate_task_authorization(request: dict[str, Any]) -> tuple[bool, str]:
         return False, "retrieval_task_scope_mismatch"
     if not isinstance(task.get("business_question"), str) or not task["business_question"].strip():
         return False, "retrieval_business_question_required"
-    if not isinstance(task.get("subjects"), list) or not task["subjects"]:
+    if not task_subjects(task):
         return False, "retrieval_subjects_required"
     if task.get("authorized") is False or task.get("status") in {"cancelled", "paused", "stopped"}:
         return False, "retrieval_task_stopped"

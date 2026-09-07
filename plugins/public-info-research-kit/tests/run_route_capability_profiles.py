@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import copy
 import json
 from pathlib import Path
 
@@ -58,7 +59,7 @@ def main() -> int:
         )
         gui_ok = True
         channel_invariants_ok = True
-        if route.get("requires_shared_gui_serialization"):
+        if route.get("requires_shared_gui_serialization") and route["channel"] in {"wechat", "xhs"}:
             policy = profile_data.get("package_policy") or {}
             gui_ok = (
                 route.get("portable_preflight_schema") == "portable_channel_request.v1"
@@ -84,7 +85,7 @@ def main() -> int:
                         route.get("gate_request_schema") == "wechat_ai_search_gate_request.v1",
                         route.get("gate_tool") == "tools/check_wechat_ai_search_gate_preflight.py",
                         route.get("research_orchestration_schema") == "d292_research_orchestration.v1",
-                        route.get("status") == "task_driven_retrieval_ready_not_live_revalidated",
+                        route.get("status") == "task_driven_retrieval_ready",
                         route.get("execution_authorized") is False,
                         route.get("real_gui_validated") is False,
                         route.get("original_source_backread_required") is True,
@@ -118,6 +119,18 @@ def main() -> int:
                 "passed": profile_ok and profile_contract_ok and gui_ok and channel_invariants_ok,
             }
         )
+    for channel in ("map_gis", "public_dynamic_page"):
+        for desktop in (True, False):
+            scoped = copy.deepcopy(request)
+            scoped["channel_scope"] = [channel]
+            scoped[channel]["uses_shared_desktop"] = desktop
+            routed = MODULE.build_plan(scoped)
+            route = routed["routes"][0]
+            cases.append({"case_id": channel + ("_GUI" if desktop else "_background"), "passed": routed["status"] == "pass" and route["requires_shared_gui_serialization"] is desktop and route["high_state_owner_preflight_required"] is False})
+    request["wechat"] = {"known_urls": ["https://mp.weixin.qq.com/s/example"]}
+    request["channel_scope"] = ["wechat"]
+    known = MODULE.build_plan(request)
+    cases.append({"case_id": "known_link_reads_without_search", "passed": known["status"] == "pass" and [r["mode"] for r in known["routes"]] == ["known_url_browser_open"]})
     report = {
         "schema": "route_capability_profile_fixture_report.v1",
         "status": "pass" if result["status"] == "pass" and all(row["passed"] for row in cases) else "fail",
