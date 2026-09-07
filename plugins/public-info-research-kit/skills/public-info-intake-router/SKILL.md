@@ -15,7 +15,7 @@ description: 将研究问题路由到微信、小红书、静态或动态公开�
 1. 先确认业务问题、需要什么证据、使用边界和停止条件。
 2. 下游只需提供 `task_id`、`business_question`、`subjects` 与已有业务限制；本包生成渠道计划，将本包选择的 `channel_scope` 及渠道输入填入内部请求后运行 `python tools/route_task.py --request <请求文件>`；兼容原合同的单数 `subject`，不得要求下游填写渠道表面和技术版本。
 3. 读取路由结果中的 `capability_profile`。它说明该渠道擅长、不擅长、黄金方法、失败分类和停止线；不要用一个渠道的经验替代另一个渠道的画像。
-4. 将原业务合同的 `sufficiency` 映射为 `query_sufficiency_applicability.v1`（编译结果的 `sufficiency_applicability`），对真实研究检索，运行 `python tools/validate_adaptive_query_sufficiency.py --applicability-input <适用性文件>`。未显式声明时默认 `d237_required`；缺少 `acceptance_mode` 时返回 `d237_consumer_contract_required`，不得静默降级。只有具名链接读取、指定文件获取、单事实核验或精确记录读取，且有真人豁免引用时，才可用 `exempt_simple_direct_retrieval`。
+4. 将原业务合同的 `sufficiency` 映射为 `query_sufficiency_applicability.v1`（编译结果的 `sufficiency_applicability`），对真实研究检索，运行 `python tools/validate_adaptive_query_sufficiency.py --applicability-input <适用性文件>`。未显式声明时默认 `d237_required`；缺少 `acceptance_mode` 时返回 `d237_consumer_contract_required`，不得静默降级。只有具名链接读取、指定文件获取、单事实核验或精确记录读取，由本包引用用户原始请求、无需额外批准时，才可用 `exempt_simple_direct_retrieval`。
 5. 微信／小红书业务研究默认 `searcher_mode=researcher`。先闭合城市、正式名、单一别名、分期、主体和时间阶段；同名、异体字或历史名分别生成独立查询，不塞进一个长查询。
 6. 读取 `resources/social_semantic_query_lexicon.v0.1.json`，围绕 `business_question + judgment_gap`，用身份、生命周期、业务意图、渠道表面、来源角色、体验机制、客户任务、比较角色、反例、内容形态和时间等语义原子形成少量查询候选。
 7. 把查询写入 `social_query_plan.v1`。每条须有唯一 `query_id`、独立 `exact_query_text`、执行状态、查询假设、来源角色目标、结果批次下限、实际开读下限、预期信息增益和失败归因要求；运行 `python tools/validate_social_query_plan.py --plan <计划文件>`，只有 `executable_query_ids` 中的冻结查询可执行。
@@ -31,6 +31,8 @@ description: 将研究问题路由到微信、小红书、静态或动态公开�
 17. 只有当前检索任务自然闭合后才换任务线程；不要在进行中催促、插入下一批或把换线程当作平台恢复动作。
 18. 遇到“动作报错但画面成功”“标题未开文”“两批无高质量候选”“聚合命中”“软证据拒收”等情形，按随 Plugin 安装的 `resources/decision-playbook.v1.md` 处理。
 19. 若输入不足，只返回真正影响检索的问题；其他缺口按明确假设继续，不要求使用者填写复杂表格。
+
+简单直接读取按用户原始请求执行：指定文章／文件、单事实核验或精确记录读取，不要求用户另批“豁免”或填写研究配额。本工程确认目标与读完即止的范围后，在原计划的 `simple_direct_retrieval_exemption` 中填写类型、证据目标和停止条件；编译器引用 `received_task:<task_id>` 作为原请求依据，保留原业务合同。该内部适用性记录不是新审批。只因提供了 URL 不能判定为简单读取；有独立多查询、比较／规律、正反证、来源多样性、增量发现或总体外推要求时，仍进入研究充分性检查，不能用直接读取类别降低要求。用户明确给出的研究标准优先保留。
 
 ## 输出
 

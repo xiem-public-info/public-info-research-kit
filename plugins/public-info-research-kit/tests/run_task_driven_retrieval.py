@@ -67,6 +67,17 @@ def main():
     check('d292_in_scope_iteration',orchestration(d292)['passed'])
     d292['in_scope_iteration_package']=bad
     check('d292_expansion_rejected',not orchestration(d292)['passed'])
+
+    direct_task = {"task_id": "direct-read", "business_question": "Read https://mp.weixin.qq.com/s/example", "subjects": ["article"], "stop_condition": "Stop after reading the supplied article"}
+    direct_plan = {"channel": "wechat", "queries": [], "simple_direct_retrieval_exemption": {"exemption_type": "known_url_read", "evidence_target": "https://mp.weixin.qq.com/s/example"}}
+    direct_request = compile_request(direct_task, direct_plan)
+    check("direct_read_no_extra_user_exemption", validate_applicability(direct_request["sufficiency_applicability"])["passed"] and not validate_applicability(direct_request["sufficiency_applicability"])["d237_required"])
+    check("direct_read_original_request_preserved", direct_request["retrieval_task"] == direct_task and direct_request["sufficiency_applicability"]["simple_direct_retrieval_exemption"]["human_authorization_ref"] == "received_task:direct-read")
+    for characteristic in ("multiple_independent_queries", "comparative_or_pattern_judgment", "support_and_counterevidence_required", "adaptive_extension_possible"):
+        complex_plan = copy.deepcopy(direct_plan); complex_plan["research_characteristics"] = [characteristic]
+        check("direct_url_does_not_exempt_" + characteristic, not validate_applicability(compile_request(direct_task, complex_plan)["sufficiency_applicability"])["passed"])
+    required = copy.deepcopy(direct_task); required["sufficiency"] = {"policy": "d237_required", "acceptance_mode": "quality_sufficiency"}
+    check("explicit_research_standard_preserved", validate_applicability(compile_request(required, direct_plan)["sufficiency_applicability"])["d237_required"])
     report={'status':'pass' if all(c['passed'] for c in cases) else 'fail','case_count':len(cases),'failure_count':sum(not c['passed'] for c in cases),'cases':cases,'platform_opened':False,'network_accessed':False}
     print(json.dumps(report,indent=2)); return int(report['status']!='pass')
 if __name__=='__main__': raise SystemExit(main())

@@ -37,6 +37,19 @@ def compile_sufficiency_input(task: dict, plan: dict) -> dict:
             result[key] = sufficiency[source_key]
         elif key in task:
             result[key] = task[key]
+    # The owner classifies the received request; this is not a second approval.
+    if "research_characteristics" in plan:
+        received = result.get("research_characteristics", [])
+        planned = plan["research_characteristics"]
+        result["research_characteristics"] = list(dict.fromkeys(received + planned)) if isinstance(received, list) and isinstance(planned, list) else received if not isinstance(received, list) else planned
+    direct = plan.get("simple_direct_retrieval_exemption")
+    if isinstance(direct, dict) and not any(key in result for key in ("sufficiency_policy", "acceptance_mode", "qualification_policy", "diversity_policy")):
+        result["sufficiency_policy"] = "exempt_simple_direct_retrieval"
+        result["simple_direct_retrieval_exemption"] = {
+            **direct,
+            "human_authorization_ref": "received_task:" + task["task_id"],
+            "stop_condition": task.get("stop_condition") or sufficiency.get("stop_condition") or direct.get("stop_condition"),
+        }
     return result
 
 

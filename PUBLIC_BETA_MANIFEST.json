@@ -64,7 +64,7 @@
   "validation": {
     "harness_schema": "public_release_harness_report.v1",
     "test_runner_count": 15,
-    "fixture_case_count": 196,
+    "fixture_case_count": 203,
     "fixture_failure_count": 0,
     "golden_task_fixture_count": 5,
     "negative_fixture_file_count": 4,
@@ -329,8 +329,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-info-intake-router/SKILL.md",
-      "sha256": "85796ec4c891b844d66cbccf7a8f11d8dde3ea5b5d8b5e1660178db478318d04",
-      "bytes": 7891
+      "sha256": "6c6b701b0fb899667c39f60912b204d7767b7a37765953276adde9ffa31f5d17",
+      "bytes": 8655
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-web-official-resolver/SKILL.md",
@@ -339,8 +339,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/skills/wechat-known-url-reader/SKILL.md",
-      "sha256": "e75c025f5770fa31385183bfaa1a5a4dd4e60d587df08a6d73ff483859c6af6e",
-      "bytes": 2489
+      "sha256": "d69befd7a34e513aaced63523bf4fb23c8811cdd3e1bc10755b7b51cc5751fdf",
+      "bytes": 2668
     },
     {
       "path": "plugins/public-info-research-kit/skills/wechat-public-research/SKILL.md",
@@ -489,8 +489,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_task_driven_retrieval.py",
-      "sha256": "9b8f3151fcbfbbef358790464f5dc8b863c486a4c62ce90ed641dce0108a1ef4",
-      "bytes": 6604
+      "sha256": "588242720780982d664ae118d335fce98f3e21a8945e73f1f6cd66b5d9f869cf",
+      "bytes": 8264
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_wechat_ai_search_gate_preflight.py",
@@ -524,8 +524,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/compile_retrieval_execution_request.py",
-      "sha256": "5d9ccb753837a9554e82a5224655045c9115fe32d6a203d9711ac0de992e49d0",
-      "bytes": 4963
+      "sha256": "1eda20d706a8376012f89f66b7afcc4143066d76399b80a1cbb2bc8b20585116",
+      "bytes": 5983
     },
     {
       "path": "plugins/public-info-research-kit/tools/doctor.py",
