@@ -1,15 +1,15 @@
 {
   "schema": "public_info_self_service_release_manifest.v3",
-  "version": "0.8.0-rc.4",
-  "status": "local_candidate_not_published",
+  "version": "0.8.0-rc.5",
+  "status": "published_prerelease",
   "base_release_tag": "v0.8.0-rc.4",
-  "release_tag": null,
-  "candidate_revision": "2026-09-08-model-scope-candidate",
+  "release_tag": "v0.8.0-rc.5",
+  "candidate_revision": "2026-09-08-public-rc5-release",
   "distribution_model": "public_repository_direct_use_without_maintainer_authorization",
   "license": "MIT",
   "repository": "xiem-public-info/public-info-research-kit",
   "previous_stable_version": "0.7.0",
-  "private_source_commit": "acf90a64ef91eb096d6fc4be35b876cd44f4da18",
+  "private_source_commit": "9269953be2a2c319a5a53a7880209f6fdff7d4b5",
   "private_revision_commit": "1dc57aae935afc4ea11d833a0aff74c48ff1cfa2",
   "public_package_source": "curated_snapshot_without_private_repository_history_or_runtime_state",
   "skill_count": 7,
@@ -102,8 +102,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "fb2aec10e587e958c7a65c6d70d92699475d0138f04e91e654292edc7cc42576",
-      "bytes": 4427
+      "sha256": "aa01a73a16c4d7191aff5431b0ae8d0dbb83c800abd8007843b8a3f3b7416519",
+      "bytes": 4797
     },
     {
       "path": "DECISION_PLAYBOOK.md",
@@ -114,6 +114,11 @@
       "path": "INSTALL_CHECKLIST.md",
       "sha256": "409a10a37ba7ece3ff2763b343334cfd9190d0ec0e052f288558a4fd8be447dc",
       "bytes": 542
+    },
+    {
+      "path": "INSTALL_PROMPT_0.8.0-rc.5.md",
+      "sha256": "affa6f6defb445e2852822bd0a7aa0339dc2d128067cc174ab6e8c7c5fc1f48e",
+      "bytes": 3284
     },
     {
       "path": "INTEROPERABILITY.md",
@@ -132,18 +137,18 @@
     },
     {
       "path": "QUICKSTART.md",
-      "sha256": "3c41efc75db66939c0f70b82d5b3078084175a4c9b0d5fd29926ea04ba980cca",
-      "bytes": 3424
+      "sha256": "59deffacce31f8ef17b0510f2c9262c7a8dca7471230f5677f8e7827643fbc2d",
+      "bytes": 3677
     },
     {
       "path": "RC_INSTALL_0.8.0.md",
-      "sha256": "0be908cc4fd3ffcede526a031d8edb1c616c8712150634c7f704172a4f06b1e4",
-      "bytes": 3354
+      "sha256": "d2626c8b857c0eded9a1f944270454b7060ffe8314ed07de452f4c7539a9bcf7",
+      "bytes": 3842
     },
     {
       "path": "README.md",
-      "sha256": "96efee7d6ca6658b881fe4ef6697d57ac65080c4068ee22429326dd657a62385",
-      "bytes": 5614
+      "sha256": "87c4bddb9ec26aebec421763b7b58604b842032236f16ac8ef465f32686246aa",
+      "bytes": 5760
     },
     {
       "path": "RELEASE_NOTES_0.8.0-rc.2.md",
@@ -159,6 +164,11 @@
       "path": "RELEASE_NOTES_0.8.0-rc.4.md",
       "sha256": "62d64b54df33dc1fb3ea55ce12730d718946839de23855be19454d62a787d260",
       "bytes": 1132
+    },
+    {
+      "path": "RELEASE_NOTES_0.8.0-rc.5.md",
+      "sha256": "6d6f2e89f0465e62e8fddfafc4ad6115ded836b509e07629cdc2d8417b7f0973",
+      "bytes": 2274
     },
     {
       "path": "SECURITY.md",
@@ -197,12 +207,12 @@
     },
     {
       "path": "UPDATE_0.8.0.md",
-      "sha256": "850435b919b38c78bac84dd03b21d8ccb1a626fca2798880788b05c1315a9fac",
-      "bytes": 2434
+      "sha256": "abb624a585d64131a8c4a4d3c7fb9b9f5b4488da75813ffa333f2d64448ebc33",
+      "bytes": 2653
     },
     {
       "path": "plugins/public-info-research-kit/.codex-plugin/plugin.json",
-      "sha256": "35162d9adf5e1bf8b20a56105871f87c6b15194af2ca3d893c7914dd2342174d",
+      "sha256": "0daad5f15a92a29fd32007bee161ed1a54e40acfe17bcc2e9c2065d1a8cc7153",
       "bytes": 1853
     },
     {
@@ -252,8 +262,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/resources/decision-playbook.v1.md",
-      "sha256": "0cb2c0051ea7aa9dc6a5cdc2edf9a9f84f631de534c42885d30d9434b6aea937",
-      "bytes": 7891
+      "sha256": "51be50c3a7e2a7c4ac8df4f3ee954358e3cda324b9bb459c764a28af09ba698a",
+      "bytes": 8065
     },
     {
       "path": "plugins/public-info-research-kit/resources/install-checklist.v1.md",
@@ -622,8 +632,8 @@
     },
     {
       "path": "scripts/build_release_manifest.py",
-      "sha256": "0b32529075e442b8e88998c3ec9cae740d9c95ae025494a2354de1cfc15e4930",
-      "bytes": 7874
+      "sha256": "92136abdba4bbff05f72ae54c67cd5bd00a8c6e59a29eb6e302f5280d0b10e87",
+      "bytes": 7828
     }
   ]
 }

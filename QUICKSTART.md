@@ -1,8 +1,8 @@
 # Quickstart
 
-## 0.8.0-rc.4 候选版
+## 0.8.0-rc.5 候选版
 
-公开 main 已同步 0.8.0-rc.4；固定版本安装可使用 `v0.8.0-rc.4` 标签。中文地址、命令和逐机验收说明见 [`RC_INSTALL_0.8.0.md`](RC_INSTALL_0.8.0.md)。需要旧稳定版时使用 `v0.7.0` 标签。
+公开 main 已同步 0.8.0-rc.5；固定版本安装可使用 `v0.8.0-rc.5` 标签。中文地址、命令和逐机验收说明见 [`RC_INSTALL_0.8.0.md`](RC_INSTALL_0.8.0.md)。需要旧稳定版时使用 `v0.7.0` 标签。
 
 ## 一步安装
 
@@ -17,7 +17,7 @@
 只有应用内安装没有成功时，才复制执行这一条：
 
 ```bash
-codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.4 && codex plugin add public-info-research-kit@public-info-research-public
+codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.5 && codex plugin add public-info-research-kit@public-info-research-public
 ```
 
 ## 开始任务
@@ -44,6 +44,8 @@ python3 plugins/public-info-research-kit/tools/doctor.py --channel all
 doctor 默认不联网，只读取本地版本、Plugin 清单和文件完整性。它可以判断 Computer Use 是否已安装启用，但不会安装、启用、读取 macOS 权限数据库、修改权限或操作账号登录。只有排查 TLS 时才显式增加 `--network-probe`。
 
 ## 更新
+
+升级到本版可复制 [rc.5 安装部署提示词](INSTALL_PROMPT_0.8.0-rc.5.md)。若市场来源固定旧标签，先将其引用调整到 `v0.8.0-rc.5` 再更新；下方 upgrade 命令仅刷新当前登记的引用，不自动跨标签升级。
 
 优先在 Codex 的 Plugin 页面点击更新。备用命令：
 
