@@ -8,6 +8,27 @@ CHANNEL_ALIASES = {
     "wechat_search": "wechat", "xhs_search": "xhs",
     "official_origin": "public_web", "map": "map_gis", "spatial": "map_gis",
 }
+# Existing retrieval capability IDs, not natural-language phrases or a new router.
+SCOPE_ROUTE_IDS = {
+    "ROUTE-CUSTOMER-RESEARCH-UPSTREAM", "ROUTE-COMPETITOR-QA", "ROUTE-PROJECT-DEEPDIVE",
+    "ROUTE-XHS", "ROUTE-WECHAT-AI-SEARCH-GATE", "ROUTE-WECHAT-KNOWN-URL",
+    "ROUTE-WECHAT-DESKTOP", "ROUTE-VERTICAL-MINI-PROGRAM", "ROUTE-OFFICIAL-RESOLVER",
+    "ROUTE-PLAYWRIGHT-DYNAMIC", "ROUTE-AUTHORIZED-SOURCE-GAP", "ROUTE-PUBLIC-VIDEO",
+    "ROUTE-RSSHUB-PUBLIC", "ROUTE-MAP",
+}
+
+
+def explicit_research_requirements(payload: dict[str, Any]) -> list[str]:
+    """Hard business requirements survive direct reading; optional targets do not."""
+    fields = ("count_threshold", "quality_criteria", "diversity_requirements", "required_object_ids")
+    policy = payload.get("qualification_policy")
+    sources = (payload, policy) if isinstance(policy, dict) else (payload,)
+
+    def has_requirement(value: object) -> bool:
+        values = value.values() if isinstance(value, dict) else value if isinstance(value, list) else (value,)
+        return any(item not in (None, "", [], {}, False) for item in values)
+
+    return [field for field in fields if any(has_requirement(source.get(field)) for source in sources)]
 
 
 def task_subjects(task: dict[str, Any]) -> list:
@@ -79,3 +100,139 @@ def validate_task_authorization(request: dict[str, Any]) -> tuple[bool, str]:
     if request.get("operation", "public_retrieval") != "public_retrieval":
         return False, "retrieval_operation_not_covered"
     return True, "task_contract_authorized"
+
+
+def validate_scope_interpretation(task: dict, plan: dict) -> dict:
+    """Check an owner's interpretation against its plan; do not parse user prose.
+
+    The model owns semantic completeness and domain interpretation. Exact quotes,
+    task binding and action coverage make that interpretation reviewable; they do
+    not prove that the model understood the request or verified the evidence.
+    """
+    scope = plan.get("scope_interpretation")
+    result = {"status": "owner_interpretation_required", "errors": [],
+              "domain": "unknown", "execution_routes": [], "reuse_routes": [],
+              "research_required": False, "unresolved_items": [],
+              "task_completion_claim_allowed": False,
+              "semantic_understanding_verified": False}
+    if scope is None:
+        return result
+    if not isinstance(scope, dict):
+        return {**result, "status": "scope_conflict", "errors": ["scope_interpretation_invalid"]}
+    errors = []
+    source = task.get("request_text") or task.get("business_question", "")
+    if not isinstance(source, str) or not source or not task.get("task_id"):
+        return {**result, "status": "scope_conflict", "errors": ["original_request_required"]}
+    if scope.get("task_id") != task.get("task_id") or scope.get("request_text") != source:
+        errors.append("original_request_binding_mismatch")
+    domain = scope.get("domain", "unknown")
+    if not isinstance(domain, str) or domain not in {"residential", "non_residential", "unknown"}:
+        errors.append("business_domain_invalid")
+    inherited_domain = task.get("business_domain")
+    if inherited_domain is not None and inherited_domain not in ("residential", "non_residential", "unknown"):
+        errors.append("received_business_domain_invalid")
+    inherited_known = inherited_domain in ("residential", "non_residential")
+    if inherited_known and inherited_domain != domain:
+        errors.append("business_domain_conflicts_with_received_context")
+    basis = scope.get("domain_basis")
+    if not inherited_known and domain != "unknown" and (not isinstance(basis, str) or not basis or basis not in source):
+        errors.append("business_domain_basis_required")
+    if not isinstance(scope.get("research_required"), bool):
+        errors.append("research_requirement_not_interpreted")
+    sufficiency = task.get("sufficiency", {})
+    if not isinstance(sufficiency, dict):
+        errors.append("retrieval_sufficiency_invalid")
+        sufficiency = {}
+    research_inputs = {**task, **sufficiency}
+    queries = plan.get("queries", [])
+    if not isinstance(queries, list):
+        errors.append("queries_invalid")
+        queries = []
+    if scope.get("research_required") is False and (
+        sufficiency.get("policy", task.get("sufficiency_policy")) == "d237_required"
+        or research_inputs.get("acceptance_mode")
+        or explicit_research_requirements(research_inputs)
+        or research_inputs.get("research_characteristics")
+        or plan.get("research_characteristics") or len(queries) > 1
+    ):
+        errors.append("research_requirement_conflicts_with_task_or_plan")
+    if scope.get("research_required") is True and plan.get("simple_direct_retrieval_exemption"):
+        errors.append("research_action_conflicts_with_direct_read_exemption")
+    actions = scope.get("actions", [])
+    exclusions = scope.get("exclusions", [])
+    unresolved = scope.get("unresolved_items", [])
+    coverage = plan.get("action_coverage", {})
+    if (not isinstance(actions, list) or not isinstance(exclusions, list)
+            or not isinstance(unresolved, list) or not isinstance(coverage, dict)):
+        return {**result, "status": "scope_conflict", "errors": errors + ["scope_collections_invalid"]}
+    excluded_routes = set()
+    for item in exclusions:
+        if (not isinstance(item, dict) or not isinstance(item.get("route_id"), str)
+                or item["route_id"] not in SCOPE_ROUTE_IDS
+                or not isinstance(item.get("request_quote"), str)
+                or not item["request_quote"] or item["request_quote"] not in source):
+            errors.append("exclusion_basis_invalid")
+        else:
+            excluded_routes.add(item["route_id"])
+    for item in unresolved:
+        if not isinstance(item, str) or not item or item not in source:
+            errors.append("unresolved_source_invalid")
+    ids = set()
+    execution, reuse, deferred = set(), set(), []
+    for action in actions:
+        if not isinstance(action, dict):
+            errors.append("action_invalid")
+            continue
+        action_id, route_id = action.get("id"), action.get("route_id")
+        quote = action.get("request_quote")
+        if not isinstance(action_id, str) or not action_id or action_id in ids:
+            errors.append("action_id_invalid_or_duplicate")
+            continue
+        ids.add(action_id)
+        if not isinstance(route_id, str) or route_id not in SCOPE_ROUTE_IDS or not isinstance(quote, str) or not quote or quote not in source:
+            errors.append("action_basis_invalid")
+            continue
+        handling = coverage.get(action_id)
+        if not isinstance(handling, dict):
+            errors.append("action_omitted_from_plan:" + action_id)
+            continue
+        disposition = handling.get("disposition")
+        if disposition in ("execute", "reuse"):
+            if route_id in excluded_routes:
+                errors.append("planned_action_explicitly_excluded:" + action_id)
+            if route_id == "ROUTE-COMPETITOR-QA" and domain == "non_residential":
+                errors.append("residential_route_conflicts_with_domain")
+            if route_id == "ROUTE-COMPETITOR-QA" and domain == "unknown":
+                deferred.append(action_id)
+            elif disposition == "execute":
+                execution.add(route_id)
+            else:
+                reuse.add(route_id)
+                refs = handling.get("evidence_refs")
+                if not (isinstance(refs, list) and refs and all(isinstance(ref, str) and ref.strip() for ref in refs)):
+                    errors.append("reuse_evidence_reference_required:" + action_id)
+        elif disposition == "defer" and handling.get("reason"):
+            deferred.append(action_id)
+        else:
+            errors.append("action_disposition_invalid:" + action_id)
+    if set(coverage) - ids:
+        errors.append("unrequested_action_in_plan")
+    for query in queries:
+        if not isinstance(query, dict) or "action_id" not in query:
+            errors.append("query_action_reference_required")
+        else:
+            query_action = query["action_id"]
+            handling = coverage.get(query_action, {}) if isinstance(query_action, str) else {}
+            if (not isinstance(query_action, str) or query_action not in ids
+                    or not isinstance(handling, dict) or handling.get("disposition") != "execute"
+                    or query_action in deferred):
+                errors.append("query_not_linked_to_executing_action")
+    if not actions and not unresolved:
+        errors.append("interpreted_actions_required")
+    if errors:
+        return {**result, "status": "scope_conflict", "errors": errors, "domain": domain}
+    return {**result, "status": "owner_scope_pending" if unresolved or deferred else "scope_consistent",
+            "domain": domain, "execution_routes": sorted(execution), "reuse_routes": sorted(reuse),
+            "research_required": scope["research_required"], "unresolved_items": unresolved,
+            "deferred_action_ids": deferred, "excluded_routes": sorted(excluded_routes),
+            "task_completion_claim_allowed": False}

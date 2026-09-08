@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import argparse
 import json
 import subprocess
 import sys
@@ -53,6 +54,12 @@ def run_harness() -> dict:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--candidate-revision', help='Build a local un-published candidate manifest; never changes a tag or release.')
+    parser.add_argument('--private-revision-commit', help='Exact reviewed source commit for the candidate.')
+    args = parser.parse_args()
+    if args.candidate_revision and not args.private_revision_commit:
+        parser.error('--candidate-revision requires --private-revision-commit')
     plugin = json.loads((PLUGIN / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
     version = plugin["version"]
     harness = run_harness()
@@ -61,16 +68,16 @@ def main() -> int:
     manifest = {
         "schema": "public_info_self_service_release_manifest.v3",
         "version": version,
-        "status": "published_prerelease",
-        "base_release_tag": "v0.8.0-rc.3",
-        "release_tag": "v0.8.0-rc.4",
-        "candidate_revision": "2026-09-07-public-rc4-release",
+        "status": "local_candidate_not_published" if args.candidate_revision else "published_prerelease",
+        "base_release_tag": "v0.8.0-rc.4" if args.candidate_revision else "v0.8.0-rc.3",
+        "release_tag": None if args.candidate_revision else "v0.8.0-rc.4",
+        "candidate_revision": args.candidate_revision or "2026-09-07-public-rc4-release",
         "distribution_model": "public_repository_direct_use_without_maintainer_authorization",
         "license": "MIT",
         "repository": "xiem-public-info/public-info-research-kit",
         "previous_stable_version": "0.7.0",
         "private_source_commit": "acf90a64ef91eb096d6fc4be35b876cd44f4da18",
-        "private_revision_commit": "e597a7c069c886f529af4e09d1088bc5c3a38f06",
+        "private_revision_commit": args.private_revision_commit or "e597a7c069c886f529af4e09d1088bc5c3a38f06",
         "public_package_source": "curated_snapshot_without_private_repository_history_or_runtime_state",
         "skill_count": len(skills),
         "skills": skills,
@@ -80,6 +87,7 @@ def main() -> int:
             "D292_research_orchestration",
             "D291_spatial_coordinate_evidence_v2",
             "D293_task_driven_retrieval_authority",
+            "model_interpretation_and_plan_consistency",
             "wechat_ai_search_task_gate",
             "D237_D240_D241_adaptive_sufficiency",
             "evidence_consumer_rejection",

@@ -144,8 +144,23 @@
                   "deep_search",
                   "partial_tier",
                   "tail_end_reference",
-                  "exclude_candidate"
+                  "exclude_candidate",
+                  "qualification_pending"
                 ]
+              },
+              "role_evidence_refs": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "target_inventory": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sales_stage": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
               }
             }
           }

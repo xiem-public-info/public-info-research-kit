@@ -102,11 +102,13 @@ def validate(contract: dict[str, Any]) -> dict[str, Any]:
             months = row.get("months_to_delivery")
             if months != "unknown" and not isinstance(months, int):
                 errors.append(f"{prefix}_months_to_delivery_invalid")
-            if isinstance(months, int) and 0 <= months < 12 and row.get("recommended_role") != "tail_end_reference":
-                errors.append(f"{prefix}_delivery_under_12_months_requires_tail_end_reference")
+            if row.get("recommended_role") == "tail_end_reference":
+                basis = row.get("role_evidence_refs", {})
+                if not isinstance(basis, dict) or not all(_nonempty(basis.get(key)) for key in ("target_inventory", "sales_stage")):
+                    errors.append(f"{prefix}_tail_end_requires_inventory_and_sales_stage_evidence")
             if row.get("applicable_product_scope") not in {"whole_project", "partial_tier", "unknown"}:
                 errors.append(f"{prefix}_applicable_product_scope_invalid")
-            if row.get("recommended_role") not in {"deep_search", "partial_tier", "tail_end_reference", "exclude_candidate"}:
+            if row.get("recommended_role") not in {"deep_search", "partial_tier", "tail_end_reference", "exclude_candidate", "qualification_pending"}:
                 errors.append(f"{prefix}_recommended_role_invalid")
 
     counts = contract.get("complete_event_count_policy")

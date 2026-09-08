@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from retrieval_task_policy import validate_task_authorization
+from retrieval_task_policy import validate_task_authorization, explicit_research_requirements
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -80,19 +80,6 @@ def nonnegative_number(value: Any) -> bool:
 
 def positive_integer(value: Any) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value >= 1
-
-
-def explicit_research_requirements(payload: dict[str, Any]) -> list[str]:
-    """Hard business requirements survive a direct-read action; optional targets do not."""
-    fields = ("count_threshold", "quality_criteria", "diversity_requirements", "required_object_ids")
-    policy = payload.get("qualification_policy")
-    sources = (payload, policy) if isinstance(policy, dict) else (payload,)
-
-    def has_requirement(value: object) -> bool:
-        values = value.values() if isinstance(value, dict) else value if isinstance(value, list) else (value,)
-        return any(item not in (None, "", [], {}, False) for item in values)
-
-    return [field for field in fields if any(has_requirement(source.get(field)) for source in sources)]
 
 
 def validate_applicability(payload: dict[str, Any]) -> dict[str, Any]:

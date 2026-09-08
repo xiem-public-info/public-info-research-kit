@@ -206,7 +206,7 @@
     "wechat_surface_policy": "候选设计必须区分微信全局文章、公众号文章列表、号内搜索、问一问、AI 搜索、聊天记录、小程序和已知链接；不同表面的结果与失败不得无差别合并",
     "aggregate_surface_identity_policy": "聚合任务必须记录 platform、aggregate_surface_id、current_authorization_status 与 ordinary_original_source_surface；微信 AI 搜索和小红书问点点是两个独立表面，普通搜索不得事后标记为聚合 AI",
     "residential_choice_recall_policy": "完整购房事件优先使用板块或通勤锚、购买意图或家庭任务、买房或看房日记、日常生活、新规产品、行动结果和价值冲突的组合；项目名加单一意图只作其中一种窄查询，不扩成固定矩阵",
-    "residential_competitor_lifecycle_precheck_policy": "深度事件和官方表达检索前先核身份、当前新房供给、近六个月销售或产品内容、开盘加推预售、实际可选产品、交付期和适用产品层；家书或交付信号触发交付日期核验，不足十二个月到交付时只建议下游降为尾盘参照",
+    "residential_competitor_lifecycle_precheck_policy": "深度事件和官方表达检索前先核身份、当前新房供给、近六个月销售或产品内容、开盘加推预售、实际可选产品、交付期和适用产品层；家书或交付信号触发交付日期核验，不足十二个月到交付只触发目标产品余量、实际可选产品及销售重叠复核，不据此自动降为尾盘；缺依据时资格待核",
     "first_return_feedback_policy": "首次回传必须把真实标题、账号、日期、生命周期、行动词、身份冲突和低效词喂给下一轮独立查询，并检查项目事实、竞品关系、客户选择与反例是否共同支持统一语义核；不足时范围内继续 in_scope_iteration_batch，超范围返回合并 proposed_incremental_batch 待裁定",
     "official_expression_fidelity_policy": "官方表达资产必须同时保留核心观点、必要短原话、标题、账号或主体、日期、生命周期和原文定位；只有摘要不得标记完成",
     "phase_order": ["身份与对象", "竞品生命周期轻量核验", "分平台聚合解歧与信息密度", "原文列表回源", "体验与选择", "竞品或替代", "反例与冲突", "统一语义核支持判断", "收敛"],

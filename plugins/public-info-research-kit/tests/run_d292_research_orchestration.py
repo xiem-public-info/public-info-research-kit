@@ -48,7 +48,12 @@ def main() -> int:
 
     row = copy.deepcopy(valid)
     row["competitor_lifecycle_precheck"]["objects"][0]["recommended_role"] = "deep_search"
-    cases.append(run_case("under_12_months_is_tail_end_reference", row, False, "competitor_lifecycle_precheck.objects[0]_delivery_under_12_months_requires_tail_end_reference"))
+    cases.append(run_case("near_delivery_does_not_force_tail_end", row, True))
+    row = copy.deepcopy(valid)
+    row["competitor_lifecycle_precheck"]["objects"][0].pop("role_evidence_refs")
+    cases.append(run_case("tail_end_requires_independent_basis", row, False, "competitor_lifecycle_precheck.objects[0]_tail_end_requires_inventory_and_sales_stage_evidence"))
+    row["competitor_lifecycle_precheck"]["objects"][0]["recommended_role"] = "qualification_pending"
+    cases.append(run_case("missing_basis_can_remain_pending", row, True))
 
     row = copy.deepcopy(valid)
     row["complete_event_count_policy"]["target_is_maximum"] = True

@@ -1,16 +1,16 @@
 {
   "schema": "public_info_self_service_release_manifest.v3",
   "version": "0.8.0-rc.4",
-  "status": "published_prerelease",
-  "base_release_tag": "v0.8.0-rc.3",
-  "release_tag": "v0.8.0-rc.4",
-  "candidate_revision": "2026-09-07-public-rc4-release",
+  "status": "local_candidate_not_published",
+  "base_release_tag": "v0.8.0-rc.4",
+  "release_tag": null,
+  "candidate_revision": "2026-09-08-model-scope-candidate",
   "distribution_model": "public_repository_direct_use_without_maintainer_authorization",
   "license": "MIT",
   "repository": "xiem-public-info/public-info-research-kit",
   "previous_stable_version": "0.7.0",
   "private_source_commit": "acf90a64ef91eb096d6fc4be35b876cd44f4da18",
-  "private_revision_commit": "e597a7c069c886f529af4e09d1088bc5c3a38f06",
+  "private_revision_commit": "1dc57aae935afc4ea11d833a0aff74c48ff1cfa2",
   "public_package_source": "curated_snapshot_without_private_repository_history_or_runtime_state",
   "skill_count": 7,
   "skills": [
@@ -28,6 +28,7 @@
     "D292_research_orchestration",
     "D291_spatial_coordinate_evidence_v2",
     "D293_task_driven_retrieval_authority",
+    "model_interpretation_and_plan_consistency",
     "wechat_ai_search_task_gate",
     "D237_D240_D241_adaptive_sufficiency",
     "evidence_consumer_rejection",
@@ -65,8 +66,8 @@
   ],
   "validation": {
     "harness_schema": "public_release_harness_report.v1",
-    "test_runner_count": 15,
-    "fixture_case_count": 261,
+    "test_runner_count": 16,
+    "fixture_case_count": 282,
     "fixture_failure_count": 0,
     "golden_task_fixture_count": 5,
     "negative_fixture_file_count": 4,
@@ -141,8 +142,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "a9386ae5f9d488ea6be0ceae6e14130d39ea0b36fb24c8d5a193803225f1f537",
-      "bytes": 5414
+      "sha256": "96efee7d6ca6658b881fe4ef6697d57ac65080c4068ee22429326dd657a62385",
+      "bytes": 5614
     },
     {
       "path": "RELEASE_NOTES_0.8.0-rc.2.md",
@@ -246,13 +247,13 @@
     },
     {
       "path": "plugins/public-info-research-kit/resources/channel-capability-profiles/xhs.v1.json",
-      "sha256": "a3793e08522aed832ea279ba11e07a7af4ad77e44db4f462b4abdfe5da732a66",
-      "bytes": 3198
+      "sha256": "9cf5a71009fc8449bd73da24d9965fae10f3a977e5530391d430371fb83db869",
+      "bytes": 3985
     },
     {
       "path": "plugins/public-info-research-kit/resources/decision-playbook.v1.md",
-      "sha256": "00bdc5b6437b7542460093744e065f3ee5658942bb8b8bfb66d36204e546b291",
-      "bytes": 5989
+      "sha256": "0cb2c0051ea7aa9dc6a5cdc2edf9a9f84f631de534c42885d30d9434b6aea937",
+      "bytes": 7891
     },
     {
       "path": "plugins/public-info-research-kit/resources/install-checklist.v1.md",
@@ -271,8 +272,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/resources/social_semantic_query_lexicon.v0.1.json",
-      "sha256": "581f20cb5f2214a7682638dbd51c1157582a6cf6d6790242dee98bc4ab2ca848",
-      "bytes": 19163
+      "sha256": "5ce3dc284ac7253b9b58a3261f5e3eb4114f3703e86a989a1eb50b7ce5e4c5c8",
+      "bytes": 19253
     },
     {
       "path": "plugins/public-info-research-kit/schemas/adaptive_query_sufficiency_contract.v1.json",
@@ -281,8 +282,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/schemas/d292_research_orchestration.v1.json",
-      "sha256": "1257619b794ecee603dd03ee9bbea60965434e333e47ac72cea75b72b367dd4d",
-      "bytes": 10139
+      "sha256": "16d421ba978985fc69b6b7de0a3612fd9fa3c9fc20ec92490a1de1c7d6b5d9d0",
+      "bytes": 10630
     },
     {
       "path": "plugins/public-info-research-kit/schemas/per_machine_smoke_receipt.v1.json",
@@ -291,8 +292,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/schemas/portable_channel_request.v1.json",
-      "sha256": "dcdad873ff5d20ea75935a433107d470b3744483f40391df8f173b035580f252",
-      "bytes": 5711
+      "sha256": "97e8dece34ab6937b50438965baccbe86dca6637346a20d67741dae504dd8d36",
+      "bytes": 5973
     },
     {
       "path": "plugins/public-info-research-kit/schemas/public_evidence_envelope.v1.json",
@@ -336,8 +337,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-info-intake-router/SKILL.md",
-      "sha256": "dbd05234c2b3ebd427728cc3bc4669bdcc2b83cb364f5be9014335a0f02753de",
-      "bytes": 9174
+      "sha256": "2ff1d7463165251435f1298e6173ce526b5bb030a952e36310b1604abea39995",
+      "bytes": 9585
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-web-official-resolver/SKILL.md",
@@ -356,13 +357,13 @@
     },
     {
       "path": "plugins/public-info-research-kit/skills/xhs-visible-research/SKILL.md",
-      "sha256": "7b579ca0d3f90b2ab396c95195991514c0272faa3d9aea47f76e70322287b839",
-      "bytes": 4541
+      "sha256": "fdd0378198aa53ad80eb3e8267f6c80c0e40fb335c1f27ac1a10d74dc0a5a8d1",
+      "bytes": 5132
     },
     {
       "path": "plugins/public-info-research-kit/tests/fixtures/d292-research-orchestration/valid.json",
-      "sha256": "cc9995c3196fe1a0f2d677d3d9c3671573df6cac4ea18c71afe27c9583d47a34",
-      "bytes": 2416
+      "sha256": "0b2744cec139a4711dccdecea5c3d8ee7ccb31b8a99eb5cda915243cfaf8e8a2",
+      "bytes": 2628
     },
     {
       "path": "plugins/public-info-research-kit/tests/fixtures/golden-tasks/golden_direct_retrieval_exemption.json",
@@ -436,8 +437,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_d292_research_orchestration.py",
-      "sha256": "ca0270d50b20508b72de00903b7ff7890e1092e1f32bb08a91e6deef77e4a705",
-      "bytes": 5153
+      "sha256": "ab53c900eeacf48a0cf05fe97459dfa721834f5543e38f1ad8a27610769a036d",
+      "bytes": 5517
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_doctor_policy.py",
@@ -461,8 +462,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_portable_channel_preflight.py",
-      "sha256": "5ef8aa07223a8bfbc7716d0d2b9f5b9509827a9e44dc894b697b778d2f491a54",
-      "bytes": 4876
+      "sha256": "3069ec8c8723e481c41d563084c7456361b36d44a9e76449431f6448c81e4fcd",
+      "bytes": 5566
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_public_evidence_contract.py",
@@ -471,8 +472,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_release_harness.py",
-      "sha256": "0a23bd307e18e418b9c97791a994051d81ed6297a860a51d115e7ed2bd6d8192",
-      "bytes": 9048
+      "sha256": "2012c3b2f7feff00c79a7ed752e894c1baa151eb6e160900ba747f58217880a7",
+      "bytes": 9084
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_residential_bridge_lock.py",
@@ -500,6 +501,11 @@
       "bytes": 12722
     },
     {
+      "path": "plugins/public-info-research-kit/tests/run_task_scope_resolution.py",
+      "sha256": "3592c35ab5b8f0d467de95dbba73c9827db0ebfffd2a8493185a11955e5f320d",
+      "bytes": 5529
+    },
+    {
       "path": "plugins/public-info-research-kit/tests/run_wechat_ai_search_gate_preflight.py",
       "sha256": "5d376ce8d4de9b5c7095bdb144c07f9015da8e68838bf087d48f5e672c1638b8",
       "bytes": 2577
@@ -521,8 +527,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/check_portable_channel_preflight.py",
-      "sha256": "60d928aec73d5b0d6d426cf80613491f2b653d3031b54b904645979bccefc29d",
-      "bytes": 12369
+      "sha256": "4b140e205556b02938e9f8de67c6c5d145c52a1824f87edba36430cec0a5aeba",
+      "bytes": 13149
     },
     {
       "path": "plugins/public-info-research-kit/tools/check_wechat_ai_search_gate_preflight.py",
@@ -531,8 +537,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/compile_retrieval_execution_request.py",
-      "sha256": "71d3f22c2b00677dadf0860ff0bc3cf9113108170780616b0402116fb2d58eaa",
-      "bytes": 6801
+      "sha256": "b501dbdb97ba39bec19a59bff937a15ff0346921a406750e4559357921bfe0e1",
+      "bytes": 7027
     },
     {
       "path": "plugins/public-info-research-kit/tools/doctor.py",
@@ -551,8 +557,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/retrieval_task_policy.py",
-      "sha256": "de50b393d7c0cdb522255060e1d9ce6eaa625813a4bbb36af01a67f57c0412b2",
-      "bytes": 4514
+      "sha256": "c527c32bdaf2d9f54b279f24d8b0be0714ca1356f103caa90dbb762566447330",
+      "bytes": 13379
     },
     {
       "path": "plugins/public-info-research-kit/tools/route_task.py",
@@ -566,13 +572,13 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_adaptive_query_sufficiency.py",
-      "sha256": "4fbea339c902b521c953f049bf80b672b06a083d1f84eb3b7f9dbe5c8579a054",
-      "bytes": 35399
+      "sha256": "0a41db9f9e98bfc2b1507c0ed055170e5d11ccb1967d109be88779daa792b0e5",
+      "bytes": 34694
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_d292_research_orchestration.py",
-      "sha256": "7b303aab36bc49dfeb7c33edfde74a010bce97d3ecf1e7a7d937cee7bd153abc",
-      "bytes": 10300
+      "sha256": "8fdac100b4292b0c309b36853bcc046f89f039d214ccd8c434b82165cd25e83d",
+      "bytes": 10471
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_osm_display_receipt.py",
@@ -616,8 +622,8 @@
     },
     {
       "path": "scripts/build_release_manifest.py",
-      "sha256": "249886bf20fc58501933952550c8a72f73026f39cb88cd4221b24388095a0658",
-      "bytes": 7113
+      "sha256": "0b32529075e442b8e88998c3ec9cae740d9c95ae025494a2354de1cfc15e4930",
+      "bytes": 7874
     }
   ]
 }

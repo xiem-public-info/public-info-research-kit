@@ -126,6 +126,10 @@
           },
           "surface_id": {
             "type": "string"
+          },
+          "action_id": {
+            "type": "string",
+            "minLength": 1
           }
         }
       }
@@ -253,6 +257,10 @@
     "sufficiency_applicability": {
       "type": "object",
       "description": "Owner mapping of received business sufficiency; not an acceptance receipt."
+    },
+    "scope_consistency": {
+      "type": "object",
+      "description": "Internal owner-plan consistency only; never semantic completeness or execution proof."
     }
   },
   "anyOf": [

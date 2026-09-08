@@ -6,6 +6,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import tempfile
 from pathlib import Path
 
 
@@ -82,6 +83,18 @@ def main() -> int:
     cases: list[dict] = []
     cases.append(run_case("valid_wechat", base_request("wechat"), True, "pass"))
     cases.append(run_case("valid_xhs", base_request("xhs"), True, "pass"))
+    original_profile = MODULE.PROFILE_PATHS['xhs']
+    with tempfile.TemporaryDirectory() as directory:
+        try:
+            for entry in ('cua.getTab', 'cua.getBrowser', 'cua.createBrowserTab'):
+                profile = json.loads(original_profile.read_text())
+                profile['execution_entrypoint'] = entry
+                path = Path(directory) / 'xhs.json'
+                path.write_text(json.dumps(profile))
+                MODULE.PROFILE_PATHS['xhs'] = path
+                cases.append(run_case('browser_entry_rejected:'+entry, base_request('xhs'), False, 'invalid_request'))
+        finally:
+            MODULE.PROFILE_PATHS['xhs'] = original_profile
 
     request = base_request()
     request["computer_use"]["available"] = False

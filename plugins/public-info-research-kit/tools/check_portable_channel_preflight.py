@@ -41,6 +41,7 @@ ALLOWED_TOP_LEVEL = {
     "live_gate",
     "adaptive_extension_authorized",
     "retrieval_task", "surface_id", "scope_expansion_requested", "budget_exhausted", "operation", "usage",
+    "scope_consistency",
 }
 FORBIDDEN_CONTROL_FIELDS = {
     "requested_executor",
@@ -100,7 +101,7 @@ def _validate_queries(request: dict[str, Any], channel: str, require_live: bool)
         if not isinstance(row, dict):
             errors.append(f"{prefix}_must_be_object")
             continue
-        allowed = {"query_id", "platform", "exact_query_text", "execution_state", "acceptance", "surface_id"}
+        allowed = {"query_id", "platform", "exact_query_text", "execution_state", "acceptance", "surface_id", "action_id"}
         unknown = sorted(set(row) - allowed)
         if unknown:
             errors.append(f"{prefix}_unknown_fields:{','.join(unknown)}")
@@ -167,6 +168,13 @@ def validate(request: dict[str, Any], *, require_live: bool = False) -> dict[str
             errors.append("channel_profile_mismatch")
         if profile.get("execution_owner") != "installed_public_info_research_kit":
             errors.append("profile_execution_owner_invalid")
+        if channel == "xhs":
+            native = profile.get("native_gui_policy", {})
+            if (profile.get("execution_entrypoint") != "cua.getApp"
+                    or native.get("native_application") != "com.google.Chrome"
+                    or native.get("binding_kind") != "native_App_not_browser_Tab"
+                    or not {"cua.getTab", "cua.getBrowser", "cua.createBrowserTab"}.issubset(set(native.get("forbidden_browser_entrypoints", [])))):
+                errors.append("xhs_native_app_boundary_required")
 
     if request.get("execution_owner") != "installed_public_info_research_kit":
         errors.append("execution_owner_invalid")
@@ -270,6 +278,9 @@ def validate(request: dict[str, Any], *, require_live: bool = False) -> dict[str
         "require_live": require_live,
         "execution_authorized": require_live and not errors,
         "authorization_basis": POLICY_ID if task_valid else "legacy_explicit_live_gate",
+        "execution_entrypoint": profile.get("execution_entrypoint"),
+        "native_gui_policy": profile.get("native_gui_policy") if channel == "xhs" else None,
+        "actual_tool_execution_verified": False,
         "computer_use_action": "end_user_installs_and_authorizes_independently_package_only_reminds_and_detects",
         "automatic_computer_use_install_enable_or_permission_action": False,
         "platform_opened": False,

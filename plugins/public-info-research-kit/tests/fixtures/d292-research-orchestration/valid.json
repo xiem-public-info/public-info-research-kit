@@ -8,7 +8,10 @@
       "authorization_status": "not_authorized",
       "aggregate_output_role": "ai_aggregate_clue",
       "aggregate_answer_evidence_allowed": false,
-      "ordinary_original_source_surfaces": ["wechat_global_article_results", "public_account_article_list"]
+      "ordinary_original_source_surfaces": [
+        "wechat_global_article_results",
+        "public_account_article_list"
+      ]
     },
     {
       "platform": "xhs",
@@ -16,7 +19,10 @@
       "authorization_status": "unresolved",
       "aggregate_output_role": "ai_aggregate_clue",
       "aggregate_answer_evidence_allowed": false,
-      "ordinary_original_source_surfaces": ["xhs_note_list", "xhs_visible_note_body"]
+      "ordinary_original_source_surfaces": [
+        "xhs_note_list",
+        "xhs_visible_note_body"
+      ]
     }
   ],
   "competitor_lifecycle_precheck": {
@@ -33,7 +39,11 @@
         "delivery_date_checked": true,
         "months_to_delivery": 8,
         "applicable_product_scope": "partial_tier",
-        "recommended_role": "tail_end_reference"
+        "recommended_role": "tail_end_reference",
+        "role_evidence_refs": {
+          "target_inventory": "fixture:target-product-inventory",
+          "sales_stage": "fixture:current-sales-stage"
+        }
       }
     ]
   },

@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from retrieval_task_policy import task_subjects, validate_task_authorization
+from retrieval_task_policy import task_subjects, validate_task_authorization, validate_scope_interpretation
 from validate_adaptive_query_sufficiency import explicit_research_requirements
 
 
@@ -64,9 +64,12 @@ def compile_sufficiency_input(task: dict, plan: dict) -> dict:
 
 
 def compile_request(task: dict, plan: dict) -> dict:
+    scope = validate_scope_interpretation(task, plan)
+    if scope['status'] == 'scope_conflict':
+        raise ValueError('scope_conflict:' + ';'.join(scope['errors']))
     channel = plan['channel']
     request = dict(schema='portable_channel_request.v1', task_id=task['task_id'],
-        retrieval_task=copy.deepcopy(task), channel=channel, channel_profile=f'{channel}.v1',
+        retrieval_task=copy.deepcopy(task), scope_consistency=scope, channel=channel, channel_profile=f'{channel}.v1',
         execution_owner='installed_public_info_research_kit',
         downstream_business_owner=task.get('business_owner', 'requesting_user_or_downstream_project'),
         business_question=task['business_question'], subjects=task_subjects(task), sufficiency_applicability=compile_sufficiency_input(task, plan), intent=plan.get('intent', 'business_research'),

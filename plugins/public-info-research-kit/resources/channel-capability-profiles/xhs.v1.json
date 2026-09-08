@@ -30,9 +30,10 @@
     "remind_and_detect_only": true
   },
   "golden_method": [
-    "先闭合对象身份并将正式名、别名、分期和反例拆为独立查询",
+    "先闭合对象身份、正式名与已证实别名，再冻结逐字检索词",
     "通过语义词库形成少量查询，冻结 query_id 与 exact_query_text",
     "执行便携式渠道预检，确认执行 Owner、正常可见 Chrome、共享桌面串行与停止线",
+    "加载当前原生 App 文档，通过 cua.getApp(\"com.google.Chrome\") 绑定既有 Chrome；API 错误核签名，不切换到浏览器 Tab",
     "只在现有正常 Chrome 的真实可写控件中输入，平台内逐字可见一致后提交",
     "按任务配额推进结果批次并实际开读，不用首屏标题代表内容覆盖",
     "只记录实际可见正文、字幕、画面文字和评论，并区分来源角色",
@@ -70,5 +71,19 @@
     "tools/check_portable_channel_preflight.py",
     "tools/validate_xhs_evidence_security.py",
     "tools/validate_public_evidence.py"
-  ]
+  ],
+  "execution_entrypoint": "cua.getApp",
+  "native_gui_policy": {
+    "native_application": "com.google.Chrome",
+    "binding_kind": "native_App_not_browser_Tab",
+    "current_documentation_required_on_resume_or_api_error": true,
+    "forbidden_browser_entrypoints": [
+      "cua.getTab",
+      "cua.getBrowser",
+      "cua.createBrowserTab"
+    ],
+    "api_error_policy": "diagnose_native_signature_from_current_documentation_never_switch_surface",
+    "browser_debug_banner_policy": "stop_and_report_actual_prior_calls_not_automatic_user_window_restore",
+    "preflight_scope": "authority_and_contract_only_not_actual_tool_execution"
+  }
 }
