@@ -1,28 +1,28 @@
-# v0.8.0-rc.5 中文安装与使用说明
+# v0.8.0-rc.6 中文安装与使用说明
 
-这是供同事跨电脑试装的公开预发布版，不是稳定版。固定标签为 `v0.8.0-rc.5`，候选分支为 `codex/public-v0.8-quality-parity`；公开 `main` 同步此版本，旧稳定版可通过 `v0.7.0` 标签获取。
+这是供同事跨电脑试装的公开预发布版，不是稳定版。固定标签为 `v0.8.0-rc.6`，候选分支为 `codex/public-v0.8-quality-parity`；公开 `main` 同步此版本，旧稳定版可通过 `v0.7.0` 标签获取。
 
 ## 安装地址
 
 - 候选分支：<https://github.com/xiem-public-info/public-info-research-kit/tree/codex/public-v0.8-quality-parity>
-- 固定版本下载：[v0.8.0-rc.5](https://github.com/xiem-public-info/public-info-research-kit/releases/tag/v0.8.0-rc.5)
+- 固定版本下载：[v0.8.0-rc.6](https://github.com/xiem-public-info/public-info-research-kit/releases/tag/v0.8.0-rc.6)
 
 ## 推荐安装方式
 
-可直接复制 [rc.5 安装部署提示词](INSTALL_PROMPT_0.8.0-rc.5.md)，包含本版更新内容、首次安装和旧版升级。
+可直接复制 [rc.6 安装部署提示词](INSTALL_PROMPT_0.8.0-rc.6.md)，包含本版更新内容、首次安装和旧版升级。
 
 在 Codex 中发送本仓库地址或固定标签地址，并说明：“请安装这个 GitHub 固定版本中的 `public-info-research-kit` Plugin。”
 
 如果应用内安装没有成功，在终端依次执行：
 
 ```bash
-codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.5
+codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.6
 codex plugin add public-info-research-kit@public-info-research-public
 ```
 
 安装完成后新建一个 Codex 任务，确认以下七个能力可见：公开任务路由、普通网页／官方来源、微信已知链接、微信公开研究、小红书可见研究、地图空间证据、公开证据交付。
 
-已有市场固定旧标签时，应把该市场来源引用调整为 `v0.8.0-rc.5` 后再更新本插件；刷新旧标签不会取得新版。安装后核实实际安装版本，保留用户配置和其他插件。
+已有市场固定旧标签时，应把该市场来源引用调整为 `v0.8.0-rc.6` 后再更新本插件；刷新旧标签不会取得新版。安装后核实实际安装版本，保留用户配置和其他插件。
 
 ## 第一次使用
 

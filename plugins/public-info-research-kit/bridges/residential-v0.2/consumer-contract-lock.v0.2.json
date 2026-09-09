@@ -10,7 +10,7 @@
   "consumer": {
     "repository": "https://github.com/xiem-bit/residential-project-interpretation-service-public",
     "release_candidate": "v0.2.0-rc.8",
-    "candidate_commit": "1b60c50430f84728745f1d45ff81ed4e3d0ad560",
+    "candidate_commit": "6a000eb0dad9e31e7d31c132e921c031832e95ca",
     "contracts": [
       {
         "path": "external-capabilities/upstream-task.schema.json",
@@ -33,10 +33,12 @@
     "status": "pass_unpublished_candidates",
     "producer_minimum_fixture_cases": 11,
     "producer_core_conformance_fixture_cases": 94,
-    "current_producer_release_harness_cases": 101,
-    "consumer_regression_cases": 106,
+    "current_producer_release_harness_cases": 318,
+    "consumer_regression_cases": 136,
     "producer_validated_consumer_fixture": true,
-    "consumer_validated_producer_fixture": true
+    "consumer_validated_producer_fixture": true,
+    "request_frozen_before_execution": true,
+    "contract_drift_cli_negative_cases": 6
   },
   "boundaries": {
     "shared_cwd_required": false,

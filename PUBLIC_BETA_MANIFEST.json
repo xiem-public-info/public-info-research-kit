@@ -1,16 +1,16 @@
 {
   "schema": "public_info_self_service_release_manifest.v3",
-  "version": "0.8.0-rc.5",
+  "version": "0.8.0-rc.6",
   "status": "published_prerelease",
-  "base_release_tag": "v0.8.0-rc.4",
-  "release_tag": "v0.8.0-rc.5",
-  "candidate_revision": "2026-09-08-public-rc5-release",
+  "base_release_tag": "v0.8.0-rc.5",
+  "release_tag": "v0.8.0-rc.6",
+  "candidate_revision": "2026-09-09-public-rc6-release",
   "distribution_model": "public_repository_direct_use_without_maintainer_authorization",
   "license": "MIT",
   "repository": "xiem-public-info/public-info-research-kit",
   "previous_stable_version": "0.7.0",
-  "private_source_commit": "9269953be2a2c319a5a53a7880209f6fdff7d4b5",
-  "private_revision_commit": "1dc57aae935afc4ea11d833a0aff74c48ff1cfa2",
+  "private_source_commit": "9d7cd2eb1c2314c98c956cd69e89a8294e058898",
+  "private_revision_commit": "9d7cd2eb1c2314c98c956cd69e89a8294e058898",
   "public_package_source": "curated_snapshot_without_private_repository_history_or_runtime_state",
   "skill_count": 7,
   "skills": [
@@ -29,6 +29,7 @@
     "D291_spatial_coordinate_evidence_v2",
     "D293_task_driven_retrieval_authority",
     "model_interpretation_and_plan_consistency",
+    "frozen_request_contract_binding",
     "wechat_ai_search_task_gate",
     "D237_D240_D241_adaptive_sufficiency",
     "evidence_consumer_rejection",
@@ -66,8 +67,8 @@
   ],
   "validation": {
     "harness_schema": "public_release_harness_report.v1",
-    "test_runner_count": 16,
-    "fixture_case_count": 282,
+    "test_runner_count": 17,
+    "fixture_case_count": 318,
     "fixture_failure_count": 0,
     "golden_task_fixture_count": 5,
     "negative_fixture_file_count": 4,
@@ -79,7 +80,7 @@
   },
   "interop": {
     "manifest": "plugins/public-info-research-kit/schemas/public_interop_manifest.v1.json",
-    "producer_schema_sha256": "ee303d2ea8eef1bcc2b6e6f7a8b020486aa80c3c3ca3189cb99fedd5b8fc2148",
+    "producer_schema_sha256": "343d804eb2bd2be56a97d93c25376d64e55fc8e2e9afac952d2c4e1a630e92e1",
     "residential_bridge_lock": "plugins/public-info-research-kit/bridges/residential-v0.2/consumer-contract-lock.v0.2.json",
     "candidate_conformance_passed": true,
     "both_packages_published": false
@@ -102,8 +103,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "aa01a73a16c4d7191aff5431b0ae8d0dbb83c800abd8007843b8a3f3b7416519",
-      "bytes": 4797
+      "sha256": "d1972a69f5ebdcbb742cc8382e434d318d14216a86bc5b572b11ae6338cfe153",
+      "bytes": 5207
     },
     {
       "path": "DECISION_PLAYBOOK.md",
@@ -119,6 +120,11 @@
       "path": "INSTALL_PROMPT_0.8.0-rc.5.md",
       "sha256": "affa6f6defb445e2852822bd0a7aa0339dc2d128067cc174ab6e8c7c5fc1f48e",
       "bytes": 3284
+    },
+    {
+      "path": "INSTALL_PROMPT_0.8.0-rc.6.md",
+      "sha256": "7ad8aeb5f7ce17fd4f1ca7c917aff928e40048ab9360b3bd096f611bc3123272",
+      "bytes": 3262
     },
     {
       "path": "INTEROPERABILITY.md",
@@ -137,18 +143,18 @@
     },
     {
       "path": "QUICKSTART.md",
-      "sha256": "59deffacce31f8ef17b0510f2c9262c7a8dca7471230f5677f8e7827643fbc2d",
+      "sha256": "c9cba6175b7dd8e3ec860c15a2915ee11b468c331a549829b0a45e48370a53d0",
       "bytes": 3677
     },
     {
       "path": "RC_INSTALL_0.8.0.md",
-      "sha256": "d2626c8b857c0eded9a1f944270454b7060ffe8314ed07de452f4c7539a9bcf7",
+      "sha256": "8894a0a40246f520ae53c8071195355b524d3eb60c47071349511c2aa255fa40",
       "bytes": 3842
     },
     {
       "path": "README.md",
-      "sha256": "87c4bddb9ec26aebec421763b7b58604b842032236f16ac8ef465f32686246aa",
-      "bytes": 5760
+      "sha256": "a5a1608240b25a8ca1019c42962b5ed0c5dd96c4243bf530fca3828dc293a567",
+      "bytes": 5820
     },
     {
       "path": "RELEASE_NOTES_0.8.0-rc.2.md",
@@ -169,6 +175,11 @@
       "path": "RELEASE_NOTES_0.8.0-rc.5.md",
       "sha256": "6d6f2e89f0465e62e8fddfafc4ad6115ded836b509e07629cdc2d8417b7f0973",
       "bytes": 2274
+    },
+    {
+      "path": "RELEASE_NOTES_0.8.0-rc.6.md",
+      "sha256": "00766d02a315400f4c6fe4309cd9204eb72dea5639fd14cc2ca21ce28ea78310",
+      "bytes": 1893
     },
     {
       "path": "SECURITY.md",
@@ -212,18 +223,18 @@
     },
     {
       "path": "plugins/public-info-research-kit/.codex-plugin/plugin.json",
-      "sha256": "0daad5f15a92a29fd32007bee161ed1a54e40acfe17bcc2e9c2065d1a8cc7153",
+      "sha256": "896e3281930b6ebcd4714d90493aade680e151348ebef2a2446d30eac908ec62",
       "bytes": 1853
     },
     {
       "path": "plugins/public-info-research-kit/bridges/residential-v0.2/README.md",
-      "sha256": "6cbb77fcdab359a3fecff26c109171488b3d98aafc96c3baf77c27916077ece3",
-      "bytes": 939
+      "sha256": "74b68c963d6494a8af2ca1897f1e03665d28aa8738b0e0f41589b5998600664b",
+      "bytes": 3127
     },
     {
       "path": "plugins/public-info-research-kit/bridges/residential-v0.2/consumer-contract-lock.v0.2.json",
-      "sha256": "45e3a88bbd7047f26063676bdf6f5467b3357d732b36047fa8319b2a4e186c61",
-      "bytes": 1981
+      "sha256": "b219273ca2d043a1b95ae7895ba803f8f57f3de18b36b755091dacdeac763ffe",
+      "bytes": 2070
     },
     {
       "path": "plugins/public-info-research-kit/examples/social_query_plan.example.json",
@@ -282,8 +293,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/resources/social_semantic_query_lexicon.v0.1.json",
-      "sha256": "5ce3dc284ac7253b9b58a3261f5e3eb4114f3703e86a989a1eb50b7ce5e4c5c8",
-      "bytes": 19253
+      "sha256": "d656cf2186eabe2e28ad8bb9af30713d0822004ccc77a20ebc43d07981cc609a",
+      "bytes": 19345
     },
     {
       "path": "plugins/public-info-research-kit/schemas/adaptive_query_sufficiency_contract.v1.json",
@@ -302,18 +313,18 @@
     },
     {
       "path": "plugins/public-info-research-kit/schemas/portable_channel_request.v1.json",
-      "sha256": "97e8dece34ab6937b50438965baccbe86dca6637346a20d67741dae504dd8d36",
-      "bytes": 5973
+      "sha256": "9f849d57056c5b3c8a05bd0f797821d84744c08c3a0490d0927509bdf3e2dedb",
+      "bytes": 6153
     },
     {
       "path": "plugins/public-info-research-kit/schemas/public_evidence_envelope.v1.json",
-      "sha256": "ee303d2ea8eef1bcc2b6e6f7a8b020486aa80c3c3ca3189cb99fedd5b8fc2148",
-      "bytes": 4358
+      "sha256": "343d804eb2bd2be56a97d93c25376d64e55fc8e2e9afac952d2c4e1a630e92e1",
+      "bytes": 5578
     },
     {
       "path": "plugins/public-info-research-kit/schemas/public_interop_manifest.v1.json",
-      "sha256": "5596b94a8e3395c1f30dafd3e24b43f55a327477f4aebc3ca66a5743b0286212",
-      "bytes": 2803
+      "sha256": "f78f1b638b883cfa0038d8815fd25d49dcc5eef707070880b297c140cddc40a6",
+      "bytes": 3006
     },
     {
       "path": "plugins/public-info-research-kit/schemas/social_query_plan.v1.json",
@@ -342,13 +353,13 @@
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-evidence-delivery/SKILL.md",
-      "sha256": "f802a72da88decd58ec0b441faef282152af2cbd4693fa3f23814ab85a2968fa",
-      "bytes": 5877
+      "sha256": "4b691ab39644a6d15ddb5c1e4a01085d22b6a591ed9bf02c0cbb19c11604d151",
+      "bytes": 6579
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-info-intake-router/SKILL.md",
-      "sha256": "2ff1d7463165251435f1298e6173ce526b5bb030a952e36310b1604abea39995",
-      "bytes": 9585
+      "sha256": "844f0c15d579d1b83275cb835ba8530c60b7e2ec773e16c5be8e687869bce9ed",
+      "bytes": 10824
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-web-official-resolver/SKILL.md",
@@ -421,6 +432,21 @@
       "bytes": 1849
     },
     {
+      "path": "plugins/public-info-research-kit/tests/fixtures/residential-contract-binding/draft-envelope.json",
+      "sha256": "ac4d84aef9cf4fc6593e2b09354be2f2c6fbdbc8a9d4bc2f166c32e61a120ce7",
+      "bytes": 6119
+    },
+    {
+      "path": "plugins/public-info-research-kit/tests/fixtures/residential-contract-binding/request.json",
+      "sha256": "d25e939cb9f29a0b84efd5f4dc5eee3234069246f69eee9552cd4858d7b0bc90",
+      "bytes": 3463
+    },
+    {
+      "path": "plugins/public-info-research-kit/tests/fixtures/residential-contract-binding/sufficiency-input.json",
+      "sha256": "a3c648ee35d1a8964270a700bccc42bb28cd79a4fd9efc1eef2e4b0ff68cdf21",
+      "bytes": 4562
+    },
+    {
       "path": "plugins/public-info-research-kit/tests/fixtures/spatial_coordinate_evidence_v2/cases.json",
       "sha256": "df40bc265b3865c3828d898fa0e708e02dd0327a810ded2b97520569bdf11646",
       "bytes": 20097
@@ -477,13 +503,18 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_public_evidence_contract.py",
-      "sha256": "3f88d89f4996bd886996945eb92802e14b8cb40002da3968db8fa206b64d0452",
-      "bytes": 6135
+      "sha256": "dec8e612cc35815e83acb5a556c923b92791e9e65bf2215194162c1bb40c932d",
+      "bytes": 6323
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_release_harness.py",
-      "sha256": "2012c3b2f7feff00c79a7ed752e894c1baa151eb6e160900ba747f58217880a7",
-      "bytes": 9084
+      "sha256": "0a818fb1fea7d38634c2b02eacf43f7ea2ab952210ec93ae6e88aa6922f2b397",
+      "bytes": 9123
+    },
+    {
+      "path": "plugins/public-info-research-kit/tests/run_request_contract_binding.py",
+      "sha256": "33e7ce8c881bbd68b40310017b679c9eae9aa268c3e207da72373d584450c984",
+      "bytes": 8670
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_residential_bridge_lock.py",
@@ -507,8 +538,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_task_driven_retrieval.py",
-      "sha256": "d618dd59927de557178fe3fa76fea9af6949606083ed33d365a18484409075b4",
-      "bytes": 12722
+      "sha256": "7f52fe590367cd7e9bec4645ff2e9754f73c99fcc2e4eca5a37e49d68ab92796",
+      "bytes": 12868
     },
     {
       "path": "plugins/public-info-research-kit/tests/run_task_scope_resolution.py",
@@ -537,18 +568,18 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/check_portable_channel_preflight.py",
-      "sha256": "4b140e205556b02938e9f8de67c6c5d145c52a1824f87edba36430cec0a5aeba",
-      "bytes": 13149
+      "sha256": "e4c22b50362cddbda03fc11fdf1fbdbe401570fc517e5b20ee744151dfb3f771",
+      "bytes": 13391
     },
     {
       "path": "plugins/public-info-research-kit/tools/check_wechat_ai_search_gate_preflight.py",
-      "sha256": "dd80f18cf3fc83a34329da58b9a69e84fcc5c73bf23ede1830e882b515748314",
-      "bytes": 8649
+      "sha256": "5cc3c90d51250de7d14afdb542ef6d5567ce9d3d8308852e88a9cc572942ef98",
+      "bytes": 8850
     },
     {
       "path": "plugins/public-info-research-kit/tools/compile_retrieval_execution_request.py",
-      "sha256": "b501dbdb97ba39bec19a59bff937a15ff0346921a406750e4559357921bfe0e1",
-      "bytes": 7027
+      "sha256": "df7f0c2f4ea551b179fdbddd73a5a7557387952ea85c12805d6a0ea63fd5634a",
+      "bytes": 7389
     },
     {
       "path": "plugins/public-info-research-kit/tools/doctor.py",
@@ -557,8 +588,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/package_evidence.py",
-      "sha256": "25ec9ffb8844ac22f401f0602aa256e2c7ed539f62c97c0e628c5e9557535a01",
-      "bytes": 2374
+      "sha256": "1cdfdd8582ebe51f65fc031001ba99964ca2e95ccf7aa26cd7627fe8661209a7",
+      "bytes": 3412
     },
     {
       "path": "plugins/public-info-research-kit/tools/providers/macos_vision_ocr.swift",
@@ -566,9 +597,14 @@
       "bytes": 4744
     },
     {
+      "path": "plugins/public-info-research-kit/tools/request_contract.py",
+      "sha256": "5fd0736dd9884caaae57ab2971cc6c009d29290f62fb0426290e955b17d63464",
+      "bytes": 10635
+    },
+    {
       "path": "plugins/public-info-research-kit/tools/retrieval_task_policy.py",
-      "sha256": "c527c32bdaf2d9f54b279f24d8b0be0714ca1356f103caa90dbb762566447330",
-      "bytes": 13379
+      "sha256": "26455c1a952264617c77b60e39c6af8f18c845d2c021a99706157e4a9d81f1b6",
+      "bytes": 14658
     },
     {
       "path": "plugins/public-info-research-kit/tools/route_task.py",
@@ -582,8 +618,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_adaptive_query_sufficiency.py",
-      "sha256": "0a41db9f9e98bfc2b1507c0ed055170e5d11ccb1967d109be88779daa792b0e5",
-      "bytes": 34694
+      "sha256": "3a17d5c3ea77705535e754d63cbdb33608aa4aaea03a400133035a6d0ee5a160",
+      "bytes": 35620
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_d292_research_orchestration.py",
@@ -602,8 +638,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_public_evidence.py",
-      "sha256": "04f915cdaca8f120cfda089dc05ee4e225f319706b9be9fc1bf1c55e9dd426c7",
-      "bytes": 18397
+      "sha256": "0f170f3b7d539715ea7a7e906354f14cdc44575fc290384635b03459fee8d743",
+      "bytes": 22611
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_residential_bridge.py",
@@ -612,8 +648,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_social_query_plan.py",
-      "sha256": "c2d7f31c2cc8de9c96d6d17a4ec25fdbdbc03b9d9c5fb2b16429f1ddcbd53c9c",
-      "bytes": 12395
+      "sha256": "903faec83cd805f11a3c74f11ca9049d7b388c79fed906fdc8111637730f9333",
+      "bytes": 12427
     },
     {
       "path": "plugins/public-info-research-kit/tools/validate_spatial_coordinate_evidence_v2.py",
@@ -632,8 +668,8 @@
     },
     {
       "path": "scripts/build_release_manifest.py",
-      "sha256": "92136abdba4bbff05f72ae54c67cd5bd00a8c6e59a29eb6e302f5280d0b10e87",
-      "bytes": 7828
+      "sha256": "5c66c9a17a1312bcec4165f777514985e276983b2aa5bfa1fac7fca756b31be2",
+      "bytes": 7875
     }
   ]
 }
