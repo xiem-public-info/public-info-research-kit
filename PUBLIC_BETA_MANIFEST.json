@@ -105,8 +105,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "40d897388d34273f83e5324109ac1978b19370a5ee2334e6699dd0e46000a131",
-      "bytes": 5585
+      "sha256": "678f860a22873eef9ff3e200badfa168762eac2bea5703a8c973803c1fd90c8a",
+      "bytes": 5579
     },
     {
       "path": "DECISION_PLAYBOOK.md",
@@ -150,18 +150,18 @@
     },
     {
       "path": "QUICKSTART.md",
-      "sha256": "a9b9eb4b130988e97da21c9dbf7514143cb2e6f8b8868fd33989e22688539124",
+      "sha256": "636f69760b81eb9d24a13d2af8af4443a0dbaeedc77525b868de21a8b51a3764",
       "bytes": 2515
     },
     {
       "path": "RC_INSTALL_0.8.0.md",
-      "sha256": "651e70cce14516e778e1d03e543b5f69d98ed42c51641f30ab5834eb42cbce0f",
-      "bytes": 3723
+      "sha256": "d327ec6b60e76b4c92608f4706ed4ff270e146998e92ffa1f2cd3fea25845bdf",
+      "bytes": 3691
     },
     {
       "path": "README.md",
-      "sha256": "ffca1b73e35397f0f1f1b1f676c58554c027c13ebf9786c41a3a8b9b9d01c744",
-      "bytes": 5852
+      "sha256": "e585f613c2e277a26d27032fd1b12143a120164a7db85ea64151f50821829fc1",
+      "bytes": 5990
     },
     {
       "path": "RELEASE_NOTES_0.8.0-rc.2.md",
@@ -190,8 +190,8 @@
     },
     {
       "path": "RELEASE_NOTES_0.8.0-rc.7.md",
-      "sha256": "255f42543125dc60b56e27111c4eecf9d70b14cc3aa0003d4e37df789906f0d6",
-      "bytes": 2133
+      "sha256": "ae234886a8434ba1e72bd329a05cabfac6171e5a272229f2a172ee1b78b0e913",
+      "bytes": 2143
     },
     {
       "path": "SECURITY.md",
@@ -235,8 +235,8 @@
     },
     {
       "path": "UPGRADE_0.8.0-rc.6_to_rc.7.md",
-      "sha256": "d732871fb9c32a6615068a98d17912cbc2994f28244d70a245f447445050c60d",
-      "bytes": 5737
+      "sha256": "dfa9ec57ee2460479384165fefc9d1768044e3e527a6411506f660558872e5bf",
+      "bytes": 5700
     },
     {
       "path": "plugins/public-info-research-kit/.codex-plugin/plugin.json",
