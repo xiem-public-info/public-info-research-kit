@@ -9,8 +9,8 @@ from pathlib import Path
 from typing import Any
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from request_contract import check_sufficiency_binding, normalize_request
-from retrieval_task_policy import validate_task_authorization, explicit_research_requirements
+from request_contract import check_sufficiency_binding, normalize_request, same
+from retrieval_task_policy import validate_task_authorization, validate_execution_request, explicit_research_requirements
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -444,15 +444,15 @@ def validate_completion_claim(contract: dict[str, Any], receipt: dict[str, Any])
     return None
 
 
-def validate_package(payload: dict[str, Any], original_request: dict | None = None) -> dict[str, Any]:
-    if isinstance(payload, dict) and payload.get("source_request_sha256") is not None and original_request is None:
-        return result("original_request_required_for_bound_sufficiency", False)
+def validate_package(payload: dict[str, Any], original_request: dict | None = None, *, allow_legacy_unbound: bool = False) -> dict[str, Any]:
+    if not isinstance(payload, dict) or payload.get("schema") != CONTRACT["package_schema"]:
+        return result("invalid_schema", False)
+    if original_request is None and (not allow_legacy_unbound or payload.get("source_request_sha256") is not None):
+        return result("original_request_required_for_sufficiency", False)
     if original_request is not None:
         binding_issues = check_sufficiency_binding(original_request, payload)
         if binding_issues:
             return result("sufficiency_request_binding_failed", False, errors=binding_issues)
-    if not isinstance(payload, dict) or payload.get("schema") != CONTRACT["package_schema"]:
-        return result("invalid_schema", False)
     missing_top = [field for field in CONTRACT["required_package_sections"] if payload.get(field) in (None, "")]
     if missing_top:
         return result("invalid_package", False, missing_fields=missing_top)
@@ -516,6 +516,22 @@ def validate_package(payload: dict[str, Any], original_request: dict | None = No
     receipt = payload.get("receipt")
     if not isinstance(receipt, dict):
         return result("invalid_receipt", False)
+    if original_request is not None and batch_state != "proposed_incremental_batch":
+        execution = payload.get("execution_request")
+        if not isinstance(execution, dict):
+            return result("sufficiency_execution_request_required", False)
+        valid, status = validate_execution_request(execution, original_request)
+        if not valid:
+            return result(status, False)
+        execution = execution.get("owner_request", execution)
+        if execution.get("batch_state") != batch_state or execution.get("parent_batch_id") != batch.get("parent_batch_id"):
+            return result("sufficiency_execution_batch_mismatch", False)
+        frozen = {(q.get("query_id"), q.get("exact_query_text")) for q in execution.get("query_plan", []) if isinstance(q, dict) and q.get("execution_state") == "frozen"}
+        if any((q["query_id"], q["exact_query_text"]) not in frozen for q in batch["queries"]):
+            return result("sufficiency_execution_query_mismatch", False)
+        for field in ("continuation_adoption", "continuation_binding"):
+            if not same(execution.get(field), payload.get(field)):
+                return result("sufficiency_execution_continuation_mismatch", False)
     needs_auth = receipt.get("needs_downstream_authorization")
     if batch_state == "proposed_incremental_batch" and needs_auth is not True:
         return result("incremental_batch_authorization_mismatch", False)
@@ -523,6 +539,8 @@ def validate_package(payload: dict[str, Any], original_request: dict | None = No
         return result("incremental_batch_authorization_mismatch", False)
     if batch_state == "in_scope_iteration_batch":
         execution = payload.get("execution_request")
+        if isinstance(execution, dict):
+            execution = execution.get("owner_request", execution)
         if not isinstance(execution, dict) or execution.get("task_id") != payload.get("task_id"):
             return result("retrieval_task_scope_mismatch", False)
         if normalize_request(execution.get("retrieval_task", {})).get("in_scope_iteration_allowed") is False:
@@ -609,6 +627,8 @@ def validate_package(payload: dict[str, Any], original_request: dict | None = No
         adaptive_extension_authorized=extension.get("authorized") is True,
         incremental_execution_authorized=batch_state == "in_scope_iteration_batch" or (batch_state == "approved_incremental_batch" and extension.get("authorized") is True),
         live_channel_authorized=False,
+        production_binding_verified=original_request is not None,
+        validation_scope="frozen_request_and_execution" if original_request is not None else "legacy_structure_only",
         portable_channel_preflight_still_required=batch_state in {"approved_incremental_batch", "in_scope_iteration_batch"},
     )
 
@@ -619,10 +639,11 @@ def main() -> int:
     group.add_argument("--input", type=Path)
     group.add_argument("--applicability-input", type=Path)
     parser.add_argument("--request", type=Path, help="Original frozen request; compare declared requirements without changing it")
+    parser.add_argument("--allow-legacy-unbound", action="store_true", help="Explicit historical structural check only; no production binding")
     args = parser.parse_args()
     path = args.applicability_input or args.input
     payload = json.loads(path.read_text(encoding="utf-8"))
-    validation = validate_applicability(payload) if args.applicability_input else validate_package(payload, json.loads(args.request.read_text()) if args.request else None)
+    validation = validate_applicability(payload) if args.applicability_input else validate_package(payload, json.loads(args.request.read_text()) if args.request else None, allow_legacy_unbound=args.allow_legacy_unbound)
     print(json.dumps(validation, ensure_ascii=False, indent=2))
     return 0 if validation["passed"] else 2
 

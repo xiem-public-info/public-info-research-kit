@@ -21,7 +21,7 @@ description: 将研究问题路由到微信、小红书、静态或动态公开�
 7. 把查询写入 `social_query_plan.v1`。每条须有唯一 `query_id`、独立 `exact_query_text`、执行状态、查询假设、来源角色目标、结果批次下限、实际开读下限、预期信息增益和失败归因要求；运行 `python tools/validate_social_query_plan.py --plan <计划文件>`，只有 `executable_query_ids` 中的冻结查询可执行。
 8. 模型依据原任务、继承的业务领域和补充指令理解动作、明确排除与待解释部分，在现有计划中填写内部 `scope_interpretation` 与 `action_coverage`。代码只核原请求绑定、已识别动作有无遗漏、执行与排除是否冲突、领域和研究标准是否一致；不以关键词或支持的句式决定任务轻重。领域不由通用 QA、分类等词决定，已给或已裁定名单只定研究对象。住宅资格与供给分析按原任务执行；明确取图、整理或不做资格复核时保留其范围，未知部分由本包结合原请求判断，不自动加搜索或转成用户填表。具体内部字段与边界见 `resources/decision-playbook.v1.md`。距交付不足 12 个月只触发目标产品余量、可选产品与销售重叠复核，不自动降为尾盘；尾盘建议须有目标产品库存与销售阶段依据，缺依据时资格待核。正式竞品角色仍由下游裁定。
 9. 首次回传回答原业务问题，说明已成立判断、冲突、缺口及是否继续。住宅比较研究才检查项目事实、竞品关系、客户选择和反例的统一语义核；完整购房事件、官方表达资产按任务需要启用。使用 D-292 包时，不适用的专用段声明 `applies=false`，通用首次回传声明 `residential_semantic_core_applies=false`，不得用这些标志跳过任务已经要求的住宅研究内容。
-10. 业务语义内核可以依据负例、冲突、缺口和边际信息增益生成一份合并 `proposed_incremental`，范围内按原任务授权逐条冻结后执行，超范围另行裁定。按累计可用成果（复用与新增去重）判断，原任务的最低要求、期望目标和非关键缺口分别处理；增益字段按任务适用，不统一要求 A／B／C、项目数或表达数。形成或验收充分性包时运行 `python tools/validate_adaptive_query_sufficiency.py --input <充分性包>`。
+10. 业务语义内核可以依据负例、冲突、缺口和边际信息增益生成一份合并 `proposed_incremental`，范围内按原任务授权逐条冻结后执行，超范围另行裁定。按累计可用成果（复用与新增去重）判断，原任务的最低要求、期望目标和非关键缺口分别处理；增益字段按任务适用，不统一要求 A／B／C、项目数或表达数。形成或验收充分性包时运行 `python tools/validate_adaptive_query_sufficiency.py --input <充分性包> --request <冻结原请求>`。
 11. 本包用 `tools/compile_retrieval_execution_request.py --task <收到的业务合同> --plan <本包计划> --output <执行请求>` 编译。计划含 `channel`、`surface_id` 和 `queries`；每条查询含编号、精确词、frozen 状态和任务配额。`shared_gui`、`computer_use`、`end_user_session` 由本包核实际环境后填写，不能要求下游填写或自动假定为已就绪。微信 AI 编译结果直接交 AI 预检；其他微信／小红书在真实 GUI 动作前，把冻结查询转换为 `portable_channel_request.v1`，运行 `python tools/check_portable_channel_preflight.py --request <请求文件> --require-live`。执行 Owner 固定为已安装的公开信息研究包；下游保留业务问题、验收和解释权，不能指定执行器、回退、坐标或登录态。
 12. `wechat_ai_search` 与 `xhs_ask_diandian` 是两个独立平台表面，普通搜索不得冒充；聚合回答只用于解歧、信息密度、扩词、反例和回源导航。微信 AI 从任务合同继承权限，运行 `tools/check_wechat_ai_search_gate_preflight.py --require-live` 检查实际执行条件，结果不代表已执行或已通过真实验收。
 13. 只采用路由器返回的发行能力，不搜索或调用仓库外的历史路线。
@@ -38,9 +38,13 @@ description: 将研究问题路由到微信、小红书、静态或动态公开�
 
 住宅 `residential.upstream_task.v0.2` 由编译器确定性读取 `acceptance_contract`、`object_scope`、`stop_conditions` 和 `incremental_policy`，原请求保持完整副本。模式、数量、质量、多样性及资格不能由模型重新指定；重复位置出现不同值时先订正本包映射，不修改原请求。执行请求保留 `request_id` 与原请求的 `source_request_sha256`，进度另记。
 
-`social_query_plan.v1.acceptance_mode` 的 `d237_required / exempt_simple_direct_retrieval` 是适用策略，不能复制成验收模式 `hybrid / quality_sufficiency / count_based`。形成充分性包时，从编译结果继承原请求编号和哈希，完整保留验收条件，再运行 `validate_adaptive_query_sufficiency.py --input <充分性包> --request <冻结原请求>`。
+`social_query_plan.v1.acceptance_mode` 的 `d237_required / exempt_simple_direct_retrieval` 是适用策略，不能复制成验收模式 `hybrid / quality_sufficiency / count_based`。形成充分性包时，从编译结果继承原请求编号和哈希，完整保留验收条件，并把实际使用的执行请求作为 `execution_request` 保存。批次状态、父批次、冻结查询和后续授权记录须一致，再运行 `validate_adaptive_query_sufficiency.py --input <充分性包> --request <冻结原请求>`。
 
 新任务的范围内迭代继承有效任务授权；`in_scope_iteration_allowed=false` 明确禁止继续，`execution_authorized` 只表示扩展授权。旧任务恢复先回看原请求、停止条件和当前授权，不能把字段省略或 `execution_authorized=false` 自动解释为已批准继续。范围、预算或明确停止要求改变时，由有权 Owner 留下新的决定，原冻结请求不回改。
+
+实际工具调用前，使用 `tools/compile_retrieval_execution_request.py --task <冻结原请求> --check-execution <实际执行请求>`；原生任务和住宅请求均执行此检查。编译只表明计划可生成，不代表实际检查、检索或充分性通过。原生旧任务没有 `request_id` 时，内部沿用其 `task_id` 作为请求编号，原件不增字段；其业务 Owner 沿用原任务，不默认设为住宅 Owner。模型从自然语言中保留停止要求；需要明确是否允许后续批次时，结合原意表达 `in_scope_iteration_allowed`，不得为通过校验改写已冻结原件。
+
+后续决定放在 `continuation_adoption`，它保持住宅 rc.8 采用回执的原结构。执行计划和充分性包另存相同的 `continuation_binding`：`schema=continuation_authorization_binding.v1`、原请求 `request_sha256`、完整决定 `adoption_sha256`、逐字相同的 `limits_quote` 和明确的 `adaptive_extension` 预算。计划与充分性包的扩展预算须与绑定记录相同。模型及有权 Owner 按原决定解释批次数、时间和费用；哈希与数值检查只验证已明确记录的一致性，不能证明自由文本预算已被正确理解，也不能制造授权。原授权清楚时直接继承；只有实质缺口或变化部分才询问。
 
 以下字段由本包用于内部执行计划，业务交付只呈现需要的结论和限制；按当前渠道填写适用字段，不要求下游预填：任务编号、业务问题、判断缺口、渠道与模式、渠道画像、业务 Owner、执行 Owner、`searcher_mode`、对象身份、精确输入、查询计划版本、每条查询的最小结果批次与实际开读数、增量授权状态、证据目标、使用边界、停止条件和预期验证器。
 

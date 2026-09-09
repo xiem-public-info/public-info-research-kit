@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from retrieval_task_policy import validate_task_authorization, POLICY_ID
+from retrieval_task_policy import validate_execution_request, POLICY_ID
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,6 +42,7 @@ ALLOWED_TOP_LEVEL = {
     "adaptive_extension_authorized",
     "retrieval_task", "surface_id", "scope_expansion_requested", "budget_exhausted", "operation", "usage",
     "scope_consistency", "request_id", "source_request_sha256",
+    "batch_state", "parent_batch_id", "continuation_adoption", "continuation_binding", "adaptive_extension",
 }
 FORBIDDEN_CONTROL_FIELDS = {
     "requested_executor",
@@ -230,9 +231,11 @@ def validate(request: dict[str, Any], *, require_live: bool = False) -> dict[str
     live_gate = request.get("live_gate")
     task_valid = False
     if "retrieval_task" in request:
-        task_valid, task_status = validate_task_authorization(request)
+        task_valid, task_status = validate_execution_request(request)
         if not task_valid:
             errors.append(task_status)
+    if require_live and "retrieval_task" not in request:
+        errors.append("retrieval_task_contract_required")
     if live_gate is None and task_valid:
         pass
     elif not isinstance(live_gate, dict):

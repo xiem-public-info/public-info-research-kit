@@ -271,6 +271,29 @@
     "source_request_sha256": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "batch_state": {
+      "enum": [
+        "initial_frozen_batch",
+        "in_scope_iteration_batch",
+        "approved_incremental_batch",
+        "proposed_incremental_batch"
+      ]
+    },
+    "parent_batch_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "continuation_adoption": {
+      "type": "object"
+    },
+    "continuation_binding": {
+      "type": "object"
+    },
+    "adaptive_extension": {
+      "type": "object"
     }
   },
   "anyOf": [

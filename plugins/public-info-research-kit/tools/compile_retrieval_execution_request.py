@@ -7,8 +7,8 @@ import json
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from request_contract import normalize_request, canonical_sha256
-from retrieval_task_policy import task_subjects, validate_task_authorization, validate_scope_interpretation
+from request_contract import normalize_request, canonical_sha256, request_identity
+from retrieval_task_policy import task_subjects, validate_task_authorization, validate_scope_interpretation, validate_execution_request
 from validate_adaptive_query_sufficiency import explicit_research_requirements
 
 
@@ -73,14 +73,15 @@ def compile_request(task: dict, plan: dict) -> dict:
         raise ValueError('scope_conflict:' + ';'.join(scope['errors']))
     channel = plan['channel']
     request = dict(schema='portable_channel_request.v1', task_id=task['task_id'],
-        retrieval_task=copy.deepcopy(original_task), source_request_sha256=canonical_sha256(original_task), request_id=original_task.get("request_id"), scope_consistency=scope, channel=channel, channel_profile=f'{channel}.v1',
+        retrieval_task=copy.deepcopy(original_task), source_request_sha256=canonical_sha256(original_task), request_id=request_identity(original_task), scope_consistency=scope, channel=channel, channel_profile=f'{channel}.v1',
         execution_owner='installed_public_info_research_kit',
         downstream_business_owner=task.get('business_owner', 'requesting_user_or_downstream_project'),
         business_question=task['business_question'], subjects=task_subjects(task), sufficiency_applicability=compile_sufficiency_input(task, plan), intent=plan.get('intent', 'business_research'),
         evidence_type='public_evidence', usage_boundary=task.get('usage_boundary', 'internal_research'),
         stop_condition=task.get('stop_condition') or task.get('sufficiency', {}).get('stop_condition') or plan.get('stop_condition') or 'Stop when sufficient, no material gain, or safety boundary reached',
-        query_plan_schema='social_query_plan.v1', query_plan=copy.deepcopy(plan['queries']))
-    for key in ('surface_id', 'scope_expansion_requested', 'budget_exhausted', 'operation', 'usage', 'shared_gui', 'computer_use', 'end_user_session'):
+        query_plan_schema='social_query_plan.v1', query_plan=copy.deepcopy(plan['queries']),
+        batch_state=plan.get('batch_state', 'initial_frozen_batch'), parent_batch_id=plan.get('parent_batch_id'))
+    for key in ('surface_id', 'scope_expansion_requested', 'budget_exhausted', 'operation', 'usage', 'shared_gui', 'computer_use', 'end_user_session', 'continuation_adoption', 'continuation_binding', 'adaptive_extension'):
         if key in plan:
             request[key] = copy.deepcopy(plan[key])
     for query in request['query_plan']:
@@ -106,11 +107,20 @@ def compile_request(task: dict, plan: dict) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--task', type=Path, required=True)
-    parser.add_argument('--plan', type=Path, required=True)
-    parser.add_argument('--output', type=Path, required=True)
+    mode=parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument('--plan', type=Path)
+    mode.add_argument('--check-execution', type=Path)
+    parser.add_argument('--output', type=Path)
     args = parser.parse_args()
     try:
-        request = compile_request(json.loads(args.task.read_text()), json.loads(args.plan.read_text()))
+        task=json.loads(args.task.read_text())
+        if args.check_execution:
+            passed,status=validate_execution_request(json.loads(args.check_execution.read_text()), task)
+            print(json.dumps({'passed':passed,'status':status,'platform_opened':False}))
+            return 0 if passed else 2
+        if not args.output:
+            raise ValueError('output_required_for_compilation')
+        request = compile_request(task, json.loads(args.plan.read_text()))
     except (ValueError, KeyError, TypeError) as error:
         print(json.dumps({'passed': False, 'status': str(error)})); return 2
     args.output.parent.mkdir(parents=True, exist_ok=True)

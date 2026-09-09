@@ -20,6 +20,10 @@ description: 阅读用户直接提供的具名微信文章链接，使用当前�
 
 收到用户或下游的检索合同，即默认授权全部检索渠道和公开搜索表面按需使用。下游只给业务目标、主体和内容需求；本工具包选择渠道、AI 使用顺序和精确词。AI→原文、原文→AI→后续计划均属常规研究。每条查询提交前冻结，范围内迭代无需另批；超出对象、目标或预算才请求裁定。权限不代表工具、登录、访问或真实渠道已验证。 规则见 `resources/retrieval_authority_current.json`，合同编译见 `tools/compile_retrieval_execution_request.py`。
 
+## 实际执行前的原请求检查
+
+保留收到的原生或住宅请求原件。使用 `tools/compile_retrieval_execution_request.py --task <冻结原请求> --check-execution <本次执行请求>` 检查后，再执行其中的实际动作；编译成功或旧 live-gate 不能代替该检查。微信和小红书还需各自的 `--require-live` 预检。简单读取继续按原任务的直接读取适用性执行，不增加研究要求。研究回传保留本次实际 `execution_request`，不得事后重建成已执行；完整用法见 `skills/public-info-intake-router/SKILL.md`。
+
 ## 使用边界（0.8.0-rc.4）
 
 - 使用本人的正常账号和本机正常界面，保持合理频率；完整保留当前可见桌面研究能力。

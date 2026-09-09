@@ -16,6 +16,7 @@ REPO_ROOT = ROOT.parents[1]
 TESTS = (
     "run_task_driven_retrieval.py",
     "run_request_contract_binding.py",
+    "run_execution_request_binding.py",
     "run_task_scope_resolution.py",
     "run_route_capability_profiles.py",
     "run_portable_channel_preflight.py",

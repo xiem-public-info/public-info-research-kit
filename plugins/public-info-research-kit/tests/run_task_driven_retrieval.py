@@ -29,6 +29,7 @@ def main():
     check('business_sufficiency_mapped',validate_applicability(compiled['sufficiency_applicability'])['passed'])
     check('original_stop_wins',compiled['stop_condition']=='original task stop')
     check('missing_criteria_not_invented',validate_applicability(compile_request(task,plan)['sufficiency_applicability'])['status']=='d237_consumer_contract_required')
+    task['sufficiency']=copy.deepcopy(base['retrieval_task']['sufficiency'])
     for surface in ('wechat_ai_search','wechat_global_article_results','wechat_video_search','wechat_mini_program_search','wechat_public_account_search'):
         selected=copy.deepcopy(plan); selected['surface_id']=surface
         request=compile_request(task,selected)
@@ -57,11 +58,16 @@ def main():
     r=copy.deepcopy(request); r['owner_request']['query_plan'][0]['acceptance']['minimum_actual_opens']=0; check('ai_zero_article_opens',ai(r,require_live=True)['passed'])
     fixture=json.loads((ROOT/'tests/fixtures/golden-tasks/golden_research_partial.json').read_text())
     fixture['batch'].update(batch_state='in_scope_iteration_batch',parent_batch_id='parent')
-    ex=copy.deepcopy(base); ex.pop('live_gate'); ex['task_id']=fixture['task_id']; ex['retrieval_task']={**task,'task_id':fixture['task_id']}; ex['query_plan']=[{**q,'execution_state':'frozen'} for q in fixture['batch']['queries']]
-    fixture['execution_request']=ex; fixture['receipt']['needs_downstream_authorization']=False
-    check('in_scope_iteration_without_extension',validate_package(fixture)['passed'])
-    bad=copy.deepcopy(fixture); bad['execution_request']['query_plan'][0]['exact_query_text']='different'; check('iteration_query_binding',not validate_package(bad)['passed'])
-    bad=copy.deepcopy(fixture); bad['execution_request']['scope_expansion_requested']=True; check('iteration_scope_expansion',not validate_package(bad)['passed'])
+    iteration_task={**copy.deepcopy(task), 'task_id':fixture['task_id'], 'sufficiency':copy.deepcopy(fixture['consumer_contract'])}
+    iteration_plan={k:copy.deepcopy(base[k]) for k in ('channel','shared_gui','computer_use','end_user_session')}
+    iteration_plan.update(batch_state='in_scope_iteration_batch',parent_batch_id='parent',
+        queries=[{'query_id':q['query_id'],'exact_query_text':q['exact_query_text'],'execution_state':'frozen'} for q in fixture['batch']['queries']])
+    ex=compile_request(iteration_task,iteration_plan)
+    fixture.update(execution_request=ex, request_id=iteration_task['task_id'], source_request_sha256=canonical_sha256(iteration_task))
+    fixture['receipt']['needs_downstream_authorization']=False
+    check('in_scope_iteration_without_extension',validate_package(fixture,iteration_task)['passed'])
+    bad=copy.deepcopy(fixture); bad['execution_request']['query_plan'][0]['exact_query_text']='different'; check('iteration_query_binding',not validate_package(bad,iteration_task)['passed'])
+    bad=copy.deepcopy(fixture); bad['execution_request']['scope_expansion_requested']=True; check('iteration_scope_expansion',not validate_package(bad,iteration_task)['passed'])
     d292=json.loads((ROOT/'tests/fixtures/d292-research-orchestration/valid.json').read_text())
     d292['task_id']=fixture['task_id']; d292['in_scope_iteration_package']=fixture
     d292['first_return']['merged_increment_proposal'].update(downstream_authorization_required=False, execution_authorized=True)

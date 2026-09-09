@@ -19,7 +19,7 @@ SPEC.loader.exec_module(MODULE)
 
 
 def base_request(channel: str = "wechat") -> dict:
-    return {
+    request = {
         "schema": "portable_channel_request.v1",
         "task_id": f"fixture-{channel}",
         "channel": channel,
@@ -65,6 +65,15 @@ def base_request(channel: str = "wechat") -> dict:
         },
         "adaptive_extension_authorized": False,
     }
+
+    from compile_retrieval_execution_request import compile_request
+    consumer = json.loads((ROOT / "tests/fixtures/golden-tasks/golden_research_partial.json").read_text())["consumer_contract"]
+    task = {"task_id": request["task_id"], "business_question": request["business_question"],
+            "business_owner": "fixture_consumer", "subjects": ["Example project"],
+            "stop_condition": request["stop_condition"], "sufficiency": consumer}
+    plan = {key: copy.deepcopy(request[key]) for key in ("channel", "shared_gui", "computer_use", "end_user_session")}
+    plan["queries"] = copy.deepcopy(request["query_plan"])
+    return {**request, **compile_request(task, plan)}
 
 
 def run_case(case_id: str, request: dict, expected_pass: bool, expected_status: str) -> dict:

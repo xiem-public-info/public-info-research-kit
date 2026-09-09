@@ -1,28 +1,25 @@
-# v0.8.0-rc.6 中文安装与使用说明
+# v0.8.0-rc.7 中文安装与使用说明
 
-这是供同事跨电脑试装的公开预发布版，不是稳定版。固定标签为 `v0.8.0-rc.6`，候选分支为 `codex/public-v0.8-quality-parity`；公开 `main` 同步此版本，旧稳定版可通过 `v0.7.0` 标签获取。
+本目录为待发布候选，当前已发布版本仍是 rc.6。下述固定版本安装步骤须在 rc.7 Release、标签及同版 ZIP 已公开后执行；不以候选分支替代正式固定资产。
 
 ## 安装地址
 
-- 候选分支：<https://github.com/xiem-public-info/public-info-research-kit/tree/codex/public-v0.8-quality-parity>
-- 固定版本下载：[v0.8.0-rc.6](https://github.com/xiem-public-info/public-info-research-kit/releases/tag/v0.8.0-rc.6)
+- [固定 rc.7 发布页](https://github.com/xiem-public-info/public-info-research-kit/releases/tag/v0.8.0-rc.7)
+- [可复制的安装提示词](INSTALL_PROMPT_0.8.0-rc.7.md)
+- [已有 rc.6 的升级与回退步骤](UPGRADE_0.8.0-rc.6_to_rc.7.md)
 
-## 推荐安装方式
+## 首次安装
 
-可直接复制 [rc.6 安装部署提示词](INSTALL_PROMPT_0.8.0-rc.6.md)，包含本版更新内容、首次安装和旧版升级。
-
-在 Codex 中发送本仓库地址或固定标签地址，并说明：“请安装这个 GitHub 固定版本中的 `public-info-research-kit` Plugin。”
-
-如果应用内安装没有成功，在终端依次执行：
+先核对当前电脑是否已经安装。首次安装优先使用 Codex 的 Plugin 安装入口，说明固定版本为 v0.8.0-rc.7；需要 CLI 时先核本机帮助，再逐条执行：
 
 ```bash
-codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.6
-codex plugin add public-info-research-kit@public-info-research-public
+codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.7 --json
+codex plugin add public-info-research-kit@public-info-research-public --json
 ```
 
-安装完成后新建一个 Codex 任务，确认以下七个能力可见：公开任务路由、普通网页／官方来源、微信已知链接、微信公开研究、小红书可见研究、地图空间证据、公开证据交付。
+核对返回的实际版本和 installedPath，在该目录读取插件清单并运行本版离线检查。市场可用版本不等于已安装版本；已有安装时按升级说明处理，不重复套用首次登记命令。保留用户配置、项目成果与旧版本目录。
 
-已有市场固定旧标签时，应把该市场来源引用调整为 `v0.8.0-rc.6` 后再更新本插件；刷新旧标签不会取得新版。安装后核实实际安装版本，保留用户配置和其他插件。
+新建任务后确认七项能力可见：公开任务路由、普通网页与官方来源、微信已知链接、微信公开研究、小红书可见研究、地图空间证据、公开证据交付。安装不发起平台检索。
 
 ## 第一次使用
 
@@ -52,4 +49,4 @@ codex plugin add public-info-research-kit@public-info-research-public
 
 ## 候选版边界
 
-这个版本已经通过离线回归、发行文件完整性和干净克隆检查，但异机真实微信／小红书 smoke 与第二用户 UAT 仍需每位试装同事在自己的电脑和账号上完成。发现问题时请同时提供候选提交号、使用渠道、可复现步骤和停止位置；不要提交账号态、查询隐私、客户数据或截图中的敏感信息。
+本版为候选补丁；离线回归、完整包校验与实际插件安装分别核对。异机真实微信／小红书 smoke 与第二用户 UAT 仍需每位试装同事在自己的电脑和账号上完成。发现问题时请同时提供候选提交号、使用渠道、可复现步骤和停止位置；不要提交账号态、查询隐私、客户数据或截图中的敏感信息。

@@ -1,24 +1,10 @@
 # Quickstart
 
-## 0.8.0-rc.6 候选版
+## 0.8.0-rc.7 候选版
 
-公开 main 已同步 0.8.0-rc.6；固定版本安装可使用 `v0.8.0-rc.6` 标签。中文地址、命令和逐机验收说明见 [`RC_INSTALL_0.8.0.md`](RC_INSTALL_0.8.0.md)。需要旧稳定版时使用 `v0.7.0` 标签。
+本目录为待发布候选，公开版本仍为 rc.6。固定 rc.7 Release 和标签公开后，首次安装见 [中文安装说明](RC_INSTALL_0.8.0.md)，旧版升级见 [升级与回退步骤](UPGRADE_0.8.0-rc.6_to_rc.7.md)。可直接复制 [安装提示词](INSTALL_PROMPT_0.8.0-rc.7.md)。
 
-## 一步安装
-
-在 Codex 中打开本仓库并安装 Plugin。若没有出现安装卡片，直接让 Codex“安装这个 GitHub 仓库里的 `public-info-research-kit` Plugin”，无需手动执行底层命令。
-
-安装成功后即可开始任务，无需联系维护者或取得逐任务授权。当前任务没有刷新出新 Skill 时，新建任务；不要把重启或 doctor 当作正常安装步骤。
-
-需要微信或小红书时，终端用户另行在 Codex Plugins 中自行安装并启用 Computer Use，并自行授予 macOS 屏幕录制与辅助功能权限；本包不会代办。随后登录自己的微信和小红书。完整清单见 `INSTALL_CHECKLIST.md`。
-
-## 备用 CLI
-
-只有应用内安装没有成功时，才复制执行这一条：
-
-```bash
-codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.6 && codex plugin add public-info-research-kit@public-info-research-public
-```
+当前 Plugin 页面提供安装入口时优先使用。核实实际 installedPath、版本和代码后，新建任务确认七项能力可见。安装不会启动真实检索，也不自动恢复旧任务。
 
 ## 开始任务
 
@@ -41,26 +27,10 @@ python3 -m venv .venv
 python3 plugins/public-info-research-kit/tools/doctor.py --channel all
 ```
 
-doctor 默认不联网，只读取本地版本、Plugin 清单和文件完整性。它可以判断 Computer Use 是否已安装启用，但不会安装、启用、读取 macOS 权限数据库、修改权限或操作账号登录。只有排查 TLS 时才显式增加 `--network-probe`。
+doctor 默认不联网，只读取本地版本、Plugin 清单和完整包布局中的文件完整性。实际插件目录可能只含子目录；父级缺根清单时按升级说明核对已校验 ZIP 与实际安装代码，不因此反复卸载。它可以判断 Computer Use 是否已安装启用，但不会安装、启用、读取 macOS 权限数据库、修改权限或操作账号登录。只有排查 TLS 时才显式增加 `--network-probe`。
 
-## 更新
+## 更新和卸载
 
-升级到本版可复制 [rc.6 安装部署提示词](INSTALL_PROMPT_0.8.0-rc.6.md)。若市场来源固定旧标签，先将其引用调整到 `v0.8.0-rc.6` 再更新；下方 upgrade 命令仅刷新当前登记的引用，不自动跨标签升级。
+升级时保留原配置与成果，区分市场刷新、实际插件更新和新任务加载。固定旧标签的市场不会因刷新自动跨到新版，详见 [升级与回退](UPGRADE_0.8.0-rc.6_to_rc.7.md)。不手动清空缓存，不改其他市场或插件。
 
-优先在 Codex 的 Plugin 页面点击更新。备用命令：
-
-```bash
-codex plugin marketplace upgrade public-info-research-public && codex plugin add public-info-research-kit@public-info-research-public
-```
-
-从 0.4.0—0.7.0 更新到 0.8.0 不需要先卸载。更新完成后新建一个任务即可使用新规则；无需重启 Codex，也不要把 doctor 当作更新前置。微信任务开始前，使用者需登录微信、手动打开公开“搜一搜”，并让该页面保持在 Computer Use 当前可操作的主屏执行面。
-
-0.8.0 候选的更新范围与验收边界见 `UPDATE_0.8.0.md`。在正式标签发布前，普通用户继续以 0.7.0 为稳定版。
-
-## 卸载
-
-优先在 Codex 的 Plugin 页面点击卸载。备用命令：
-
-```bash
-codex plugin remove public-info-research-kit@public-info-research-public && codex plugin marketplace remove public-info-research-public
-```
+确需卸载时，先保护本插件目录中的用户自定义文件与成果，再使用 Plugin 页面或本机帮助确认的单插件 remove 命令。移除会删除其本地配置和缓存；项目目录里的历史成果继续保留。

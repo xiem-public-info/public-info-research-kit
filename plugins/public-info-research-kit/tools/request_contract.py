@@ -1,7 +1,8 @@
 """Deterministic business-contract adaptation and immutable request binding.
 
 This module reads declared fields, never interprets user prose or executes work.
-Keep the portable copy behavior-identical; the original request stays unchanged.
+Portable business checks only; no private runtime or local-main dependency.
+The original request and downstream adoption receipt stay unchanged.
 """
 from __future__ import annotations
 
@@ -30,6 +31,87 @@ def canonical_sha256(value: object) -> str:
 
 def same(left: object, right: object) -> bool:
     return canonical_sha256(left) == canonical_sha256(right)
+
+
+def request_identity(original: dict) -> str | None:
+    """Native tasks without a request id use their existing task id without rewriting."""
+    return original.get("request_id") or original.get("task_id")
+
+
+def declared_stop(task: dict) -> str | None:
+    return task.get("stop_condition") or task.get("sufficiency", {}).get("stop_condition")
+
+
+def continuation_errors(original: dict, decision: object, queries: list, extension: object, binding: object) -> list[str]:
+    """Check an explicit Owner decision; do not infer authorization from prose."""
+    if not isinstance(decision, dict):
+        return ["continuation_decision_required"]
+    expected_owner = normalize_request(original).get("business_owner")
+    if not isinstance(expected_owner, str) or not expected_owner.strip():
+        return ["continuation_business_owner_required"]
+    if (decision.get("task_id") != original.get("task_id")
+            or decision.get("request_id") != request_identity(original)
+            or decision.get("project_id") != original.get("project_id")
+            or decision.get("accepted_by") != expected_owner
+            or not isinstance(binding, dict)
+            or binding.get("schema") != "continuation_authorization_binding.v1"
+            or binding.get("request_sha256") != canonical_sha256(original)
+            or binding.get("adoption_sha256") != canonical_sha256(decision)):
+        return ["continuation_request_or_owner_mismatch"]
+    increment = decision.get("incremental_decision", {})
+    if not isinstance(increment, dict):
+        return ["continuation_decision_invalid"]
+    ids = increment.get("authorized_query_ids")
+    query_ids = [q.get("query_id") for q in queries if isinstance(q, dict)]
+    if (increment.get("decision") != "authorize_incremental"
+            or not isinstance(ids, list) or not ids
+            or any(not isinstance(x, str) or not x for x in ids)
+            or not query_ids or any(not isinstance(x, str) or x not in ids for x in query_ids)
+            or not increment.get("limits")):
+        return ["continuation_query_scope_invalid"]
+    if binding.get("limits_quote") != increment.get("limits") or not same(binding.get("adaptive_extension"), extension):
+        return ["continuation_limits_mismatch"]
+    return []
+
+
+def batch_authority_errors(original: dict, execution: dict, extension: object = None) -> list[str]:
+    task = normalize_request(original)
+    state = execution.get("batch_state", "initial_frozen_batch")
+    parent = execution.get("parent_batch_id")
+    if state not in {"initial_frozen_batch", "in_scope_iteration_batch", "approved_incremental_batch", "proposed_incremental_batch"}:
+        return ["invalid_batch_state"]
+    if state == "initial_frozen_batch" and parent:
+        return ["initial_batch_cannot_have_parent"]
+    if state != "initial_frozen_batch" and (not isinstance(parent, str) or not parent.strip()):
+        return ["continuation_parent_batch_required"]
+    if state == "in_scope_iteration_batch" and task.get("in_scope_iteration_allowed") is False:
+        return ["in_scope_iteration_explicitly_disallowed"]
+    if state == "approved_incremental_batch":
+        actual = extension if extension is not None else execution.get("adaptive_extension", task.get("sufficiency", {}).get("adaptive_extension"))
+        if not isinstance(actual, dict) or actual.get("authorized") is not True:
+            return ["adaptive_extension_not_authorized"]
+        if (not actual.get("authorization_ref")
+                or type(actual.get("maximum_incremental_batches")) is not int
+                or actual["maximum_incremental_batches"] <= 0):
+            return ["adaptive_extension_limits_required"]
+        usage = execution.get("usage", {})
+        if not isinstance(usage, dict):
+            return ["retrieval_budget_invalid"]
+        for limit_key, used_key in (("maximum_incremental_batches", "incremental_batches"), ("time_limit_minutes", "minutes"), ("cost_limit", "cost")):
+            limit = actual.get(limit_key)
+            if limit is None:
+                continue
+            if limit_key == "cost_limit" and limit == "zero":
+                limit = 0
+            used = usage.get(used_key, 0)
+            if any(not isinstance(x, (int, float)) or isinstance(x, bool) or x < 0 for x in (limit, used)):
+                return ["retrieval_budget_invalid"]
+            if (used > limit if used_key == "cost" else used >= limit):
+                return ["retrieval_budget_exhausted"]
+        received = task.get("sufficiency", {}).get("adaptive_extension")
+        if not same(actual, received) or task.get("in_scope_iteration_allowed") is False:
+            return continuation_errors(original, execution.get("continuation_adoption"), execution.get("query_plan", []), actual, execution.get("continuation_binding"))
+    return []
 
 
 def merge_declared(target: dict, source: dict, fields=REQUIREMENT_FIELDS) -> None:
@@ -96,6 +178,10 @@ def normalize_request(original: dict) -> dict:
         task.setdefault("usage_boundary", "；".join(destination.get("allowed_uses", [])))
     if sufficiency:
         task["sufficiency"] = sufficiency
+    if "in_scope_iteration_allowed" in task and type(task["in_scope_iteration_allowed"]) is not bool:
+        raise ValueError("in_scope_iteration_policy_invalid")
+    if task.get("stop_condition") and sufficiency.get("stop_condition") and task["stop_condition"] != sufficiency["stop_condition"]:
+        raise ValueError("request_contract_conflict:stop_condition")
     return task
 
 
@@ -114,8 +200,8 @@ def check_sufficiency_binding(original: dict, package: dict) -> list[str]:
         expected = acceptance_contract(original)
     except (ValueError, TypeError) as exc:
         return [str(exc)]
-    for key in ("task_id", "request_id"):
-        if not original.get(key) or package.get(key) != original[key]:
+    for key, value in (("task_id", original.get("task_id")), ("request_id", request_identity(original))):
+        if not value or package.get(key) != value:
             errors.append("sufficiency_request_mismatch:" + key)
     if package.get("source_request_sha256") != canonical_sha256(original):
         errors.append("sufficiency_request_hash_mismatch")
@@ -127,21 +213,17 @@ def check_sufficiency_binding(original: dict, package: dict) -> list[str]:
             errors.append("sufficiency_contract_mismatch:" + key)
     task = normalize_request(original)
     batch = package.get("batch", {})
-    if batch.get("batch_state") == "in_scope_iteration_batch" and task.get("in_scope_iteration_allowed") is False:
-        errors.append("in_scope_iteration_explicitly_disallowed")
+    if not isinstance(batch, dict):
+        return errors + ["invalid_batch"]
+    errors.extend(batch_authority_errors(original, {
+        **batch, "query_plan": batch.get("queries", []),
+        "continuation_adoption": package.get("continuation_adoption"),
+        "continuation_binding": package.get("continuation_binding"),
+    }, consumer.get("adaptive_extension")))
     expected_extension = task.get("sufficiency", {}).get("adaptive_extension")
     actual_extension = consumer.get("adaptive_extension")
     if expected_extension is not None and not same(expected_extension, actual_extension):
-        decision = package.get("continuation_adoption", {})
-        valid_decision = isinstance(decision, dict) and decision.get("schema") == "residential.upstream_adoption_receipt.v0.2"
-        valid_decision = valid_decision and all(decision.get(key) == original.get(key) for key in ("request_id", "task_id", "project_id"))
-        valid_decision = valid_decision and decision.get("accepted_by") == "residential_production_owner"
-        increment = decision.get("incremental_decision", {}) if valid_decision else {}
-        ids = increment.get("authorized_query_ids", [])
-        query_ids = [q.get("query_id") for q in batch.get("queries", []) if isinstance(q, dict)]
-        valid_decision = valid_decision and increment.get("decision") == "authorize_incremental" and bool(increment.get("limits"))
-        valid_decision = valid_decision and isinstance(ids, list) and bool(query_ids) and set(query_ids).issubset(set(ids))
-        if batch.get("batch_state") != "approved_incremental_batch" or not valid_decision:
+        if batch.get("batch_state") != "approved_incremental_batch":
             errors.append("sufficiency_extension_authority_mismatch")
     return errors
 
@@ -153,7 +235,7 @@ def make_binding(original: dict, package: dict) -> dict:
     return {
         "schema": BINDING_SCHEMA,
         "request_schema": original.get("schema", "retrieval_task"),
-        "request_id": original["request_id"],
+        "request_id": request_identity(original),
         "request_sha256": canonical_sha256(original),
         "acceptance_contract": acceptance_contract(original),
         "sufficiency_package_sha256": canonical_sha256(package),
@@ -176,7 +258,7 @@ def binding_errors(binding: dict, original: dict | None = None, package: dict | 
         errors.append("contract_binding_invalid:acceptance_contract")
     if original is not None:
         try:
-            if binding.get("request_id") != original.get("request_id") or binding.get("request_schema") != original.get("schema", "retrieval_task"):
+            if binding.get("request_id") != request_identity(original) or binding.get("request_schema") != original.get("schema", "retrieval_task"):
                 errors.append("contract_binding_request_mismatch")
             if binding.get("request_sha256") != canonical_sha256(original):
                 errors.append("contract_binding_request_hash_mismatch")

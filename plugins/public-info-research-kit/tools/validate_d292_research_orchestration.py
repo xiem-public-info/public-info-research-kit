@@ -160,7 +160,9 @@ def validate(contract: dict[str, Any]) -> dict[str, Any]:
     if support in {"partial", "unsupported"} and proposal.get("proposed") is not True:
         errors.append("incomplete_semantic_core_requires_one_merged_increment_proposal")
     iteration = contract.get("in_scope_iteration_package")
-    in_scope = isinstance(iteration, dict) and iteration.get("task_id") == contract.get("task_id") and iteration.get("batch", {}).get("batch_state") == "in_scope_iteration_batch" and validate_package(iteration)["passed"]
+    execution = iteration.get("execution_request") if isinstance(iteration, dict) else None
+    execution = execution.get("owner_request", execution) if isinstance(execution, dict) else {}
+    in_scope = isinstance(iteration, dict) and iteration.get("task_id") == contract.get("task_id") and iteration.get("batch", {}).get("batch_state") == "in_scope_iteration_batch" and validate_package(iteration, execution.get("retrieval_task"))["passed"]
     if iteration is not None and not in_scope:
         errors.append("invalid_in_scope_iteration_package")
     if proposal.get("downstream_authorization_required") is not (False if in_scope else True):

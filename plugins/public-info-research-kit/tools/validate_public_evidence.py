@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 from typing import Any, Iterable
 from urllib.parse import parse_qsl, urlsplit
-from request_contract import binding_errors, same
+from request_contract import binding_errors, same, canonical_sha256, request_identity
 from validate_adaptive_query_sufficiency import validate_package as validate_sufficiency
 
 
@@ -116,7 +116,7 @@ def sensitive_errors(data: Any) -> list[str]:
 
 
 def validate(data: dict[str, Any], original_request: dict | None = None,
-             sufficiency_input: dict | None = None, *, allow_legacy_unbound: bool = False) -> dict[str, Any]:
+             sufficiency_input: dict | None = None, *, allow_legacy_unbound: bool = False, historical_read_only: bool = False) -> dict[str, Any]:
     errors: list[str] = []
     if data.get("schema") != SCHEMA:
         errors.append(f"schema must be {SCHEMA}")
@@ -194,26 +194,34 @@ def validate(data: dict[str, Any], original_request: dict | None = None,
         errors.append("query_execution.acceptance_mode is invalid")
     binding = data.get("contract_binding")
     if binding is not None:
-        errors.extend(binding_errors(binding, original_request, sufficiency_input))
+        errors.extend(binding_errors(binding, original_request, None if historical_read_only else sufficiency_input))
         if isinstance(binding, dict):
             if binding.get("request_id") != data.get("request_id"):
                 errors.append("contract_binding_request_mismatch")
             acceptance = binding.get("acceptance_contract", {})
             if not isinstance(acceptance, dict) or acceptance.get("acceptance_mode") != query_execution.get("acceptance_mode"):
                 errors.append("contract_binding_execution_mode_mismatch")
-        if original_request is None:
+        if original_request is None and not historical_read_only:
             errors.append("original_request_required_for_bound_validation")
-    elif mode == "research_retrieval" and not allow_legacy_unbound:
+        if historical_read_only and sufficiency_input is not None and isinstance(binding, dict) and binding.get("sufficiency_package_sha256") != canonical_sha256(sufficiency_input):
+            errors.append("historical_sufficiency_hash_mismatch")
+    elif mode == "research_retrieval" and not allow_legacy_unbound and not historical_read_only:
         errors.append("contract_binding_required")
     if original_request is not None:
         for key in ("request_id", "task_id", "project_id"):
-            if data.get(key) != original_request.get(key):
+            expected = request_identity(original_request) if key == "request_id" else original_request.get(key)
+            if data.get(key) != expected:
                 errors.append("envelope_request_mismatch:" + key)
     if sufficiency_input is not None:
-        checked = validate_sufficiency(sufficiency_input, original_request)
-        if not checked["passed"]:
-            errors.append("sufficiency_validation_failed:" + checked["status"])
-            errors.extend(checked.get("errors", []))
+        if not historical_read_only:
+            checked = validate_sufficiency(sufficiency_input, original_request)
+            if not checked["passed"]:
+                errors.append("sufficiency_validation_failed:" + checked["status"])
+                errors.extend(checked.get("errors", []))
+        elif isinstance(binding, dict) and isinstance(binding.get("acceptance_contract"), dict):
+            for key, value in binding["acceptance_contract"].items():
+                if not same(value, sufficiency_input.get("consumer_contract", {}).get(key)):
+                    errors.append("historical_acceptance_mismatch:" + key)
         actual = sufficiency_input.get("receipt", {})
         if query_execution.get("evidence_sufficiency_status") != actual.get("evidence_sufficiency_status"):
             errors.append("sufficiency_status_mismatch")
@@ -228,7 +236,7 @@ def validate(data: dict[str, Any], original_request: dict | None = None,
         extension = sufficiency_input.get("consumer_contract", {}).get("adaptive_extension", {})
         if query_execution.get("adaptive_extension_authorized") is not extension.get("authorized"):
             errors.append("sufficiency_extension_flag_mismatch")
-    elif mode == "research_retrieval" and not allow_legacy_unbound:
+    elif mode == "research_retrieval" and not allow_legacy_unbound and not historical_read_only:
         errors.append("sufficiency_input_required")
     if query_execution.get("evidence_sufficiency_status") not in {"sufficient", "partially_sufficient", "expression_supply_gap", "not_assessed"}:
         errors.append("query_execution.evidence_sufficiency_status is invalid")
@@ -414,8 +422,8 @@ def validate(data: dict[str, Any], original_request: dict | None = None,
         "external_write_executed": False,
         "evidence_class_changed": False,
         "downstream_acceptance_changed": False,
-        "validation_scope": "legacy_structure_only" if binding is None and allow_legacy_unbound else "request_and_sufficiency_bound",
-        "production_binding_verified": not errors and original_request is not None and sufficiency_input is not None,
+        "validation_scope": "historical_read_only" if historical_read_only else "legacy_structure_only" if binding is None and allow_legacy_unbound else "request_and_sufficiency_bound",
+        "production_binding_verified": not historical_read_only and not errors and original_request is not None and sufficiency_input is not None,
     }
 
 
@@ -425,11 +433,12 @@ def main() -> int:
     parser.add_argument("--request", type=Path)
     parser.add_argument("--sufficiency-input", type=Path)
     parser.add_argument("--allow-legacy-unbound", action="store_true", help="Historical read-only structure review; never a production adoption approval")
+    parser.add_argument("--historical-read-only", action="store_true", help="Read rc6 bound or older evidence without claiming current execution or adoption checks")
     args = parser.parse_args()
     data = json.loads(args.input.read_text(encoding="utf-8"))
     validation = validate(data, json.loads(args.request.read_text()) if args.request else None,
                           json.loads(args.sufficiency_input.read_text()) if args.sufficiency_input else None,
-                          allow_legacy_unbound=args.allow_legacy_unbound)
+                          allow_legacy_unbound=args.allow_legacy_unbound, historical_read_only=args.historical_read_only)
     print(json.dumps(validation, ensure_ascii=False, indent=2))
     return 0 if validation["status"] == "pass" else 2
 

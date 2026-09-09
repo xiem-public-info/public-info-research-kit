@@ -31,6 +31,7 @@ def main() -> int:
         cases.append({"case_id": name, "passed": bool(condition)})
 
     compiled = compile_request(request, plan)
+    suff["execution_request"] = copy.deepcopy(compiled)
     check("residential_full_mapping", all(compiled["sufficiency_applicability"].get(k) == v for k, v in request["acceptance_contract"].items()))
     check("objects_stops_and_original_preserved", compiled["subjects"] == [request["object_scope"]["canonical_subject"], *request["object_scope"]["comparison_objects"]] and compiled["stop_condition"] == "；".join(request["stop_conditions"]) and compiled["retrieval_task"] == request)
     check("partial_receipt_is_valid_not_complete", SUFF.validate_package(suff, request)["passed"] and suff["receipt"]["evidence_sufficiency_status"] == "partially_sufficient")
@@ -60,11 +61,13 @@ def main() -> int:
     scope_request["stop_conditions"] = request["stop_conditions"][:-1]
     iteration = copy.deepcopy(suff); iteration["batch"].update(batch_state="in_scope_iteration_batch", parent_batch_id="B0")
     iteration["source_request_sha256"] = canonical_sha256(scope_request)
-    iteration["execution_request"] = compile_request(scope_request, plan)
+    iteration_plan = {**copy.deepcopy(plan), "batch_state": "in_scope_iteration_batch", "parent_batch_id": "B0"}
+    iteration["execution_request"] = compile_request(scope_request, iteration_plan)
     check("in_scope_iteration_keeps_extension_false", SUFF.validate_package(iteration, scope_request)["passed"] and not iteration["consumer_contract"]["adaptive_extension"]["authorized"])
     denied = copy.deepcopy(request); denied["incremental_policy"]["in_scope_iteration_allowed"] = False
     forbidden = copy.deepcopy(iteration); forbidden["source_request_sha256"] = canonical_sha256(denied)
-    forbidden["execution_request"] = compile_request(denied, plan)
+    forbidden["execution_request"] = copy.deepcopy(iteration["execution_request"])
+    forbidden["execution_request"].update(retrieval_task=denied, source_request_sha256=canonical_sha256(denied))
     check("explicit_iteration_stop_respected", not SUFF.validate_package(forbidden, denied)["passed"])
     outside = copy.deepcopy(compiled); outside["scope_expansion_requested"] = True
     check("scope_expansion_requires_decision", validate_task_authorization(outside)[1] == "retrieval_scope_expansion_requires_decision")
@@ -72,6 +75,15 @@ def main() -> int:
     extension["consumer_contract"]["adaptive_extension"] = {"authorized": True, "authorization_ref": "owner-decision-example", "maximum_incremental_batches": 1, "time_limit_minutes": 30, "cost_limit": "zero"}
     check("extension_cannot_self_authorize", not SUFF.validate_package(extension, request)["passed"])
     extension["continuation_adoption"] = {"schema": "residential.upstream_adoption_receipt.v0.2", "request_id": request["request_id"], "task_id": request["task_id"], "project_id": request["project_id"], "accepted_by": "residential_production_owner", "incremental_decision": {"decision": "authorize_incremental", "authorized_query_ids": [query["query_id"]], "limits": "one synthetic batch, no cost"}}
+    extension["continuation_binding"] = {"schema": "continuation_authorization_binding.v1",
+        "request_sha256": canonical_sha256(request), "adoption_sha256": canonical_sha256(extension["continuation_adoption"]),
+        "limits_quote": extension["continuation_adoption"]["incremental_decision"]["limits"],
+        "adaptive_extension": copy.deepcopy(extension["consumer_contract"]["adaptive_extension"])}
+    approved_plan = {**copy.deepcopy(plan), "batch_state": "approved_incremental_batch", "parent_batch_id": "B0",
+        "continuation_adoption": copy.deepcopy(extension["continuation_adoption"]),
+        "continuation_binding": copy.deepcopy(extension["continuation_binding"]),
+        "adaptive_extension": copy.deepcopy(extension["consumer_contract"]["adaptive_extension"])}
+    extension["execution_request"] = compile_request(request, approved_plan)
     check("separate_owner_decision_preserves_frozen_request", SUFF.validate_package(extension, request)["passed"] and canonical_sha256(request) == before and not request["incremental_policy"]["execution_authorized"])
     extension["continuation_adoption"]["incremental_decision"]["authorized_query_ids"] = ["wrong-query"]
     check("continuation_query_scope_checked", not SUFF.validate_package(extension, request)["passed"])

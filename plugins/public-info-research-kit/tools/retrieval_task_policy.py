@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 from typing import Any
-from request_contract import normalize_request, canonical_sha256, same, REQUIREMENT_FIELDS
+from request_contract import (normalize_request, canonical_sha256, same, REQUIREMENT_FIELDS,
+                              request_identity, declared_stop, batch_authority_errors)
 
 POLICY_ID = "TASK-DRIVEN-RETRIEVAL-AUTHORITY-V1"
 CHANNEL_ALIASES = {
@@ -56,8 +57,10 @@ def validate_task_authorization(request: dict[str, Any]) -> tuple[bool, str]:
         task = normalize_request(task)
     except (ValueError, TypeError) as exc:
         return False, str(exc)
-    if original_task.get("schema") == "residential.upstream_task.v0.2" and ("source_request_sha256" not in request or not isinstance(request.get("sufficiency_applicability"), dict)):
-        return False, "residential_execution_binding_required"
+    if "source_request_sha256" not in request or not isinstance(request.get("sufficiency_applicability"), dict):
+        return False, "execution_binding_required"
+    if request.get("request_id") != request_identity(original_task):
+        return False, "execution_request_id_mismatch"
     if "source_request_sha256" in request and request["source_request_sha256"] != canonical_sha256(original_task):
         return False, "execution_request_hash_mismatch"
     compiled = request.get("sufficiency_applicability")
@@ -78,6 +81,15 @@ def validate_task_authorization(request: dict[str, Any]) -> tuple[bool, str]:
         return False, "retrieval_task_stopped"
     if not request.get("stop_condition"):
         return False, "retrieval_stop_condition_required"
+    if declared_stop(task) and request["stop_condition"] != declared_stop(task):
+        return False, "execution_stop_condition_mismatch"
+    if request.get("subjects") != task_subjects(task):
+        return False, "execution_subjects_mismatch"
+    if request.get("business_question") != task["business_question"]:
+        return False, "execution_business_question_mismatch"
+    batch_errors = batch_authority_errors(original_task, request)
+    if batch_errors:
+        return False, batch_errors[0]
     for field in ("scope_expansion_requested", "budget_exhausted"):
         if field in request and not isinstance(request[field], bool):
             return False, "retrieval_scope_invalid"
@@ -119,6 +131,27 @@ def validate_task_authorization(request: dict[str, Any]) -> tuple[bool, str]:
     if request.get("operation", "public_retrieval") != "public_retrieval":
         return False, "retrieval_operation_not_covered"
     return True, "task_contract_authorized"
+
+
+def validate_execution_request(request: dict, original_request: dict | None = None) -> tuple[bool, str]:
+    """Actual pre-execution check shared by the CLI and channel preflights."""
+    if request.get("schema") == "wechat_ai_search_gate_request.v1":
+        inner = request.get("owner_request")
+        if not isinstance(inner, dict) or any(request.get(key) != inner.get(key) for key in ("task_id", "business_question")):
+            return False, "ai_execution_owner_mismatch"
+        return validate_execution_request(inner, original_request)
+    if original_request is not None and not same(request.get("retrieval_task"), original_request):
+        return False, "execution_original_request_mismatch"
+    valid, status = validate_task_authorization(request)
+    if not valid:
+        return valid, status
+    if request.get("batch_state") == "proposed_incremental_batch":
+        return False, "proposed_batch_not_authorized_for_execution"
+    from validate_adaptive_query_sufficiency import validate_applicability
+    applicability = validate_applicability(request["sufficiency_applicability"])
+    if not applicability["passed"]:
+        return False, applicability["status"]
+    return True, "execution_contract_checked_not_executed"
 
 
 def validate_scope_interpretation(task: dict, plan: dict) -> dict:

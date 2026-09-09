@@ -2,7 +2,7 @@
   "schema": "public.residential_bridge_lock.v0.2",
   "status": "compatible_candidate_frozen",
   "producer": {
-    "release_candidate": "0.8.0-rc.6",
+    "release_candidate": "0.8.0-rc.7",
     "schema_path": "schemas/public_evidence_envelope.v1.json",
     "$id": "public_evidence_envelope.v1",
     "sha256": "343d804eb2bd2be56a97d93c25376d64e55fc8e2e9afac952d2c4e1a630e92e1"
@@ -33,12 +33,13 @@
     "status": "pass_unpublished_candidates",
     "producer_minimum_fixture_cases": 11,
     "producer_core_conformance_fixture_cases": 94,
-    "current_producer_release_harness_cases": 318,
+    "current_producer_release_harness_cases": 346,
     "consumer_regression_cases": 136,
     "producer_validated_consumer_fixture": true,
     "consumer_validated_producer_fixture": true,
     "request_frozen_before_execution": true,
-    "contract_drift_cli_negative_cases": 6
+    "contract_drift_cli_negative_cases": 6,
+    "rc7_actual_execution_conformance_entry": "scripts/verify_residential_rc8_conformance.py"
   },
   "boundaries": {
     "shared_cwd_required": false,

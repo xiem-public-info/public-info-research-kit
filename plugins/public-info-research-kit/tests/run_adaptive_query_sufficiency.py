@@ -93,7 +93,7 @@ def approved_incremental() -> dict:
 def completion_cases(validator, make_payload, applicability_schema):
     cases = []
     def check_package(name, payload, status="pass", passed=True):
-        cases.append(check(name, validator.validate_package(payload), status, passed))
+        cases.append(check(name, validator.validate_package(payload, allow_legacy_unbound=True), status, passed))
 
     original = make_payload()
     original["receipt"]["evidence_sufficiency_status"] = "sufficient"
@@ -197,6 +197,8 @@ def completion_cases(validator, make_payload, applicability_schema):
     return cases
 
 
+# Historical structural fixtures intentionally use the explicit read-only API.
+# Frozen-request and actual-execution requirements are covered by the binding runners.
 def main() -> int:
     cases: list[dict] = []
     partial = load("golden-tasks/golden_research_partial.json")
@@ -204,43 +206,43 @@ def main() -> int:
     promotion = load("golden-tasks/golden_query_promotion.json")
     direct = load("golden-tasks/golden_direct_retrieval_exemption.json")
 
-    cases.append(check("golden_initial_partial", MODULE.validate_package(partial), "pass", True))
-    cases.append(check("golden_incremental_proposal", MODULE.validate_package(proposal), "pass", True))
-    cases.append(check("golden_cross_task_promotion", MODULE.validate_package(promotion), "pass", True))
+    cases.append(check("golden_initial_partial", MODULE.validate_package(partial, allow_legacy_unbound=True), "pass", True))
+    cases.append(check("golden_incremental_proposal", MODULE.validate_package(proposal, allow_legacy_unbound=True), "pass", True))
+    cases.append(check("golden_cross_task_promotion", MODULE.validate_package(promotion, allow_legacy_unbound=True), "pass", True))
     cases.append(check("golden_direct_retrieval_exemption", MODULE.validate_applicability(direct), "pass", True))
     cases.append(check("missing_acceptance_mode", MODULE.validate_applicability(load("negative-cases/d237_missing_acceptance_mode.json")), "d237_consumer_contract_required", False))
-    cases.append(check("proposal_cannot_claim_authority", MODULE.validate_package(load("negative-cases/d237_proposal_claims_authority.json")), "incremental_batch_authorization_mismatch", False))
-    cases.append(check("one_task_cannot_be_recommended", MODULE.validate_package(load("negative-cases/d237_recommended_from_one_task.json")), "recommended_query_cross_task_validation_insufficient", False))
+    cases.append(check("proposal_cannot_claim_authority", MODULE.validate_package(load("negative-cases/d237_proposal_claims_authority.json"), allow_legacy_unbound=True), "incremental_batch_authorization_mismatch", False))
+    cases.append(check("one_task_cannot_be_recommended", MODULE.validate_package(load("negative-cases/d237_recommended_from_one_task.json"), allow_legacy_unbound=True), "recommended_query_cross_task_validation_insufficient", False))
 
     payload = copy.deepcopy(partial)
     payload["consumer_contract"]["acceptance_mode"] = "count_based"
     payload["consumer_contract"]["count_threshold"] = None
-    cases.append(check("count_mode_requires_threshold", MODULE.validate_package(payload), "count_threshold_required", False))
+    cases.append(check("count_mode_requires_threshold", MODULE.validate_package(payload, allow_legacy_unbound=True), "count_threshold_required", False))
 
     payload = copy.deepcopy(partial)
     payload["consumer_contract"]["acceptance_mode"] = "quality_sufficiency"
     payload["consumer_contract"]["quality_criteria"] = []
-    cases.append(check("quality_mode_requires_criteria", MODULE.validate_package(payload), "quality_criteria_required", False))
+    cases.append(check("quality_mode_requires_criteria", MODULE.validate_package(payload, allow_legacy_unbound=True), "quality_criteria_required", False))
 
     payload = copy.deepcopy(partial)
     payload["receipt"]["evidence_sufficiency_status"] = "queries_completed"
-    cases.append(check("query_completion_is_not_sufficiency", MODULE.validate_package(payload), "invalid_evidence_sufficiency_status", False))
+    cases.append(check("query_completion_is_not_sufficiency", MODULE.validate_package(payload, allow_legacy_unbound=True), "invalid_evidence_sufficiency_status", False))
 
     payload = copy.deepcopy(proposal)
     payload["batch"]["batch_state"] = "approved_incremental_batch"
     payload["receipt"]["needs_downstream_authorization"] = False
-    cases.append(check("approved_increment_requires_authorization", MODULE.validate_package(payload), "adaptive_extension_not_authorized", False))
+    cases.append(check("approved_increment_requires_authorization", MODULE.validate_package(payload, allow_legacy_unbound=True), "adaptive_extension_not_authorized", False))
 
     approved = approved_incremental()
-    cases.append(check("approved_increment_with_limits", MODULE.validate_package(approved), "pass", True))
+    cases.append(check("approved_increment_with_limits", MODULE.validate_package(approved, allow_legacy_unbound=True), "pass", True))
 
     payload = copy.deepcopy(proposal)
     payload["query_learning_records"] = [copy.deepcopy(partial["query_learning_records"][0])]
-    cases.append(check("proposal_must_remain_unexecuted", MODULE.validate_package(payload), "proposed_incremental_batch_must_be_unexecuted", False))
+    cases.append(check("proposal_must_remain_unexecuted", MODULE.validate_package(payload, allow_legacy_unbound=True), "proposed_incremental_batch_must_be_unexecuted", False))
 
     payload = copy.deepcopy(partial)
     payload["batch"]["queries"][0]["minimum_actual_opens"] = 0
-    cases.append(check("query_execution_floor_must_be_positive", MODULE.validate_package(payload), "invalid_query_execution_floor", False))
+    cases.append(check("query_execution_floor_must_be_positive", MODULE.validate_package(payload, allow_legacy_unbound=True), "invalid_query_execution_floor", False))
 
     payload = copy.deepcopy(partial)
     record = payload["query_learning_records"][0]
@@ -249,7 +251,7 @@ def main() -> int:
     record["failure_class"] = None
     payload["receipt"]["executed_result_batch_count"] = 1
     payload["receipt"]["actual_open_count"] = 1
-    cases.append(check("floor_shortfall_needs_failure_attribution", MODULE.validate_package(payload), "query_execution_floor_shortfall_unexplained", False))
+    cases.append(check("floor_shortfall_needs_failure_attribution", MODULE.validate_package(payload, allow_legacy_unbound=True), "query_execution_floor_shortfall_unexplained", False))
 
     payload = copy.deepcopy(partial)
     record = payload["query_learning_records"][0]
@@ -258,15 +260,15 @@ def main() -> int:
     payload["receipt"]["executed_result_batch_count"] = 1
     payload["receipt"]["actual_open_count"] = 1
     payload["receipt"]["evidence_sufficiency_status"] = "sufficient"
-    cases.append(check("sufficient_claim_requires_query_floors", MODULE.validate_package(payload), "sufficient_claim_requires_query_execution_floors", False))
+    cases.append(check("sufficient_claim_requires_query_floors", MODULE.validate_package(payload, allow_legacy_unbound=True), "sufficient_claim_requires_query_execution_floors", False))
 
     payload = copy.deepcopy(partial)
     payload["query_learning_records"][0]["qualified_count"] = 3
-    cases.append(check("qualified_count_is_recomputed", MODULE.validate_package(payload), "qualified_count_mismatch", False))
+    cases.append(check("qualified_count_is_recomputed", MODULE.validate_package(payload, allow_legacy_unbound=True), "qualified_count_mismatch", False))
 
     payload = copy.deepcopy(partial)
     payload["query_learning_records"][0]["qualified_rate"] = 1.0
-    cases.append(check("qualified_rate_is_recomputed", MODULE.validate_package(payload), "qualified_rate_mismatch", False))
+    cases.append(check("qualified_rate_is_recomputed", MODULE.validate_package(payload, allow_legacy_unbound=True), "qualified_rate_mismatch", False))
 
     payload = copy.deepcopy(promotion)
     record = payload["query_learning_records"][0]
@@ -275,17 +277,17 @@ def main() -> int:
     record["qualified_count"] = None
     record["qualified_rate"] = None
     record["qualified_project_or_brand_count"] = None
-    cases.append(check("unattributed_query_cannot_be_recommended", MODULE.validate_package(payload), "recommended_query_attribution_missing", False))
+    cases.append(check("unattributed_query_cannot_be_recommended", MODULE.validate_package(payload, allow_legacy_unbound=True), "recommended_query_attribution_missing", False))
 
     payload = copy.deepcopy(promotion)
     payload["promotion_review_batches"][0]["business_question_family"] = "其他业务问题族"
-    cases.append(check("promotion_review_family_must_match", MODULE.validate_package(payload), "recommended_query_review_family_mismatch", False))
+    cases.append(check("promotion_review_family_must_match", MODULE.validate_package(payload, allow_legacy_unbound=True), "recommended_query_review_family_mismatch", False))
 
     payload = copy.deepcopy(promotion)
     duplicate = copy.deepcopy(payload["promotion_review_batches"][0])
     duplicate["review_batch_id"] = "PROMOTION-REVIEW-002"
     payload["promotion_review_batches"].append(duplicate)
-    cases.append(check("query_cannot_be_covered_twice", MODULE.validate_package(payload), "promotion_review_query_covered_by_multiple_batches", False))
+    cases.append(check("query_cannot_be_covered_twice", MODULE.validate_package(payload, allow_legacy_unbound=True), "promotion_review_query_covered_by_multiple_batches", False))
 
     applicability = {
         "schema": "query_sufficiency_applicability.v1",

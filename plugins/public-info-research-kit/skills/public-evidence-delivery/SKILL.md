@@ -6,7 +6,7 @@ description: 将公开信息整理为可复盘证据包，区分事实候选、�
 # 公开证据交付
 
 1. 已要求机器证据包时，由本包将原业务请求整理为任务编号、`request_id`、可空但不可省略的 `project_id`、对象、业务问题、所需证据、渠道／时间／地区范围、使用边界和停止条件。
-2. 真实研究检索先按 `adaptive_query_sufficiency_contract.v1` 验证请求方的质量、数量、多样性、允许用途和停止条件；运行 `tools/validate_adaptive_query_sufficiency.py`，固定查询数不能替代充分性。
+2. 研究前按原请求编译计划，使用 `validate_adaptive_query_sufficiency.py --applicability-input <编译后的适用性文件>` 核对质量、数量、多样性及停止条件，并在实际调用前用 `compile_retrieval_execution_request.py --task <冻结原请求> --check-execution <执行请求>` 检查。回传时才运行 `validate_adaptive_query_sufficiency.py --input <实际充分性包> --request <冻结原请求>`，包中保留本批次实际 `execution_request`；不得在研究前伪造结果，固定查询数不能替代充分性。
 3. 每条返回保留稳定指针、来源角色、原始声明、身份与时效、状态和必要限制。
 4. 使用五类对象：`fact_candidate`、`soft_evidence`、`platform_observation`、`conflict`、`gap`。
 5. 社交媒体观察和非概率样本不得自动升级为事实或总体比例；冲突不得静默覆盖；缺口必须写明原因和可重试条件。
@@ -26,7 +26,7 @@ description: 将公开信息整理为可复盘证据包，区分事实候选、�
 
 本 Skill 负责证据外壳，不替业务 Owner 作最终客户判断，也不向外部系统自动发送。
 
-旧包用 `validate_public_evidence.py --input <旧包> --allow-legacy-unbound` 仅作只读结构检查，其结果标为 `legacy_structure_only`，不能作为新版采用或联动通过。修封装时保留旧文件；按原请求回看既有证据和实际回执，另生成带绑定的新包。总条目数包括冲突和缺口，不能代替合格证据数；部分充分保持 `partial / partially_sufficient`。没有真实充分性回执时不能为通过校验伪造回执。
+旧 rc.6 带绑定回包与更早未绑定回包均可用 `validate_public_evidence.py --input <旧包> --historical-read-only` 只读审阅；已有原请求和充分性原件时一并传入，继续核对哈希、模式与数量。结果固定为 `historical_read_only`、`production_binding_verified=false`，不能作为新版采用或联动通过。`--allow-legacy-unbound` 仅保留更早无绑定格式的显式结构检查。修封装时保留旧文件；按原请求回看既有证据和实际回执，另生成带绑定的新包。总条目数包括冲突和缺口，不能代替合格证据数；部分充分保持 `partial / partially_sufficient`。缺冻结原请求、真实充分性回执或实际执行请求时，不得为通过校验伪造或重建已执行记录。原生旧任务无 request_id 时只读沿用 task_id，不修改原件；project_id 没有业务项目时按既有接口保留 null。
 
 
 收到用户或下游的检索合同，即默认授权全部检索渠道和公开搜索表面按需使用。下游只给业务目标、主体和内容需求；本工具包选择渠道、AI 使用顺序和精确词。AI→原文、原文→AI→后续计划均属常规研究。每条查询提交前冻结，范围内迭代无需另批；超出对象、目标或预算才请求裁定。权限不代表工具、登录、访问或真实渠道已验证。 规则见 `resources/retrieval_authority_current.json`，合同编译见 `tools/compile_retrieval_execution_request.py`。
