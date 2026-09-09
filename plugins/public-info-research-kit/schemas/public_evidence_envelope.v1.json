@@ -80,7 +80,7 @@
         "mode": {"enum": ["research_retrieval", "simple_direct_retrieval"]},
         "plan_schema": {"type": ["string", "null"]},
         "plan_version": {"type": ["string", "null"]},
-        "acceptance_mode": {"type": "string", "minLength": 1},
+        "acceptance_mode": {"enum": ["hybrid", "count_based", "quality_sufficiency", "exempt_simple_direct_retrieval"]},
         "evidence_sufficiency_status": {"enum": ["sufficient", "partially_sufficient", "expression_supply_gap", "not_assessed"]},
         "executed_query_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
         "proposed_incremental_query_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
@@ -88,6 +88,54 @@
         "result_batch_count": {"type": "integer", "minimum": 0},
         "actual_open_count": {"type": "integer", "minimum": 0},
         "failure_attribution_complete": {"type": "boolean"}
+      }
+    },
+    "contract_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "request_schema",
+        "request_id",
+        "request_sha256",
+        "acceptance_contract",
+        "sufficiency_package_sha256"
+      ],
+      "properties": {
+        "schema": {
+          "const": "public_retrieval_contract_binding.v1"
+        },
+        "request_schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "request_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "acceptance_contract": {
+          "type": "object",
+          "required": [
+            "acceptance_mode"
+          ],
+          "properties": {
+            "acceptance_mode": {
+              "enum": [
+                "hybrid",
+                "count_based",
+                "quality_sufficiency"
+              ]
+            }
+          }
+        },
+        "sufficiency_package_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
       }
     },
     "sources": {"type": "array"},

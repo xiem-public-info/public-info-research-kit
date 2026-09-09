@@ -227,7 +227,8 @@
   "incremental_query_policy": {
     "semantic_kernel_inputs": ["business_question", "judgment_gap", "negative_hits", "conflicts", "gaps", "marginal_information_gain"],
     "proposal_allowed": true,
-    "execution_requires_adaptive_extension": true,
+    "in_scope_iteration": "received_task_authority_and_explicit_restrictions",
+    "out_of_scope_execution_requires_adaptive_extension": true,
     "silent_execution_forbidden": true,
     "proposal_state": "proposed_incremental",
     "executable_state_after_authorization": "frozen"

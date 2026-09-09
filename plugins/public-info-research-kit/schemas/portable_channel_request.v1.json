@@ -261,6 +261,16 @@
     "scope_consistency": {
       "type": "object",
       "description": "Internal owner-plan consistency only; never semantic completeness or execution proof."
+    },
+    "request_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_request_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     }
   },
   "anyOf": [

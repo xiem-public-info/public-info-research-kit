@@ -60,7 +60,7 @@ def main() -> int:
     mutations = json.loads((FIXTURES / "negative-cases/public_evidence_mutations.json").read_text(encoding="utf-8"))
     cases: list[dict[str, Any]] = []
 
-    valid = VALIDATOR.validate(golden)
+    valid = VALIDATOR.validate(golden, allow_legacy_unbound=True)
     cases.append(
         {
             "case_id": "golden_evidence_envelope",
@@ -73,7 +73,7 @@ def main() -> int:
     stopped = copy.deepcopy(golden)
     stopped["upstream_status"] = "stopped"
     stopped["stop_reason"] = "触发明确安全停止线，停止当前渠道执行并保留已取得证据与缺口"
-    stopped_receipt = VALIDATOR.validate(stopped)
+    stopped_receipt = VALIDATOR.validate(stopped, allow_legacy_unbound=True)
     cases.append(
         {
             "case_id": "stopped_is_a_valid_upstream_state",
@@ -94,7 +94,7 @@ def main() -> int:
     empty_enumerations["upstream_status"] = "fulfilled"
     empty_enumerations["query_execution"]["evidence_sufficiency_status"] = "sufficient"
     empty_enumerations["stop_reason"] = "达到请求方冻结的质量、数量与来源多样性条件"
-    empty_receipt = VALIDATOR.validate(empty_enumerations)
+    empty_receipt = VALIDATOR.validate(empty_enumerations, allow_legacy_unbound=True)
     cases.append(
         {
             "case_id": "empty_conflicts_and_gaps_use_empty_arrays",
@@ -118,7 +118,7 @@ def main() -> int:
                 replace(payload, change["path"], change["value"])
         else:
             raise ValueError(f"unknown mutation operation: {operation}")
-        receipt = VALIDATOR.validate(payload)
+        receipt = VALIDATOR.validate(payload, allow_legacy_unbound=True)
         expected = mutation["expected_error_contains"]
         cases.append(
             {
@@ -134,11 +134,12 @@ def main() -> int:
     envelope, receipt = PACKAGER.package(draft)
     cases.append(
         {
-            "case_id": "packager_preserves_classes_and_consumer_boundary",
-            "expected_status": "pass",
+            "case_id": "legacy_draft_cannot_be_repackaged_without_original_contract",
+            "expected_status": "fail",
             "actual_status": receipt["status"],
             "passed": (
-                receipt["status"] == "pass"
+                receipt["status"] == "fail"
+                and "contract_binding_required" in receipt["errors"]
                 and receipt["evidence_class_changed"] is False
                 and envelope["downstream_acceptance"]["status"] == "not_assessed"
                 and envelope["negative_hits"] == golden["negative_hits"]

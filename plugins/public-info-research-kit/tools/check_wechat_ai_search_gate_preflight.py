@@ -74,7 +74,8 @@ def _collect_forbidden(value: Any, path: str = "$") -> list[str]:
     if isinstance(value, dict):
         for key, child in value.items():
             child_path = f"{path}.{key}"
-            if str(key).casefold() in SENSITIVE_OR_CONTROL_FIELDS:
+            business_authorization = (key == "authorization" and value.get("schema") == "residential.upstream_task.v0.2" and child in ("confirmed", "synthetic_fixture"))
+            if not business_authorization and str(key).casefold() in SENSITIVE_OR_CONTROL_FIELDS:
                 findings.append(child_path)
             findings.extend(_collect_forbidden(child, child_path))
     elif isinstance(value, list):

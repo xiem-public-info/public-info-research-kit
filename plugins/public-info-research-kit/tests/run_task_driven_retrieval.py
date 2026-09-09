@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'tools'))
+from request_contract import canonical_sha256
 from compile_retrieval_execution_request import compile_request
 from check_portable_channel_preflight import validate as owner
 from check_wechat_ai_search_gate_preflight import validate as ai
@@ -50,7 +51,7 @@ def main():
     r=copy.deepcopy(request); r['owner_request']['shared_gui']['lease_state']='planned'; check('gui_busy',not ai(r,require_live=True)['passed'])
     r=copy.deepcopy(request); r['real_gui_validated']=True; check('false_live_claim',not ai(r)['passed'])
     r=copy.deepcopy(request); r['owner_request']['query_plan'][0]['execution_state']='proposed_incremental'; check('unfrozen_query',not ai(r,require_live=True)['passed'])
-    r=copy.deepcopy(request); r['owner_request']['retrieval_task']['channel_scope']=['public_web']; check('legacy_hints',ai(r,require_live=True)['passed'])
+    r=copy.deepcopy(request); r['owner_request']['retrieval_task']['channel_scope']=['public_web']; r['owner_request']['source_request_sha256']=canonical_sha256(r['owner_request']['retrieval_task']); check('legacy_hints',ai(r,require_live=True)['passed'])
     r['owner_request']['retrieval_task']['channel_scope_exclusive']=True; check('explicit_exclusive',not ai(r,require_live=True)['passed'])
     r=copy.deepcopy(request); r['owner_request']['live_gate']={'authorized':False,'approved_by':'end_user','read_only':True,'stop_condition':'stop'}; check('explicit_gate_denial',not ai(r,require_live=True)['passed'])
     r=copy.deepcopy(request); r['owner_request']['query_plan'][0]['acceptance']['minimum_actual_opens']=0; check('ai_zero_article_opens',ai(r,require_live=True)['passed'])

@@ -9,6 +9,8 @@ import re
 from pathlib import Path
 from typing import Any, Iterable
 from urllib.parse import parse_qsl, urlsplit
+from request_contract import binding_errors, same
+from validate_adaptive_query_sufficiency import validate_package as validate_sufficiency
 
 
 SCHEMA = "public_evidence_envelope.v1"
@@ -59,6 +61,7 @@ TOP_FIELDS = {
     "gaps",
     "stop_reason",
     "package_boundary",
+    "contract_binding",
 }
 
 
@@ -112,7 +115,8 @@ def sensitive_errors(data: Any) -> list[str]:
     return errors
 
 
-def validate(data: dict[str, Any]) -> dict[str, Any]:
+def validate(data: dict[str, Any], original_request: dict | None = None,
+             sufficiency_input: dict | None = None, *, allow_legacy_unbound: bool = False) -> dict[str, Any]:
     errors: list[str] = []
     if data.get("schema") != SCHEMA:
         errors.append(f"schema must be {SCHEMA}")
@@ -185,8 +189,47 @@ def validate(data: dict[str, Any]) -> dict[str, Any]:
     elif mode == "simple_direct_retrieval":
         if query_execution.get("plan_schema") is not None or query_execution.get("plan_version") is not None:
             errors.append("simple direct retrieval must not invent a social query plan")
-    if not nonempty(query_execution.get("acceptance_mode")):
-        errors.append("query_execution.acceptance_mode is required")
+    allowed_modes = {"hybrid", "count_based", "quality_sufficiency"} if mode == "research_retrieval" else {"exempt_simple_direct_retrieval"}
+    if query_execution.get("acceptance_mode") not in allowed_modes:
+        errors.append("query_execution.acceptance_mode is invalid")
+    binding = data.get("contract_binding")
+    if binding is not None:
+        errors.extend(binding_errors(binding, original_request, sufficiency_input))
+        if isinstance(binding, dict):
+            if binding.get("request_id") != data.get("request_id"):
+                errors.append("contract_binding_request_mismatch")
+            acceptance = binding.get("acceptance_contract", {})
+            if not isinstance(acceptance, dict) or acceptance.get("acceptance_mode") != query_execution.get("acceptance_mode"):
+                errors.append("contract_binding_execution_mode_mismatch")
+        if original_request is None:
+            errors.append("original_request_required_for_bound_validation")
+    elif mode == "research_retrieval" and not allow_legacy_unbound:
+        errors.append("contract_binding_required")
+    if original_request is not None:
+        for key in ("request_id", "task_id", "project_id"):
+            if data.get(key) != original_request.get(key):
+                errors.append("envelope_request_mismatch:" + key)
+    if sufficiency_input is not None:
+        checked = validate_sufficiency(sufficiency_input, original_request)
+        if not checked["passed"]:
+            errors.append("sufficiency_validation_failed:" + checked["status"])
+            errors.extend(checked.get("errors", []))
+        actual = sufficiency_input.get("receipt", {})
+        if query_execution.get("evidence_sufficiency_status") != actual.get("evidence_sufficiency_status"):
+            errors.append("sufficiency_status_mismatch")
+        for output_key, receipt_key in (("result_batch_count", "executed_result_batch_count"), ("actual_open_count", "actual_open_count")):
+            if not same(query_execution.get(output_key), actual.get(receipt_key)):
+                errors.append("sufficiency_execution_count_mismatch:" + output_key)
+        batch = sufficiency_input.get("batch", {})
+        if batch.get("batch_state") != "proposed_incremental_batch":
+            ids = [q.get("query_id") for q in batch.get("queries", []) if isinstance(q, dict)]
+            if set(query_execution.get("executed_query_ids", [])) != set(ids):
+                errors.append("sufficiency_executed_query_mismatch")
+        extension = sufficiency_input.get("consumer_contract", {}).get("adaptive_extension", {})
+        if query_execution.get("adaptive_extension_authorized") is not extension.get("authorized"):
+            errors.append("sufficiency_extension_flag_mismatch")
+    elif mode == "research_retrieval" and not allow_legacy_unbound:
+        errors.append("sufficiency_input_required")
     if query_execution.get("evidence_sufficiency_status") not in {"sufficient", "partially_sufficient", "expression_supply_gap", "not_assessed"}:
         errors.append("query_execution.evidence_sufficiency_status is invalid")
     for field in ("executed_query_ids", "proposed_incremental_query_ids"):
@@ -334,6 +377,11 @@ def validate(data: dict[str, Any]) -> dict[str, Any]:
         gaps = []
     actual_conflicts = {item_id for item_id, item in item_by_id.items() if item.get("evidence_class") == "conflict"}
     actual_gaps = {item_id for item_id, item in item_by_id.items() if item.get("evidence_class") == "gap"}
+    if sufficiency_input is not None:
+        for row in sufficiency_input.get("receipt", {}).get("cumulative_evidence", []):
+            identity = row if isinstance(row, str) else row.get("evidence_item_id") if isinstance(row, dict) else None
+            if identity not in item_by_id or identity in actual_conflicts | actual_gaps:
+                errors.append("qualified_evidence_must_reference_usable_items")
     if set(conflicts) != actual_conflicts:
         errors.append("conflicts must enumerate every conflict item exactly once")
     if set(gaps) != actual_gaps:
@@ -366,15 +414,22 @@ def validate(data: dict[str, Any]) -> dict[str, Any]:
         "external_write_executed": False,
         "evidence_class_changed": False,
         "downstream_acceptance_changed": False,
+        "validation_scope": "legacy_structure_only" if binding is None and allow_legacy_unbound else "request_and_sufficiency_bound",
+        "production_binding_verified": not errors and original_request is not None and sufficiency_input is not None,
     }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--request", type=Path)
+    parser.add_argument("--sufficiency-input", type=Path)
+    parser.add_argument("--allow-legacy-unbound", action="store_true", help="Historical read-only structure review; never a production adoption approval")
     args = parser.parse_args()
     data = json.loads(args.input.read_text(encoding="utf-8"))
-    validation = validate(data)
+    validation = validate(data, json.loads(args.request.read_text()) if args.request else None,
+                          json.loads(args.sufficiency_input.read_text()) if args.sufficiency_input else None,
+                          allow_legacy_unbound=args.allow_legacy_unbound)
     print(json.dumps(validation, ensure_ascii=False, indent=2))
     return 0 if validation["status"] == "pass" else 2
 

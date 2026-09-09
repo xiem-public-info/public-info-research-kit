@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from request_contract import normalize_request, canonical_sha256
 from retrieval_task_policy import task_subjects, validate_task_authorization, validate_scope_interpretation
 from validate_adaptive_query_sufficiency import explicit_research_requirements
 
@@ -21,6 +22,7 @@ def compile_sufficiency_input(task: dict, plan: dict) -> dict:
         "wechat": "ROUTE-WECHAT-DESKTOP", "xhs": "ROUTE-XHS",
         "public_web": "ROUTE-OFFICIAL-RESOLVER", "map_gis": "ROUTE-MAP",
     }
+    task = normalize_request(task)
     sufficiency = task.get("sufficiency", {})
     if not isinstance(sufficiency, dict):
         raise ValueError("retrieval_sufficiency_invalid")
@@ -32,7 +34,7 @@ def compile_sufficiency_input(task: dict, plan: dict) -> dict:
             "required_gate_ids": [] if plan["channel"] == "map_gis" else ["GATE-D237-RESEARCH-SUFFICIENCY-DEFAULT"],
         },
     }
-    for key in ("sufficiency_policy", "acceptance_mode", "qualification_policy", "diversity_policy", "quality_criteria", "count_threshold", "count_target", "diversity_requirements", "diversity_targets", "required_object_ids", "marginal_gain_fields", "research_characteristics", "simple_direct_retrieval_exemption", "adaptive_extension"):
+    for key in ("sufficiency_policy", "acceptance_mode", "qualification_policy", "diversity_policy", "quality_criteria", "count_threshold", "count_target", "diversity_requirements", "diversity_targets", "required_object_ids", "marginal_gain_fields", "research_characteristics", "simple_direct_retrieval_exemption", "adaptive_extension", "qualified_match_classes", "non_counted_match_classes", "evidence_usage_permission"):
         source_key = "policy" if key == "sufficiency_policy" else key
         if source_key in sufficiency:
             result[key] = sufficiency[source_key]
@@ -64,12 +66,14 @@ def compile_sufficiency_input(task: dict, plan: dict) -> dict:
 
 
 def compile_request(task: dict, plan: dict) -> dict:
-    scope = validate_scope_interpretation(task, plan)
+    original_task = task
+    task = normalize_request(task)
+    scope = validate_scope_interpretation(original_task, plan)
     if scope['status'] == 'scope_conflict':
         raise ValueError('scope_conflict:' + ';'.join(scope['errors']))
     channel = plan['channel']
     request = dict(schema='portable_channel_request.v1', task_id=task['task_id'],
-        retrieval_task=copy.deepcopy(task), scope_consistency=scope, channel=channel, channel_profile=f'{channel}.v1',
+        retrieval_task=copy.deepcopy(original_task), source_request_sha256=canonical_sha256(original_task), request_id=original_task.get("request_id"), scope_consistency=scope, channel=channel, channel_profile=f'{channel}.v1',
         execution_owner='installed_public_info_research_kit',
         downstream_business_owner=task.get('business_owner', 'requesting_user_or_downstream_project'),
         business_question=task['business_question'], subjects=task_subjects(task), sufficiency_applicability=compile_sufficiency_input(task, plan), intent=plan.get('intent', 'business_research'),

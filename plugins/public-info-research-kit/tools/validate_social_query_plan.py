@@ -249,7 +249,7 @@ def validate(plan: dict[str, Any], lexicon: dict[str, Any]) -> dict[str, Any]:
     if not executable_query_ids:
         warnings.append("plan has no frozen executable queries")
     if proposed_incremental_query_ids and not adaptive_authorized:
-        warnings.append("adaptive_extension is not authorized; all incremental proposals remain non-executable")
+        warnings.append("proposals are not frozen; in-scope iteration follows the received task, out-of-scope extension requires authorization")
 
     return {
         "schema": "social_query_plan_validation.v2",

@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from request_contract import check_sufficiency_binding, normalize_request
 from retrieval_task_policy import validate_task_authorization, explicit_research_requirements
 
 
@@ -443,7 +444,13 @@ def validate_completion_claim(contract: dict[str, Any], receipt: dict[str, Any])
     return None
 
 
-def validate_package(payload: dict[str, Any]) -> dict[str, Any]:
+def validate_package(payload: dict[str, Any], original_request: dict | None = None) -> dict[str, Any]:
+    if isinstance(payload, dict) and payload.get("source_request_sha256") is not None and original_request is None:
+        return result("original_request_required_for_bound_sufficiency", False)
+    if original_request is not None:
+        binding_issues = check_sufficiency_binding(original_request, payload)
+        if binding_issues:
+            return result("sufficiency_request_binding_failed", False, errors=binding_issues)
     if not isinstance(payload, dict) or payload.get("schema") != CONTRACT["package_schema"]:
         return result("invalid_schema", False)
     missing_top = [field for field in CONTRACT["required_package_sections"] if payload.get(field) in (None, "")]
@@ -518,6 +525,8 @@ def validate_package(payload: dict[str, Any]) -> dict[str, Any]:
         execution = payload.get("execution_request")
         if not isinstance(execution, dict) or execution.get("task_id") != payload.get("task_id"):
             return result("retrieval_task_scope_mismatch", False)
+        if normalize_request(execution.get("retrieval_task", {})).get("in_scope_iteration_allowed") is False:
+            return result("in_scope_iteration_explicitly_disallowed", False)
         valid, status = validate_task_authorization(execution)
         if not valid:
             return result(status, False)
@@ -609,10 +618,11 @@ def main() -> int:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--input", type=Path)
     group.add_argument("--applicability-input", type=Path)
+    parser.add_argument("--request", type=Path, help="Original frozen request; compare declared requirements without changing it")
     args = parser.parse_args()
     path = args.applicability_input or args.input
     payload = json.loads(path.read_text(encoding="utf-8"))
-    validation = validate_applicability(payload) if args.applicability_input else validate_package(payload)
+    validation = validate_applicability(payload) if args.applicability_input else validate_package(payload, json.loads(args.request.read_text()) if args.request else None)
     print(json.dumps(validation, ensure_ascii=False, indent=2))
     return 0 if validation["passed"] else 2
 

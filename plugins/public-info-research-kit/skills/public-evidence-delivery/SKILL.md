@@ -11,7 +11,7 @@ description: 将公开信息整理为可复盘证据包，区分事实候选、�
 4. 使用五类对象：`fact_candidate`、`soft_evidence`、`platform_observation`、`conflict`、`gap`。
 5. 社交媒体观察和非概率样本不得自动升级为事实或总体比例；冲突不得静默覆盖；缺口必须写明原因和可重试条件。
 6. 上游状态只使用 `fulfilled`、`partial`、`gap`、`stopped`；`downstream_acceptance` 在上游包中必须保持 `not_assessed` 且 `decided_by=null`。没有冲突或缺口时仍分别输出空数组 `[]`。
-7. 运行 `tools/package_evidence.py` 生成包，再用 `tools/validate_public_evidence.py` 做结构、消费者拒收与敏感字段检查。打包器不得改变证据类别、`negative_hits`、`conflicts`、`gaps` 或 `stop_reason`。
+7. 研究回包运行 `tools/package_evidence.py --input <草稿> --request <冻结原请求> --sufficiency-input <实际充分性包> --output <新回包>`，复核时 `tools/validate_public_evidence.py` 使用相同原请求和充分性输入。打包器核原合同与实际回执并生成 `contract_binding`；模式冲突明确拒绝，不事后降低原门槛。不得改变证据类别、`negative_hits`、`conflicts`、`gaps` 或 `stop_reason`。
 8. 不写入 Cookie、Token、请求头、浏览器状态、二维码凭证、本地存储、剪贴板内容或账号资料。
 9. 微信／小红书证据必须回指 `query_id + exact_query_text`、查询计划版本、`searcher_mode`、来源角色、结果批次与实际开读数；标题浏览不计实际开读，聚合线索只有回到真实原文后才能升级为证据。
 10. 来源角色使用 `official_fact_source`、`brand_claim`、`sales_expression`、`supply_side_mechanism`、`buyer_voice`、`owner_experience`、`media_narrative`、`professional_workflow` 或 `ai_aggregate_clue`，避免创作者方法和销售叙事冒充用户声音。
@@ -25,6 +25,8 @@ description: 将公开信息整理为可复盘证据包，区分事实候选、�
 轻量阅读、素材和内部判断按用途直接交付，不为套用本 Skill 额外建包、建档或补齐无关字段。独立成立的结果可以先交付，原任务是否完成仍按业务目标判断。图片先看对象、视角、用途缺口，再选最可能补齐的来源；已有截图满足研究用途时先用，入选正式图片需要清晰度时再定向补取原图。完整购房事件沿用下游已裁定定义，按需记录希望取得的进展（desired_progress），区分原声、推断和未取得；不新增统一因素、不回填历史或因此扩搜。
 
 本 Skill 负责证据外壳，不替业务 Owner 作最终客户判断，也不向外部系统自动发送。
+
+旧包用 `validate_public_evidence.py --input <旧包> --allow-legacy-unbound` 仅作只读结构检查，其结果标为 `legacy_structure_only`，不能作为新版采用或联动通过。修封装时保留旧文件；按原请求回看既有证据和实际回执，另生成带绑定的新包。总条目数包括冲突和缺口，不能代替合格证据数；部分充分保持 `partial / partially_sufficient`。没有真实充分性回执时不能为通过校验伪造回执。
 
 
 收到用户或下游的检索合同，即默认授权全部检索渠道和公开搜索表面按需使用。下游只给业务目标、主体和内容需求；本工具包选择渠道、AI 使用顺序和精确词。AI→原文、原文→AI→后续计划均属常规研究。每条查询提交前冻结，范围内迭代无需另批；超出对象、目标或预算才请求裁定。权限不代表工具、登录、访问或真实渠道已验证。 规则见 `resources/retrieval_authority_current.json`，合同编译见 `tools/compile_retrieval_execution_request.py`。

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from typing import Any
+from request_contract import normalize_request, canonical_sha256, same, REQUIREMENT_FIELDS
 
 POLICY_ID = "TASK-DRIVEN-RETRIEVAL-AUTHORITY-V1"
 CHANNEL_ALIASES = {
@@ -33,6 +34,7 @@ def explicit_research_requirements(payload: dict[str, Any]) -> list[str]:
 
 def task_subjects(task: dict[str, Any]) -> list:
     """Accept the old C-32 singular spelling without changing the received task."""
+    task = normalize_request(task)
     value = task.get("subjects") if "subjects" in task else task.get("subject")
     if isinstance(value, (str, dict)) and value:
         return [value]
@@ -49,6 +51,23 @@ def validate_task_authorization(request: dict[str, Any]) -> tuple[bool, str]:
     task = request.get("retrieval_task")
     if not isinstance(task, dict):
         return False, "retrieval_task_contract_required"
+    try:
+        original_task = task
+        task = normalize_request(task)
+    except (ValueError, TypeError) as exc:
+        return False, str(exc)
+    if original_task.get("schema") == "residential.upstream_task.v0.2" and ("source_request_sha256" not in request or not isinstance(request.get("sufficiency_applicability"), dict)):
+        return False, "residential_execution_binding_required"
+    if "source_request_sha256" in request and request["source_request_sha256"] != canonical_sha256(original_task):
+        return False, "execution_request_hash_mismatch"
+    compiled = request.get("sufficiency_applicability")
+    if isinstance(compiled, dict):
+        for key in REQUIREMENT_FIELDS:
+            expected = task.get("sufficiency", {})
+            if key == "research_characteristics" and isinstance(expected.get(key), list) and isinstance(compiled.get(key), list) and set(expected[key]).issubset(compiled[key]):
+                continue
+            if key in expected and (key not in compiled or not same(compiled[key], expected[key])):
+                return False, "execution_contract_mismatch:" + key
     if not task.get("task_id") or task["task_id"] != request.get("task_id"):
         return False, "retrieval_task_scope_mismatch"
     if not isinstance(task.get("business_question"), str) or not task["business_question"].strip():
@@ -109,6 +128,7 @@ def validate_scope_interpretation(task: dict, plan: dict) -> dict:
     task binding and action coverage make that interpretation reviewable; they do
     not prove that the model understood the request or verified the evidence.
     """
+    task = normalize_request(task)
     scope = plan.get("scope_interpretation")
     result = {"status": "owner_interpretation_required", "errors": [],
               "domain": "unknown", "execution_routes": [], "reuse_routes": [],

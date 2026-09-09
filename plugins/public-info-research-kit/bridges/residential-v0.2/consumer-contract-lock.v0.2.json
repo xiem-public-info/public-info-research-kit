@@ -2,20 +2,20 @@
   "schema": "public.residential_bridge_lock.v0.2",
   "status": "compatible_candidate_frozen",
   "producer": {
-    "release_candidate": "0.8.0-rc.1",
+    "release_candidate": "0.8.0-rc.6",
     "schema_path": "schemas/public_evidence_envelope.v1.json",
     "$id": "public_evidence_envelope.v1",
-    "sha256": "ee303d2ea8eef1bcc2b6e6f7a8b020486aa80c3c3ca3189cb99fedd5b8fc2148"
+    "sha256": "343d804eb2bd2be56a97d93c25376d64e55fc8e2e9afac952d2c4e1a630e92e1"
   },
   "consumer": {
     "repository": "https://github.com/xiem-bit/residential-project-interpretation-service-public",
-    "release_candidate": "v0.2.0-rc.1",
+    "release_candidate": "v0.2.0-rc.8",
     "candidate_commit": "1b60c50430f84728745f1d45ff81ed4e3d0ad560",
     "contracts": [
       {
         "path": "external-capabilities/upstream-task.schema.json",
         "$id": "residential.upstream_task.v0.2",
-        "sha256": "12f7ed916755bc37a870a6eb893210cc7e0fbc35ecea443f8e8d10bbe102b271"
+        "sha256": "1cafb6531f34518d7d110f21ad9242aa9bf8ab18ae1d295e1b3a9c519336c32a"
       },
       {
         "path": "external-capabilities/upstream-response.schema.json",

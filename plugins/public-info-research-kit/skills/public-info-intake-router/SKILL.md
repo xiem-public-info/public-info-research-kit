@@ -36,6 +36,12 @@ description: 将研究问题路由到微信、小红书、静态或动态公开�
 
 ## 输出
 
+住宅 `residential.upstream_task.v0.2` 由编译器确定性读取 `acceptance_contract`、`object_scope`、`stop_conditions` 和 `incremental_policy`，原请求保持完整副本。模式、数量、质量、多样性及资格不能由模型重新指定；重复位置出现不同值时先订正本包映射，不修改原请求。执行请求保留 `request_id` 与原请求的 `source_request_sha256`，进度另记。
+
+`social_query_plan.v1.acceptance_mode` 的 `d237_required / exempt_simple_direct_retrieval` 是适用策略，不能复制成验收模式 `hybrid / quality_sufficiency / count_based`。形成充分性包时，从编译结果继承原请求编号和哈希，完整保留验收条件，再运行 `validate_adaptive_query_sufficiency.py --input <充分性包> --request <冻结原请求>`。
+
+新任务的范围内迭代继承有效任务授权；`in_scope_iteration_allowed=false` 明确禁止继续，`execution_authorized` 只表示扩展授权。旧任务恢复先回看原请求、停止条件和当前授权，不能把字段省略或 `execution_authorized=false` 自动解释为已批准继续。范围、预算或明确停止要求改变时，由有权 Owner 留下新的决定，原冻结请求不回改。
+
 以下字段由本包用于内部执行计划，业务交付只呈现需要的结论和限制；按当前渠道填写适用字段，不要求下游预填：任务编号、业务问题、判断缺口、渠道与模式、渠道画像、业务 Owner、执行 Owner、`searcher_mode`、对象身份、精确输入、查询计划版本、每条查询的最小结果批次与实际开读数、增量授权状态、证据目标、使用边界、停止条件和预期验证器。
 
 本 Skill 不打开微信、小红书、浏览器或地图，不联网，不生成平台事实，也不代表真实检索已经完成。
