@@ -1,14 +1,14 @@
 {
   "schema": "public_info_self_service_release_manifest.v3",
   "version": "0.8.0-rc.8",
-  "status": "published_prerelease",
+  "status": "published",
   "base_release_tag": "v0.8.0-rc.7",
   "release_tag": "v0.8.0-rc.8",
   "candidate_revision": "2026-09-22-public-rc8-methods",
   "distribution_model": "public_repository_direct_use_without_maintainer_authorization",
   "license": "MIT",
   "repository": "xiem-public-info/public-info-research-kit",
-  "previous_stable_version": "0.8.0-rc.7",
+  "previous_version": "0.8.0-rc.7",
   "private_source_commit": "9d369052cfbf1f44288887170a5190152f170815",
   "private_revision_commit": "9d369052cfbf1f44288887170a5190152f170815",
   "public_package_source": "curated_snapshot_without_private_repository_history_or_runtime_state",
@@ -109,8 +109,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "57d3a95cfc995c1bb14b1ddec2b6fd946c3bee7f26e4896a0866877b550fcfc7",
-      "bytes": 5934
+      "sha256": "d604ab5653fb25d1b27a0ddee2dd9ed003442a0c55847f26255329d61fa06798",
+      "bytes": 6461
     },
     {
       "path": "DECISION_PLAYBOOK.md",
@@ -159,18 +159,18 @@
     },
     {
       "path": "QUICKSTART.md",
-      "sha256": "a98ef2d2e9ac26de96b4a0e44ebf42abba7e6fa953eb8f0acb6d2b4ae2aede43",
-      "bytes": 2515
+      "sha256": "63481f074715d8a3c8007bc2f19478f77ea93365ab5eb4e5ca785bc2648e84d6",
+      "bytes": 2457
     },
     {
       "path": "RC_INSTALL_0.8.0.md",
-      "sha256": "0a8efc49f11d5c5d8548a5704130bfaa291b04ad37034f0b07552c0d6d1ba83b",
-      "bytes": 3691
+      "sha256": "723768c7548879d1a4990fe5eaf2cd83ee23876f7c1bf4e080811230c5cf4340",
+      "bytes": 3600
     },
     {
       "path": "README.md",
-      "sha256": "8b1f92f648a13615443cb51133617f606d13fa587bdf6ce6d37ca98ccd5a436e",
-      "bytes": 5984
+      "sha256": "1318f01a39ab9d60993c057c07bc7c9539dc1512bbf1ea48a82fe6707933f04a",
+      "bytes": 6345
     },
     {
       "path": "RELEASE_NOTES_0.8.0-rc.2.md",
@@ -204,8 +204,8 @@
     },
     {
       "path": "RELEASE_NOTES_0.8.0-rc.8.md",
-      "sha256": "f0c5a32a8c3044f317b5671f0ba142e9036e299ddab00bfe7f91777b8c3b087d",
-      "bytes": 2121
+      "sha256": "2b268411ec68fcd9be0fe30f2ef809e41d2c77a99c0c3378fec68e81b48ccd39",
+      "bytes": 2773
     },
     {
       "path": "SECURITY.md",
@@ -244,8 +244,8 @@
     },
     {
       "path": "UPDATE_0.8.0.md",
-      "sha256": "94dc652795c727ba648501f6139e52659a0369cc9ae47822aacdf1974e9c3dfd",
-      "bytes": 910
+      "sha256": "afe9d2cdc886c8e5277de5fdfb31f77876431385e41313fba799f599c5ce4d64",
+      "bytes": 1593
     },
     {
       "path": "UPGRADE_0.8.0-rc.6_to_rc.7.md",
@@ -724,8 +724,8 @@
     },
     {
       "path": "scripts/build_release_manifest.py",
-      "sha256": "c522c17c3a36cb1dc15dea5a8ee60d46703b59e096adf25e8438d61be0a4b39e",
-      "bytes": 8217
+      "sha256": "2bb9e613669ad211ec7d2c5441dc52cd7cc25de13369ba70aaecbbb7e9069583",
+      "bytes": 8204
     },
     {
       "path": "scripts/verify_residential_rc8_conformance.py",

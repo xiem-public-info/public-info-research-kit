@@ -1,8 +1,8 @@
 # Quickstart
 
-## 0.8.0-rc.8 预发布版
+## 0.8.0-rc.8
 
-固定 rc.8 Release、标签与资产公开后才能安装；尚未公开时保持原版本。首次安装见 [中文安装说明](RC_INSTALL_0.8.0.md)，旧版升级见 [升级与回退步骤](UPGRADE_0.8.0-rc.7_to_rc.8.md)。可直接复制 [安装提示词](INSTALL_PROMPT_0.8.0-rc.8.md)。
+固定 rc.8 Release、标签与资产已公开。首次安装见 [中文安装说明](RC_INSTALL_0.8.0.md)，旧版升级见 [升级与回退步骤](UPGRADE_0.8.0-rc.7_to_rc.8.md)。可直接复制 [安装提示词](INSTALL_PROMPT_0.8.0-rc.8.md)。
 
 当前 Plugin 页面提供安装入口时优先使用。核实实际 installedPath、版本和代码后，新建任务确认七项能力可见。安装不会启动真实检索，也不自动恢复旧任务。
 

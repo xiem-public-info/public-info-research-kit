@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the deterministic public RC manifest after the offline harness passes."""
+"""Build the deterministic public release manifest after the offline harness passes."""
 
 from __future__ import annotations
 
@@ -68,14 +68,14 @@ def main() -> int:
     manifest = {
         "schema": "public_info_self_service_release_manifest.v3",
         "version": version,
-        "status": "local_candidate_not_published" if args.candidate_revision else "published_prerelease",
+        "status": "local_candidate_not_published" if args.candidate_revision else "published",
         "base_release_tag": "v0.8.0-rc.7",
         "release_tag": None if args.candidate_revision else f"v{version}",
         "candidate_revision": args.candidate_revision or "2026-09-22-public-rc8-methods",
         "distribution_model": "public_repository_direct_use_without_maintainer_authorization",
         "license": "MIT",
         "repository": "xiem-public-info/public-info-research-kit",
-        "previous_stable_version": "0.8.0-rc.7",
+        "previous_version": "0.8.0-rc.7",
         "private_source_commit": "9d369052cfbf1f44288887170a5190152f170815",
         "private_revision_commit": args.private_revision_commit or "9d369052cfbf1f44288887170a5190152f170815",
         "public_package_source": "curated_snapshot_without_private_repository_history_or_runtime_state",
