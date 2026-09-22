@@ -1,19 +1,19 @@
-# v0.8.0-rc.7 中文安装与使用说明
+# v0.8.0-rc.8 中文安装与使用说明
 
-下述固定版本安装步骤须在 rc.7 Release、标签及同版 ZIP 已公开后执行；尚未公开时保持现有版本，不以候选分支替代固定资产。
+下述固定版本安装步骤须在 rc.8 Release、标签及同版 ZIP 已公开后执行；尚未公开时保持现有版本，不以候选分支替代固定资产。
 
 ## 安装地址
 
-- [固定 rc.7 发布页](https://github.com/xiem-public-info/public-info-research-kit/releases/tag/v0.8.0-rc.7)
-- [可复制的安装提示词](INSTALL_PROMPT_0.8.0-rc.7.md)
-- [已有 rc.6 的升级与回退步骤](UPGRADE_0.8.0-rc.6_to_rc.7.md)
+- [固定 rc.8 发布页](https://github.com/xiem-public-info/public-info-research-kit/releases/tag/v0.8.0-rc.8)
+- [可复制的安装提示词](INSTALL_PROMPT_0.8.0-rc.8.md)
+- [已有 rc.7 的升级与回退步骤](UPGRADE_0.8.0-rc.7_to_rc.8.md)
 
 ## 首次安装
 
-先核对当前电脑是否已经安装。首次安装优先使用 Codex 的 Plugin 安装入口，说明固定版本为 v0.8.0-rc.7；需要 CLI 时先核本机帮助，再逐条执行：
+先核对当前电脑是否已经安装。首次安装优先使用 Codex 的 Plugin 安装入口，说明固定版本为 v0.8.0-rc.8；需要 CLI 时先核本机帮助，再逐条执行：
 
 ```bash
-codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.7 --json
+codex plugin marketplace add https://github.com/xiem-public-info/public-info-research-kit.git --ref v0.8.0-rc.8 --json
 codex plugin add public-info-research-kit@public-info-research-public --json
 ```
 

@@ -32,3 +32,7 @@ description: 对静态或动态公开网页、官方原站、RSS/Feed、HTML、�
 - 不绕过登录、验证码、付费墙、权限墙、风控或访问控制；出现安全确认时交由本人处理后继续。
 - 依赖鼠标、键盘、窗口焦点或剪贴板的任务在同一台 Mac 上串行执行；这只是桌面冲突控制，不是授权机制。
 - 引用第三方文字、图片、音视频或地图时保留必要来源与署名；OSM 图件保留可见 `© OpenStreetMap contributors`。
+
+## 近期方法补充（0.8.0-rc.8）
+
+开放研究与补证按 [发现与缺口补证方法](../../resources/public-web-research-method.v1.md)执行；具名读取保持原范围。使用可见网页输入时遵循 [共享GUI输入核对](../../resources/shared-gui-input.v1.md)。

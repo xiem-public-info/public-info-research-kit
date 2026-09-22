@@ -1,16 +1,16 @@
 {
   "schema": "public_info_self_service_release_manifest.v3",
-  "version": "0.8.0-rc.7",
-  "status": "local_candidate_not_published",
-  "base_release_tag": "v0.8.0-rc.6",
-  "release_tag": null,
-  "candidate_revision": "2026-09-09-public-execution-binding-rc7",
+  "version": "0.8.0-rc.8",
+  "status": "published_prerelease",
+  "base_release_tag": "v0.8.0-rc.7",
+  "release_tag": "v0.8.0-rc.8",
+  "candidate_revision": "2026-09-22-public-rc8-methods",
   "distribution_model": "public_repository_direct_use_without_maintainer_authorization",
   "license": "MIT",
   "repository": "xiem-public-info/public-info-research-kit",
-  "previous_stable_version": "0.7.0",
-  "private_source_commit": "81f7e19df51e0022c553be137607e766a249ab71",
-  "private_revision_commit": "81f7e19df51e0022c553be137607e766a249ab71",
+  "previous_stable_version": "0.8.0-rc.7",
+  "private_source_commit": "9d369052cfbf1f44288887170a5190152f170815",
+  "private_revision_commit": "9d369052cfbf1f44288887170a5190152f170815",
   "public_package_source": "curated_snapshot_without_private_repository_history_or_runtime_state",
   "skill_count": 7,
   "skills": [
@@ -24,6 +24,10 @@
   ],
   "quality_contracts": [
     "channel_capability_profiles",
+    "gap_driven_public_web_and_contractor_evidence",
+    "visible_input_confirmation_before_gui_submit",
+    "conditional_social_query_stopping",
+    "building_imagery_identity_and_use_boundaries",
     "D235_semantic_query_strategy",
     "D292_research_orchestration",
     "D291_spatial_coordinate_evidence_v2",
@@ -105,8 +109,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "678f860a22873eef9ff3e200badfa168762eac2bea5703a8c973803c1fd90c8a",
-      "bytes": 5579
+      "sha256": "57d3a95cfc995c1bb14b1ddec2b6fd946c3bee7f26e4896a0866877b550fcfc7",
+      "bytes": 5934
     },
     {
       "path": "DECISION_PLAYBOOK.md",
@@ -115,7 +119,7 @@
     },
     {
       "path": "INSTALL_CHECKLIST.md",
-      "sha256": "b3036cb42b048c31d5f9cb383be983f1d80c27721a3f9376005d19326ce074f1",
+      "sha256": "f552581d41a2c8c7946b8fa3d501e178d8f7a6bac4199e41c219ccbc589bdb9e",
       "bytes": 820
     },
     {
@@ -134,6 +138,11 @@
       "bytes": 3734
     },
     {
+      "path": "INSTALL_PROMPT_0.8.0-rc.8.md",
+      "sha256": "fe80694215054785865d25c9f1928a0942a5397c1a55f8cd7d9e64e4424bbcb0",
+      "bytes": 3792
+    },
+    {
       "path": "INTEROPERABILITY.md",
       "sha256": "1aa0a259a0c63368e2aee43fffe4741deac4976d4599d8222ad21db368e30e93",
       "bytes": 2444
@@ -150,18 +159,18 @@
     },
     {
       "path": "QUICKSTART.md",
-      "sha256": "636f69760b81eb9d24a13d2af8af4443a0dbaeedc77525b868de21a8b51a3764",
+      "sha256": "a98ef2d2e9ac26de96b4a0e44ebf42abba7e6fa953eb8f0acb6d2b4ae2aede43",
       "bytes": 2515
     },
     {
       "path": "RC_INSTALL_0.8.0.md",
-      "sha256": "d327ec6b60e76b4c92608f4706ed4ff270e146998e92ffa1f2cd3fea25845bdf",
+      "sha256": "0a8efc49f11d5c5d8548a5704130bfaa291b04ad37034f0b07552c0d6d1ba83b",
       "bytes": 3691
     },
     {
       "path": "README.md",
-      "sha256": "e585f613c2e277a26d27032fd1b12143a120164a7db85ea64151f50821829fc1",
-      "bytes": 5990
+      "sha256": "8b1f92f648a13615443cb51133617f606d13fa587bdf6ce6d37ca98ccd5a436e",
+      "bytes": 5984
     },
     {
       "path": "RELEASE_NOTES_0.8.0-rc.2.md",
@@ -192,6 +201,11 @@
       "path": "RELEASE_NOTES_0.8.0-rc.7.md",
       "sha256": "ae234886a8434ba1e72bd329a05cabfac6171e5a272229f2a172ee1b78b0e913",
       "bytes": 2143
+    },
+    {
+      "path": "RELEASE_NOTES_0.8.0-rc.8.md",
+      "sha256": "f0c5a32a8c3044f317b5671f0ba142e9036e299ddab00bfe7f91777b8c3b087d",
+      "bytes": 2121
     },
     {
       "path": "SECURITY.md",
@@ -230,8 +244,8 @@
     },
     {
       "path": "UPDATE_0.8.0.md",
-      "sha256": "abb624a585d64131a8c4a4d3c7fb9b9f5b4488da75813ffa333f2d64448ebc33",
-      "bytes": 2653
+      "sha256": "94dc652795c727ba648501f6139e52659a0369cc9ae47822aacdf1974e9c3dfd",
+      "bytes": 910
     },
     {
       "path": "UPGRADE_0.8.0-rc.6_to_rc.7.md",
@@ -239,8 +253,13 @@
       "bytes": 5700
     },
     {
+      "path": "UPGRADE_0.8.0-rc.7_to_rc.8.md",
+      "sha256": "6d1d1478169f552634c5fd43c4af02f4bf3ee27dea32910f2f35df2ab0d410ed",
+      "bytes": 5770
+    },
+    {
       "path": "plugins/public-info-research-kit/.codex-plugin/plugin.json",
-      "sha256": "91a603ccbcda0c8b0187461fb9e35862487a39e97ff2a84e53aa00b8de19d494",
+      "sha256": "ee31019bd1e02631e398f00d58cdab85ec58e08c5a049700bbb1f49c025f1e52",
       "bytes": 1853
     },
     {
@@ -262,6 +281,11 @@
       "path": "plugins/public-info-research-kit/requirements/python-docs.txt",
       "sha256": "540531bba84a0e9dfa36b873f7a94a804a449444a700c961e1ca92610ec36d63",
       "bytes": 13
+    },
+    {
+      "path": "plugins/public-info-research-kit/resources/building-imagery-method.v1.md",
+      "sha256": "fed630458ffe7b1052532b5619d7c913f821636cdc1e6211a1d6440a4f774bd4",
+      "bytes": 1376
     },
     {
       "path": "plugins/public-info-research-kit/resources/channel-capability-profiles/osm-spatial.v1.json",
@@ -290,8 +314,8 @@
     },
     {
       "path": "plugins/public-info-research-kit/resources/decision-playbook.v1.md",
-      "sha256": "51be50c3a7e2a7c4ac8df4f3ee954358e3cda324b9bb459c764a28af09ba698a",
-      "bytes": 8065
+      "sha256": "0dfba1ec56a0d881d82da12d90e9182cdbea86afc08fce91c13f8727d81705d3",
+      "bytes": 8515
     },
     {
       "path": "plugins/public-info-research-kit/resources/install-checklist.v1.md",
@@ -304,9 +328,19 @@
       "bytes": 2602
     },
     {
+      "path": "plugins/public-info-research-kit/resources/public-web-research-method.v1.md",
+      "sha256": "9f1bf862743cca020045aedf4d2f89c9443bb37365872a9a39eced4e4c18c66d",
+      "bytes": 2874
+    },
+    {
       "path": "plugins/public-info-research-kit/resources/retrieval_authority_current.json",
       "sha256": "96a4aebb6b1b6fda918dc0d839b323a36854180b01dfc2ebeb8b557dea2888b7",
       "bytes": 1831
+    },
+    {
+      "path": "plugins/public-info-research-kit/resources/shared-gui-input.v1.md",
+      "sha256": "1fcbe26f92c0b827bb0d745bc5850f2ae1f13ad105e5933637e4e9534ef6c8c8",
+      "bytes": 1311
     },
     {
       "path": "plugins/public-info-research-kit/resources/social_semantic_query_lexicon.v0.1.json",
@@ -365,38 +399,38 @@
     },
     {
       "path": "plugins/public-info-research-kit/skills/map-spatial-evidence/SKILL.md",
-      "sha256": "1449e42c4d8dcbeaf402028781cec0d6cd8bd9283d6b4ec6193f88a8d965542d",
-      "bytes": 4551
+      "sha256": "ffa0f709b9cb3ef3cd51a7b7064a2e2ec75793bd9b5a44614f66463a102bb5ea",
+      "bytes": 4892
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-evidence-delivery/SKILL.md",
-      "sha256": "929aea20443d5ad8098befd3a5af93cbea83143fc98af4dbb32b90ccef78e863",
-      "bytes": 7335
+      "sha256": "14cfa1f76da3f0105cf4cc6df6a7c9838bbd0fc199ed80644cbfcf72d954ab7f",
+      "bytes": 7800
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-info-intake-router/SKILL.md",
-      "sha256": "1c74ab3173c8bb2cf8360108f742baedbb51e9617abba9c3094a58e071755390",
-      "bytes": 12320
+      "sha256": "e98fbf7770105f53a095093140cedcee5cbff5feeade1187dbf9ec9395f1f8af",
+      "bytes": 12673
     },
     {
       "path": "plugins/public-info-research-kit/skills/public-web-official-resolver/SKILL.md",
-      "sha256": "9096e900d1a4f13b403aeb4223cd9218359bb8db9631546969da7dfdb943c138",
-      "bytes": 3816
+      "sha256": "97dfece459f2dfc5e097cf45a2618ed316acd062359cd4c4783c3f38323324ab",
+      "bytes": 4100
     },
     {
       "path": "plugins/public-info-research-kit/skills/wechat-known-url-reader/SKILL.md",
-      "sha256": "10cf2d668febcd67d5af6bb718c7e470176c9c065ca4599d06f0ec160b397009",
-      "bytes": 3264
+      "sha256": "7db38dae77bcb09e31e0590a5e5dc32999e0fbc3c60bc7f78578a2b1c44aa3fc",
+      "bytes": 3492
     },
     {
       "path": "plugins/public-info-research-kit/skills/wechat-public-research/SKILL.md",
-      "sha256": "23dfe0ddaf92469ecb502c3f55c6268a5acd00ca996b9b970a0e9ee78b72d4db",
-      "bytes": 8371
+      "sha256": "aaaa1df44688ff5f0ab64eb601303466d1b78d509313c3de39ffa7a9d75562e5",
+      "bytes": 9002
     },
     {
       "path": "plugins/public-info-research-kit/skills/xhs-visible-research/SKILL.md",
-      "sha256": "50466913fd21588f3661693e176c21624818c6b1f2602ea4298c30a2ba2a1d7a",
-      "bytes": 5728
+      "sha256": "619bc19039c28a5e07913e85523970ac498477890f6848ca68ac4691f40dfac3",
+      "bytes": 6132
     },
     {
       "path": "plugins/public-info-research-kit/tests/fixtures/d292-research-orchestration/valid.json",
@@ -690,8 +724,8 @@
     },
     {
       "path": "scripts/build_release_manifest.py",
-      "sha256": "0728e84e3273e73b8e9d0e1af1348a8a5a24525d50ef26224189298b61af4662",
-      "bytes": 7982
+      "sha256": "c522c17c3a36cb1dc15dea5a8ee60d46703b59e096adf25e8438d61be0a4b39e",
+      "bytes": 8217
     },
     {
       "path": "scripts/verify_residential_rc8_conformance.py",
